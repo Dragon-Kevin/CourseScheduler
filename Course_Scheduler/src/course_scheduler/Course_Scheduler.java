@@ -25,29 +25,49 @@ public class Course_Scheduler {
         List LinesOfFile = new ArrayList();
         
         LinesOfFile = readFile(fileName1);
-        printList(LinesOfFile);
-        //System.out.println(LinesOfFile);
+        findCourses(LinesOfFile);
+        //printList(LinesOfFile);
+        isObjectInList(LinesOfFile, "Courses Offered");
     }
     
-    // reads in the file
-    public static List readFile(String fileName) {
-        String line;
-        List lines = new ArrayList();
+    public static void findCourses(List list) {
+        int index;
+        List courses = new ArrayList();
         
+        index = isObjectInList(list, "Courses Offered") + 1;
+        
+        for(; !list.get(index).equals("Classroom Preferences:"); index++) {
+            String[] tokens = list.get(index).toString().split(", ");
+            courses.addAll(Arrays.asList(tokens));
+        }
+        
+        printList(courses);
+        System.out.println("number of courses = " + courses.size());
+    }
+    
+    // Takes file path as an argument then tries to read the file. Returns the file as list with each line as an individual element
+    public static List readFile(String fileName) {
+        String line;                        // temporary storage for each line when read in (file is read line by line)
+        List lines = new ArrayList();       // store file (will store all lines of the file in one variable)
+        
+        // file reader
         try {
             FileReader fileReader = new FileReader(fileName);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             
+            // read a line, if it is not null add to list element.
             while((line = bufferedReader.readLine()) != null) {
-                //String[] tokens = line.split(delimiter);
-                lines.add(line);
-                
-                //System.out.println(tokens.length);
-                //System.out.println(line);
+                if(line.isEmpty() || line.trim().equals("\n") || line.trim().equals("")) {
+                    // skip empty line
+                }
+                else {
+                    lines.add(line.trim());
+                }
             }
             
             bufferedReader.close();
         }
+        // exception handling
         catch(FileNotFoundException ex) {
             System.out.println("Unable to open file '" + fileName + "'");
         }
@@ -55,13 +75,31 @@ public class Course_Scheduler {
             ex.printStackTrace();
         }
         
+        // return the file (the list of lines of the file)
         return lines;
     }
     
+    // Prints out all elements of a List
     public static void printList(List list){
-        System.out.println("here");
         for(Object ele : list) {
             System.out.println(ele);
         }
+    }
+    
+    // Searches a list for an element, returns index if found, -1 if not
+    public static int isObjectInList(List list, Object target){
+        /*for(Object ele : list) {
+            if(ele.equals(target)) {
+                System.out.println("ding");
+                return true;
+            }
+        }*/
+        for(int i = 0; i < list.size(); i++) {
+            if (list.get(i).equals(target)) {
+                //System.out.println(list.get(i));
+                return i;
+            }
+        }
+        return -1;
     }
 }
