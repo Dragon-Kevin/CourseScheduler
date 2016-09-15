@@ -16,33 +16,75 @@ public class Course_Scheduler {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
-        Course c = new Course();
-        Teacher t = new Teacher();
-        List courses = new ArrayList();
+        List courses, preferences, assignments = new ArrayList();
         String fileName1 = "src/course_scheduler/Dept1ClassData.csv";
         String fileName2 = "src/course_scheduler/Dept2ClassData.csv";
         List LinesOfFile = new ArrayList();
         
         LinesOfFile = readFile(fileName1);
-        findCourses(LinesOfFile);
-        //printList(LinesOfFile);
-        isObjectInList(LinesOfFile, "Courses Offered");
+        courses     = findCourses(LinesOfFile);
+        preferences = findClassroomPreferences(LinesOfFile);
+        assignments = findFacultyAssignments(LinesOfFile);
     }
     
-    public static void findCourses(List list) {
+    // finds and stores all faculty assignments along with time preferences in a list
+    public static List findFacultyAssignments(List list) {
+        List assignments = new ArrayList();
         int index;
-        List courses = new ArrayList();
         
+        // finds location of assignments in the file
+        index = isObjectInList(list, "Faculty Assignments:") + 1;
+        
+        // store all assignments
+        for(; index < list.size(); index++) {
+            String[] tokens = list.get(index).toString().split("\n");
+            assignments.addAll(Arrays.asList(tokens));
+        }
+        
+        //printList(assignments);
+        //System.out.println("number of assignments = " + assignments.size());
+        
+        return assignments;
+    }
+    
+    // finds and stores all of the courses with classroom restrictions and their room/building preferences in a list
+    public static List findClassroomPreferences(List list) {
+        List preferences = new ArrayList();
+        int index;
+        
+        // finds location of preferences in the file
+        index = isObjectInList(list, "Classroom Preferences:") + 1;
+        
+        // store all preferences
+        for(; !list.get(index).equals("Faculty Assignments:"); index++) {
+            String[] tokens = list.get(index).toString().split("\n");
+            preferences.addAll(Arrays.asList(tokens));
+        }
+        
+        //printList(preferences);
+        //System.out.println("number of preferences = " + preferences.size());
+        
+        return preferences;
+    }
+    
+    // finds and stores all of the courses found in the file then returns a list containing all of the courses
+    public static List findCourses(List list) {
+        List courses = new ArrayList();
+        int index;
+        
+        // finds the location of the courses in the file
         index = isObjectInList(list, "Courses Offered") + 1;
         
+        // starting from the location, loop until it reaches the end point (classroom preferences)
         for(; !list.get(index).equals("Classroom Preferences:"); index++) {
             String[] tokens = list.get(index).toString().split(", ");
             courses.addAll(Arrays.asList(tokens));
         }
         
-        printList(courses);
-        System.out.println("number of courses = " + courses.size());
+        //printList(courses);
+        //System.out.println("number of courses = " + courses.size());
+        
+        return courses;
     }
     
     // Takes file path as an argument then tries to read the file. Returns the file as list with each line as an individual element
