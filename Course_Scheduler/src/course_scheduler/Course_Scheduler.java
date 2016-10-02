@@ -6,7 +6,8 @@
 package course_scheduler;
 import java.io.*;
 import java.util.*;
-/**
+
+/*
  *
  * @author Myk
  */
@@ -15,7 +16,39 @@ public class Course_Scheduler {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) { 
+        //AJ DB STUFF      
+        Course testCourse = new Course();
+        testCourse.name = "Senior Design";
+        
+        Course testCourse2 = new Course();
+        testCourse2.name = "Data Structures";
+        
+        Course testCourse3 = new Course();
+        testCourse3.name = "OO Design in C++";
+        
+        Teacher prof = new Teacher();
+        prof.name = "Dr. Coleman";
+        prof.id = 12345;
+        prof.timePreference = "None";
+        prof.courseLoad = 0;
+        
+        Course course = new Course();
+        course.crn = 2;
+        course.classroom = 100;
+        course.name = "Senior Design";
+        
+        Database db = new Database();
+        db.addNewProfessor(prof);
+        //db.assignCoursetoProf(prof, testCourse);
+        //db.assignCoursetoProf(prof, testCourse2);
+        //db.assignCoursetoProf(prof, testCourse3);      
+        //db.addNewCourse(course);
+        //db.removeProfessor(prof);
+        
+        prof.name = "Dr. Newman";
+        db.alterProfessor(prof);
+        //END AJ DB STUFF
         List courses, preferences, assignments = new ArrayList();
         String fileName1 = "src/course_scheduler/Dept1ClassData.csv";
         String fileName2 = "src/course_scheduler/Dept2ClassData.csv";
@@ -41,8 +74,8 @@ public class Course_Scheduler {
             assignments.addAll(Arrays.asList(tokens));
         }
         
-        //printList(assignments);
-        //System.out.println("number of assignments = " + assignments.size());
+        printList(assignments);
+        System.out.println("number of assignments = " + assignments.size());
         
         return assignments;
     }
@@ -96,7 +129,7 @@ public class Course_Scheduler {
         try {
             FileReader fileReader = new FileReader(fileName);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
-            
+                
             // read a line, if it is not null add to list element.
             while((line = bufferedReader.readLine()) != null) {
                 if(line.isEmpty() || line.trim().equals("\n") || line.trim().equals("")) {

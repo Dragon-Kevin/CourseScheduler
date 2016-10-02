@@ -13,6 +13,9 @@ public class Course {
     String name, time, department, building;
     int classroom, enrollment;
     
+    int crn;
+    int courseNum;
+    
     public void test() {
         System.out.println("test");
     }
