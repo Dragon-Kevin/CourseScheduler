@@ -6,8 +6,7 @@
 package course_scheduler;
 import java.io.*;
 import java.util.*;
-
-/*
+/**
  *
  * @author Myk
  */
@@ -16,40 +15,84 @@ public class Course_Scheduler {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) { 
-        //AJ DB STUFF      
-        Course testCourse = new Course();
-        testCourse.name = "Senior Design";
+    public static void main(String[] args) {
         
-        Course testCourse2 = new Course();
-        testCourse2.name = "Data Structures";
+        //!!! - FOR ALL DATABASE STUFF,
+        //make sure you go to libraries
+        //and right-click ADD JAR/folder
+        //and add derbyclient.jar
+        //otherwise the database will not appear to work
         
-        Course testCourse3 = new Course();
-        testCourse3.name = "OO Design in C++";
-        
-        Teacher prof = new Teacher();
+        //AJ DB STUFF - JUST TESTING  
+        Course testCourse = new Course("Senior Design");
+        Course testCourse2 = new Course("Data Structures");
+        Course testCourse3 = new Course("OO Design in C++");
+        Course testCourse4 = new Course("Assembly");
+        Course testCourse5 = new Course("Programming Languages");
+        //
+        Teacher prof = new Teacher("","","","","");       
         prof.name = "Dr. Coleman";
         prof.id = 12345;
         prof.timePreference = "None";
         prof.courseLoad = 0;
-        
-        Course course = new Course();
-        course.crn = 2;
-        course.classroom = 100;
-        course.name = "Senior Design";
+        //
+        Teacher prof2 = new Teacher("","","","","");
+        prof2.id = 54321;
+        prof2.name = "Dr. Newman";
+        prof2.timePreference = "None";
+        //
+        Teacher prof3 = new Teacher("","","","","");
+        prof3.id = 99999;
+        prof3.name = "Dr. Rowaboat";
+        prof3.timePreference = "Sometimes";
+        //
+        Course fullCourse = new Course("Senior Design");
+        fullCourse.crn = 22352;
+        fullCourse.classroom = "326";
+        //fullCourse.name = ;
+        fullCourse.courseNum = 499;
+        fullCourse.building = "Tech Hall";
+        fullCourse.department = "Computer Science";
+        fullCourse.enrollment = 20;
+        fullCourse.length = 80;
+        fullCourse.time = "5:30 PM - 6:50 PM";
+        fullCourse.prof = "Dr. Coleman";
         
         Database db = new Database();
-        db.addNewProfessor(prof);
+        //db.addNewProfessor(prof);
+        //db.addNewProfessor(prof2);
+        //db.addNewProfessor(prof3);
+        //db.removeProfessor(prof);
+        //prof.name = "Dr. Newman";
+        //prof.timePreference= "Afternoon";
+        //db.alterProfessor(prof);
+        
+        //db.addNewCourse(fullCourse); 
+        //db.removeCourse(fullCourse);
+        //fullCourse.courseNum = 500;
+        //db.alterCourse(fullCourse);
+        
         //db.assignCoursetoProf(prof, testCourse);
         //db.assignCoursetoProf(prof, testCourse2);
-        //db.assignCoursetoProf(prof, testCourse3);      
-        //db.addNewCourse(course);
-        //db.removeProfessor(prof);
+        //db.assignCoursetoProf(prof, testCourse3);
+        //db.assignCoursetoProf(prof, testCourse4);
+        //db.assignCoursetoProf(prof, testCourse5);
+        //db.removeCoursefromProf(prof, fullCourse);
+        //db.removeCoursefromProf(prof, testCourse2);
+        //db.removeCoursefromProf(prof, testCourse3);
+
+        String roomNum = "326";
+        int enroll = 20;
+        int m_enroll = 40;
+        String building = "Tech Hall";
+        //db.addClassroom(roomNum, enroll, m_enroll, building);
+        db.removeClassroom(roomNum);
+        //db.alterClassroom(201, 22, 30, "Tech Hall");
         
-        prof.name = "Dr. Newman";
-        db.alterProfessor(prof);
         //END AJ DB STUFF
-        List courses, preferences, assignments = new ArrayList();
+        List preferences, assignments = new ArrayList();
+        List<Course> courses = new ArrayList();
+        List<Teacher> teachers = new ArrayList();
         String fileName1 = "src/course_scheduler/Dept1ClassData.csv";
         String fileName2 = "src/course_scheduler/Dept2ClassData.csv";
         List LinesOfFile = new ArrayList();
@@ -57,12 +100,15 @@ public class Course_Scheduler {
         LinesOfFile = readFile(fileName1);
         courses     = findCourses(LinesOfFile);
         preferences = findClassroomPreferences(LinesOfFile);
-        assignments = findFacultyAssignments(LinesOfFile);
+        assignPreferences(courses, preferences);
+        teachers = findFacultyAssignments(LinesOfFile);
+        
+        printList(courses);
     }
     
     // finds and stores all faculty assignments along with time preferences in a list
     public static List findFacultyAssignments(List list) {
-        List assignments = new ArrayList();
+        List<Teacher> teachers = new ArrayList();
         int index;
         
         // finds location of assignments in the file
@@ -71,13 +117,25 @@ public class Course_Scheduler {
         // store all assignments
         for(; index < list.size(); index++) {
             String[] tokens = list.get(index).toString().split("\n");
-            assignments.addAll(Arrays.asList(tokens));
+            String[] subtokens = tokens[0].split(", | - ");
+
+            teachers.add(new Teacher(subtokens[0], subtokens[1], subtokens[2], subtokens[3], subtokens[4]));
         }
         
-        printList(assignments);
-        System.out.println("number of assignments = " + assignments.size());
-        
-        return assignments;
+        return teachers;
+    }
+    
+    public static void assignPreferences(List<Course> courses, List<String> prefs) {
+        for(int i = 0; i < prefs.size(); i++) {
+            System.out.println(prefs.get(i));
+            for(Course ele: courses) {
+                if (prefs.get(i).equals(ele.name)) {
+                    ele.building = prefs.get(++i);
+                    ele.classroom = prefs.get(++i);
+                    //System.out.println(ele);
+                }
+            }
+        }       
     }
     
     // finds and stores all of the courses with classroom restrictions and their room/building preferences in a list
@@ -91,18 +149,17 @@ public class Course_Scheduler {
         // store all preferences
         for(; !list.get(index).equals("Faculty Assignments:"); index++) {
             String[] tokens = list.get(index).toString().split("\n");
-            preferences.addAll(Arrays.asList(tokens));
+            String[] subtokens = tokens[0].split(", room | must be taught in ");
+
+            preferences.addAll(Arrays.asList(subtokens));
         }
-        
-        //printList(preferences);
-        //System.out.println("number of preferences = " + preferences.size());
-        
+
         return preferences;
     }
     
     // finds and stores all of the courses found in the file then returns a list containing all of the courses
     public static List findCourses(List list) {
-        List courses = new ArrayList();
+        List<Course> courses = new ArrayList();
         int index;
         
         // finds the location of the courses in the file
@@ -111,11 +168,12 @@ public class Course_Scheduler {
         // starting from the location, loop until it reaches the end point (classroom preferences)
         for(; !list.get(index).equals("Classroom Preferences:"); index++) {
             String[] tokens = list.get(index).toString().split(", ");
-            courses.addAll(Arrays.asList(tokens));
+            
+            // creates class object and adds the values
+            for (int i = 0; i < tokens.length; i++) {
+                courses.add(new Course(tokens[i]));
+            }
         }
-        
-        //printList(courses);
-        //System.out.println("number of courses = " + courses.size());
         
         return courses;
     }
@@ -129,7 +187,7 @@ public class Course_Scheduler {
         try {
             FileReader fileReader = new FileReader(fileName);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
-                
+            
             // read a line, if it is not null add to list element.
             while((line = bufferedReader.readLine()) != null) {
                 if(line.isEmpty() || line.trim().equals("\n") || line.trim().equals("")) {
@@ -157,21 +215,14 @@ public class Course_Scheduler {
     // Prints out all elements of a List
     public static void printList(List list){
         for(Object ele : list) {
-            System.out.println(ele);
+            //System.out.println(ele);
         }
     }
     
     // Searches a list for an element, returns index if found, -1 if not
     public static int isObjectInList(List list, Object target){
-        /*for(Object ele : list) {
-            if(ele.equals(target)) {
-                System.out.println("ding");
-                return true;
-            }
-        }*/
         for(int i = 0; i < list.size(); i++) {
             if (list.get(i).equals(target)) {
-                //System.out.println(list.get(i));
                 return i;
             }
         }

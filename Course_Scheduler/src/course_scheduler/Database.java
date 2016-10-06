@@ -1,5 +1,7 @@
-/*
+/**
  * 
+ * 
+ * @author AJ
  */
 package course_scheduler;
 
@@ -7,7 +9,7 @@ import java.util.*;
 import java.sql.*;
 
 /**
- *
+ * There are *four* database so far.
  * @author AJ
  */
 public class Database {
@@ -27,78 +29,73 @@ public class Database {
         password = "123456";
     }        
     
-    /*
-        done
-    */
+    /**
+     * DONE
+     * @param prof - teacher object
+     */
     public void addNewProfessor(Teacher prof){
         try{
             Connection con = DriverManager.getConnection(host, username, password);
-        
-            String sqlCheck = "select ID from PROFESSORS where ID = " + prof.id;
-            Statement st = con.createStatement();
-            ResultSet rs = st.executeQuery(sqlCheck);
-            System.out.println("inserting...");
             
-            if(rs.next()){
-                //found?
-                System.out.println("hit");
-            }
-            else{
-                //create an entry in PROFESSORS
-                
-                String sql = "insert into PROFESSORS values(?,?,?)";
-                PreparedStatement ps = con.prepareStatement(sql);           
-                ps.setInt   (1, prof.id);
-                ps.setString(2, prof.name);
-                ps.setString(3, prof.timePreference);
-                ps.executeUpdate();
+            System.out.println(prof.id);
+            System.out.println(prof.name);
+            System.out.println(prof.timePreference);
+            
+            System.out.println("insert into PROFESSORS");
+            //create an entry in PROFESSORS
+            String sql = "insert into PROFESSORS values(?,?,?)";
+            PreparedStatement ps = con.prepareStatement(sql);           
+            ps.setInt   (1, prof.id);
+            ps.setString(2, prof.name);
+            ps.setString(3, prof.timePreference);
+            ps.executeUpdate();
 
-                //create an entry in PROF_COURSES for this prof
-                String sql2 = "insert into PROF_COURSES values(?,?,?,?,?,?)";
-                PreparedStatement ps2 = con.prepareStatement(sql2);
-                ps2.setInt(1, prof.id);
-                ps2.setString(2, null);
-                ps2.setString(3, null);
-                ps2.setString(4, null);
-                ps2.setString(5, null);
-                ps2.setString(6, null);
-                ps2.executeUpdate();
-            }
+            System.out.println("insert into PROF_COURSES");
+            //create an entry in PROF_COURSES for this prof
+            String sql2 = "insert into PROF_COURSES values(?,?,?,?,?,?)";
+            PreparedStatement ps2 = con.prepareStatement(sql2);
+            ps2.setInt(1, prof.id);
+            ps2.setString(2, null);
+            ps2.setString(3, null);
+            ps2.setString(4, null);
+            ps2.setString(5, null);
+            ps2.setString(6, null);
+            ps2.executeUpdate();
+           
+            System.out.println("maybe it worked");
             con.close();         
         }
         catch(SQLException err){
-            System.out.println( "Error inputing Professor!");
+            System.out.println( "Error inputing Professor! Professor may already exist!");
             err.printStackTrace();
         } 
     }
     
-    /*
-        done
-    */
+    /**
+     * DONE
+     * @param prof 
+     */
     public void removeProfessor(Teacher prof)
     {
         try{
             Connection con = DriverManager.getConnection(host, username, password);
-            
-            String sqlCheck = "select ID from PROFESSORS where ID = " + prof.id;
-            Statement st = con.createStatement();
-            ResultSet rs = st.executeQuery(sqlCheck);
-            System.out.printf("deserting...");
-            
-            if(rs.next())
-            {       
-                String sql = "delete from PROFESSORS where ID = "+ prof.id;
-                PreparedStatement ps = con.prepareStatement(sql);
-                ps.executeUpdate();
+           
+            //found
+            //remove from PROFESSORS
+            String sql = "delete from PROFESSORS where ID = "+ prof.id;
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.executeUpdate();
 
-                String sql2 = "delete from PROF_COURSES where PROF_ID = "+ prof.id;
-                PreparedStatement ps2 = con.prepareStatement(sql2);
-                ps2.executeUpdate();
+            //remove from PROF_COURSES
+            String sql2 = "delete from PROF_COURSES where PROF_ID = "+ prof.id;
+            PreparedStatement ps2 = con.prepareStatement(sql2);
+            ps2.executeUpdate();
 
-                String sql3 = "update COURSES set PROFESSOR = '' where PROFESSOR = '"+ prof.name +"'";
-                PreparedStatement ps3 = con.prepareStatement(sql3);
-                ps3.executeUpdate();
-            }
+            //remove from COURSES
+            String sql3 = "update COURSES set PROFESSOR = "+null+" where PROFESSOR = '"+ prof.name +"'";
+            PreparedStatement ps3 = con.prepareStatement(sql3);
+            ps3.executeUpdate();
+           
             con.close();
         }
         catch(SQLException err){
@@ -106,32 +103,25 @@ public class Database {
             err.printStackTrace(); 
         }
     }
-    /*
-        pass in prof that is assumed to already exist in db and has already
-        been updated with correct values
-        ID SHOULD NEVER CHANGE ONCE USED, now set to static in class
-        done
-    */
+    
+    /**DONE
+     * pass in prof that is assumed to already exist in db and teacher obj has 
+     * already been updated with correct values ID SHOULD NEVER CHANGE ONCE 
+     * USED, now set to static in class
+     * @param prof 
+     */
     public void alterProfessor(Teacher prof)
     {
         //alter with update 
         try{
             Connection con = DriverManager.getConnection(host, username, password);
 
-            String sqlCheck = "select * from PROFESSORS where ID = " + prof.id;
-            Statement st = con.createStatement();
-            ResultSet rs = st.executeQuery(sqlCheck);
-            System.out.println("altering...");
-            
-            if(rs.next())//if found
-            {   
-                //alter PROFESSORS
-                String sql = "update PROFESSORS set PROFESSORNAME = ?, TIME_PREFERENCE = ?";           //alter
-                PreparedStatement ps = con.prepareStatement(sql);
-                ps.setString(1, prof.name);
-                ps.setString(2  , prof.timePreference);
-                ps.executeUpdate();
-            }
+            //alter PROFESSORS
+            String sql = "update PROFESSORS set PROFESSORNAME = ?, TIME_PREFERENCE = ?";           //alter
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, prof.name);
+            ps.setString(2  , prof.timePreference);
+            ps.executeUpdate();
             
             con.close();
         }catch(SQLException err){
@@ -140,90 +130,251 @@ public class Database {
         }
                 
     }
-    /*
-    done?
-    */
+    
+    /**
+     * DONE
+     * @param course 
+     */
     public void addNewCourse(Course course){
         try{
             Connection con = DriverManager.getConnection(host, username, password);
             
             String sql = "insert into COURSES values(?,?,?,?,?,?,?,?,?,?)";
-            
             PreparedStatement ps = con.prepareStatement(sql);
-            ps.setInt(1, course.crn);
-            ps.setInt(2, course.courseNum);
-            ps.setString(3, course.name);    //name
-            ps.setString(4, "");    //depart
-            ps.setString(5, "");    //class
-            ps.setString(6, "");    //building
-            ps.setInt(7, 0);        //enroll
-            ps.setString(8, "");    //time
-            ps.setInt(9, 0);        //length
-            ps.setString(10, "");   //prof
+            ps.setInt   (1, course.crn);
+            ps.setInt   (2, course.courseNum);
+            ps.setString(3, course.name);   
+            ps.setString(4, course.department);          
+            ps.setString(5, course.building);        
+            ps.setInt   (6, course.enrollment);        
+            ps.setString(7, course.time);        
+            ps.setInt   (8, course.length);           
+            ps.setString(9, course.prof);          
+            ps.setString(10,course.classroom);
             ps.executeUpdate();
-            
+            System.out.println("done?");
+                
             con.close();
-            
         }
         catch(SQLException err){
-            System.out.println( "Error inputing Course!");
+            System.out.println( "Error inputing Course! Course may already exist!");
+            //err.printStackTrace();           
+        }
+    }
+    
+    /** DONE
+     * FUN FACT: If the SQL query finds no row matching the search requirements
+     * no row is deleted AND no error is thrown! Of course, this doesn't let you
+     * know if what your trying to delete isn't actually there.
+     * 
+     * @param course the course to be deleted, specifically accesses course.name
+     *      to find the course in database tables
+     */
+    public void removeCourse(Course course)
+    {
+        try{
+            Connection con = DriverManager.getConnection(host, username, password);
+            
+            String sql = "delete from COURSES where CRN = " + course.crn;
+            PreparedStatement ps = con.prepareStatement(sql);
+            System.out.println("removing course...");
+            ps.executeUpdate();
+            
+            //this tries to remove all instances of the course from a column
+            //if nothing can be removed, nothing bad happens
+            //iterates through all 5 columns
+            for (int i = 1; i < 6; i++){
+                String sql2 = "update PROF_COURSES set COURSE_"+ i +" = "+null+" where COURSE_"+ i +" = '"+ course.name +"'";
+                PreparedStatement ps2 = con.prepareStatement(sql2);
+                ps2.executeUpdate();
+            }
+            con.close(); 
+        }
+        catch(SQLException err){
+            System.out.println( "Error removing Course!");
             err.printStackTrace();           
         }
     }
     
-    /*
-    
-    */
-    public void removeCourse(Course course)
-    {
-        
-    }
-    
-    /*
-    
-    */
+    /**
+     * CRN is marked as a primary value in COURSES table, so it's value cannot 
+     * be updated, only deleted along with the entire record.
+     * @param course 
+     */
     public void alterCourse(Course course)
     {
-        
+        try{
+            Connection con = DriverManager.getConnection(host, username, password);
+            
+            String sql =  "update COURSES set "
+                        + "COURSE_NUM = ?,"
+                        + "NAME = ?,"
+                        + "DEPARTMENT = ?,"
+                        + "CLASSROOM = ?,"
+                        + "BUILDING = ?,"
+                        + "ENROLLMENT = ?,"
+                        + "TIME = ?,"
+                        + "LENGTH = ?,"
+                        + "PROFESSOR = ?"
+                        + "where CRN = " + course.crn;
+            PreparedStatement ps = con.prepareStatement(sql);
+            System.out.println("screaming");
+            ps.setInt   (1, course.courseNum);
+            ps.setString(2, course.name);
+            ps.setString(3, course.department);
+            ps.setString(4, course.classroom);
+            ps.setString(5, course.building);
+            ps.setInt   (6, course.enrollment);
+            ps.setString(7, course.time);
+            ps.setInt   (8, course.length);
+            ps.setString(9, course.prof);
+            ps.executeUpdate();
+ 
+            con.close(); 
+        }
+        catch(SQLException err){
+            System.out.println( "Error altering Course!");
+            err.printStackTrace();           
+        }    
     }
     
-    public void addClassroom()
+    /**
+     * Due to there not being a classroom object, this function is called via
+     * these params.
+     * @param num 
+     */
+    public void addClassroom(String roomNum, int enroll, int m_enroll, String building )
     {
         //do we need this?
-    }
+        try{
+        Connection con = DriverManager.getConnection(host, username, password);
         
-    /*
-    //requiring there to be a course and professor to exist already
-    //before they are connected   
-    done?
-    */
+        String sql = "insert into CLASSROOMS values(?,?,?,?)";
+        PreparedStatement ps = con.prepareStatement(sql);
+        ps.setString(1, roomNum);
+        ps.setInt   (2, enroll);
+        ps.setInt   (3, m_enroll);
+        ps.setString(4, building);
+        ps.executeUpdate();
+        
+        con.close();
+        
+        }catch(SQLException err){
+            System.out.println( "Error inputing Classroom! Classroom may already exist!");
+            //err.printStackTrace();           
+        }
+    }
+    
+    /**
+     * Due to there not being a classroom object, this function is called via
+     * these params.
+     * @param roomNum 
+     */
+    public void removeClassroom(String roomNum)
+    {
+        try{
+            Connection con = DriverManager.getConnection(host, username, password);
+
+            //remove from CLASSROOMS
+            String sql = "delete from CLASSROOMS where ROOM_NUM = '" + roomNum+"'";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.executeUpdate();
+
+            //remove from COURSES
+            String sql2 = "update COURSES set CLASSROOM = "+null+" where CLASSROOM = '"+roomNum+"'";
+            PreparedStatement ps2 = con.prepareStatement(sql2);
+            ps2.executeUpdate();
+            
+            con.close();
+        }catch(SQLException err){
+            System.out.println( "Error deleting Classroom!");
+            err.printStackTrace();           
+        }    
+    }
+    
+    /**
+     * AVOID MANIPULATING CLASSROOMS. *WILL* BREAK STUFF
+     * Due to there not being a classroom object, this function is called via
+     * these params.
+     * @param roomNum
+     * @param enroll
+     * @param m_enroll - max classroom size
+     * @param build
+     */
+    public void alterClassroom(String roomNum, int enroll, int m_enroll, String build)
+    {
+        try{
+            Connection con = DriverManager.getConnection(host, username, password);
+
+            String sql = "update CLASSROOMS "
+                    + "set ENROLLMENT = ?, "
+                    + "MAX_ENROLLMENT = ?, "
+                    + "BUILDING = ?"
+                    + "where ROOM_NUM = " + roomNum;
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt   (1, enroll);
+            ps.setInt   (2, m_enroll);
+            ps.setString(3, build);
+            ps.executeUpdate();
+
+            con.close();
+
+            }catch(SQLException err){
+                System.out.println( "Error altering Classroom!");
+                err.printStackTrace();           
+        }          
+    }
+
+    /**
+     * Requires there to be a course and professor to exist already 
+     * before they are connected.  
+     * @param prof
+     * @param course 
+     */
     public void assignCoursetoProf(Teacher prof, Course course){
         prof.courseLoad++;
-
-        if(prof.courseLoad > 5){    //db blows up
-            Connection con = null;
+        //System.out.println(prof.courseLoad);
+        if(prof.courseLoad < 6){    //unfortunately, we are limited to a max number of courses a professor can teach
             try{  
-                con = DriverManager.getConnection(host, username, password);
+                Connection con = DriverManager.getConnection(host, username, password);
 
-                String sqlCheck = "select PROF_ID from PROF_COURSES where PROF_ID="+prof.id;
+                String sqlCheck = "select * from PROF_COURSES where PROF_ID="+prof.id;
                 Statement st = con.createStatement();
                 ResultSet rs = st.executeQuery(sqlCheck);
-
-                while(rs.next()){
-                    if(rs.getInt("PROF_ID") == prof.id){
-                        //found    
-                        String sql = "update PROF_COURSES set COURSE_"+prof.courseLoad+    //the next blank course column
-                                     " = '"+course.name+"' where PROF_ID = "    //store name there
-                                     +prof.id;                                  //where the this is the prof 
-
-                         PreparedStatement ps = con.prepareStatement(sql);
-                         ps.executeUpdate();
+                rs.next();                  //bump rs to first entry of result set
+                for (int i = 1; i < 6; i++){//for each course
+                    //System.out.println(rs.getString("COURSE_1"));
+                    System.out.println(i);
+                    System.out.println(rs.getString("COURSE_"+i));
+                    System.out.println(course.name);
+                    if(rs.getString("COURSE_"+i) != null && rs.getString("COURSE_"+i).equals(course.name)){ //else if that course is the same as we are trying to input
+                        //already teaching
+                        System.out.println("Professor already teaching course!");
+                        break;  //bail out
+                    }
+                    else if (rs.getString("COURSE_"+i) != null){ //if that course is not empty
+                        //do nothing, go to next
+                        System.out.println("Course Slot Filled, Skipping");
                     }
                     else{
-                        //notfound
-                        System.out.print("prof not registered");
+                        //teacher can teach course
+                        //so add it
+                        System.out.println("add to professor's course list");
+                        String sql = "update PROF_COURSES set COURSE_"+ i +    //the next blank course column
+                                 " = '"+course.name+"' where PROF_ID = "    //store name there
+                                 +prof.id;                                  //where the this is the prof 
+
+                        PreparedStatement ps = con.prepareStatement(sql);
+                        ps.executeUpdate();
+                        break; //inserted, bail out
                     }
                 }
+                
+                //for COURSES
+                String sql2 = "update COURSES set PROFESSOR = '"+prof.name+"'where CRN = "+course.crn;
+                PreparedStatement ps2 = con.prepareStatement(sql2);
+                ps2.executeUpdate();
+                
                 con.close();
             }catch(SQLException err){
                 System.out.println("Error");
@@ -235,38 +386,35 @@ public class Database {
             
     }
 
-    /*
-    
-    */
+    /**
+     * Current logic assumes that there will *NEVER* be duplicate courses in a 
+     * professor's courses because there can't be a duplicate added via calling
+     * only this function.
+     * @param prof
+     * @param course 
+     */
     public void removeCoursefromProf(Teacher prof, Course course)
     {
-        //dec prof.courseLoad
+        prof.courseLoad--;
+        
         try{
             Connection con = DriverManager.getConnection(host, username, password);
-            
-            //find prof
-            String sqlCheck = "select PROF_ID from PROF_COURSES where PROF_ID=" + prof.id;
-            Statement st = con.createStatement();
-            ResultSet rs = st.executeQuery(sqlCheck);
-            
-            while(rs.next()){
-                if(rs.getInt("PROF_ID") == prof.id){
-                    //found
-                    String sqlCheck2 = "select * from PROF_COURSES";
-                    Statement st2 = con.createStatement();
-                    ResultSet rs2 = st.executeQuery(sqlCheck2);
-                    
-                    //find
-                    for(int i = 1; i<6; i++){
-                       // rs.getString
-                    }
-                }
-                else
-                    System.out.println("Prof not found");
+   
+            //update PROF_COURSES
+            for (int i = 1; i < 6; i++){
+                String sql = "update PROF_COURSES set COURSE_"+ i +" = "+null+" where COURSE_"+ i +" = '"+ course.name +"'";
+                PreparedStatement ps = con.prepareStatement(sql);
+                ps.executeUpdate();
             }
-             
+            
+            //update COURSES
+            String sql2 = "update COURSES set PROFESSOR = '' where CRN = " + course.crn;
+            PreparedStatement ps2 = con.prepareStatement(sql2);
+            ps2.executeUpdate();
+            
+            con.close();
         }catch(SQLException err){
-            System.out.println("Error Removing Course from Professor1");
+            System.out.println("Error Removing Course from Professor!");
             err.printStackTrace();              
         }
     }
