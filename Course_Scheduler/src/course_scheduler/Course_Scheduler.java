@@ -5,60 +5,77 @@
  */
 package course_scheduler;
 import java.io.*;
+//import java.awt.*;
 import java.util.*;
+import View.*;
 /**
  *
  * @author Myk
  */
 public class Course_Scheduler {
 
+    private static Database db = new Database();
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         
+        /** This makes the MainMenu open on running the program. 
+         *  EditMenu is just me messing around with the edit menu for
+         *  editing teacher.
+        */
+        MainMenu my = new MainMenu();
+        //EditMenu my2 = new EditMenu();
+        
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                my.setVisible(true);
+                //my2.setVisible(true);
+            }
+        }); 
+                
         //!!! - FOR ALL DATABASE STUFF,
         //make sure you go to libraries
         //and right-click ADD JAR/folder
         //and add derbyclient.jar
         //otherwise the database will not appear to work
-        
-        //AJ DB STUFF - JUST TESTING  
-        Course testCourse = new Course("Senior Design");
-        Course testCourse2 = new Course("Data Structures");
-        Course testCourse3 = new Course("OO Design in C++");
-        Course testCourse4 = new Course("Assembly");
-        Course testCourse5 = new Course("Programming Languages");
+       
+        //AJ DB STUFF - FOR TESTING  
+        //Course testCourse = new Course("Senior Design");
+        //Course testCourse2 = new Course("Data Structures");
+        //Course testCourse3 = new Course("OO Design in C++");
+        //Course testCourse4 = new Course("Assembly");
+        //Course testCourse5 = new Course("Programming Languages");
         //
-        Teacher prof = new Teacher("","","","","");       
-        prof.name = "Dr. Coleman";
-        prof.id = 12345;
-        prof.timePreference = "None";
-        prof.courseLoad = 0;
+        //Teacher prof = new Teacher("","","","","");       
+        //prof.name = "Dr. Coleman";
+        //prof.id = 12345;
+        //prof.timePreference = "None";
+        //prof.courseLoad = 0;
         //
-        Teacher prof2 = new Teacher("","","","","");
-        prof2.id = 54321;
-        prof2.name = "Dr. Newman";
-        prof2.timePreference = "None";
+        //Teacher prof2 = new Teacher("","","","","");
+        //prof2.id = 54321;
+        //prof2.name = "Dr. Newman";
+        ///prof2.timePreference = "None";
         //
-        Teacher prof3 = new Teacher("","","","","");
-        prof3.id = 99999;
-        prof3.name = "Dr. Rowaboat";
-        prof3.timePreference = "Sometimes";
+        //Teacher prof3 = new Teacher("","","","","");
+        //prof3.id = 99999;
+        //prof3.name = "Dr. Rowaboat";
+        //prof3.timePreference = "Sometimes";
         //
-        Course fullCourse = new Course("Senior Design");
-        fullCourse.crn = 22352;
-        fullCourse.classroom = "326";
+        //Course fullCourse = new Course("Senior Design");
+        //fullCourse.crn = 22352;
+        //fullCourse.classroom = "326";
         //fullCourse.name = ;
-        fullCourse.courseNum = 499;
-        fullCourse.building = "Tech Hall";
-        fullCourse.department = "Computer Science";
-        fullCourse.enrollment = 20;
-        fullCourse.length = 80;
-        fullCourse.time = "5:30 PM - 6:50 PM";
-        fullCourse.prof = "Dr. Coleman";
+        //fullCourse.courseNum = 499;
+        //fullCourse.building = "Tech Hall";
+        //fullCourse.department = "Computer Science";
+        //fullCourse.enrollment = 20;
+        //fullCourse.length = 80;
+        //fullCourse.time = "5:30 PM - 6:50 PM";
+        //fullCourse.prof = "Dr. Coleman";
         
-        Database db = new Database();
         //db.addNewProfessor(prof);
         //db.addNewProfessor(prof2);
         //db.addNewProfessor(prof3);
@@ -81,15 +98,16 @@ public class Course_Scheduler {
         //db.removeCoursefromProf(prof, testCourse2);
         //db.removeCoursefromProf(prof, testCourse3);
 
-        String roomNum = "326";
-        int enroll = 20;
-        int m_enroll = 40;
-        String building = "Tech Hall";
+        //String roomNum = "326";
+        //int enroll = 20;
+        //int m_enroll = 40;
+        //String building = "Tech Hall";
         //db.addClassroom(roomNum, enroll, m_enroll, building);
-        db.removeClassroom(roomNum);
+        //db.removeClassroom(roomNum);
         //db.alterClassroom(201, 22, 30, "Tech Hall");
-        
         //END AJ DB STUFF
+        
+        
         List preferences, assignments = new ArrayList();
         List<Course> courses = new ArrayList();
         List<Teacher> teachers = new ArrayList();
@@ -103,7 +121,68 @@ public class Course_Scheduler {
         assignPreferences(courses, preferences);
         teachers = findFacultyAssignments(LinesOfFile);
         
-        printList(courses);
+        
+        //AJ RETRIEVAL TESTING
+        //storeCourses(courses);        //store into DB
+        //storeProfessors(teachers);    //store into DB
+    /*    
+        List<Course> dbCourses = db.getCourses("");
+        Iterator itr = dbCourses.iterator();
+        Course c;
+        while(itr.hasNext())
+        {
+            c = (Course)itr.next();
+            System.out.println(c.name);
+        }
+      
+        List<Teacher> dbTeachers = db.getProfessors("");
+        Iterator itr2 = dbTeachers.iterator();
+        Teacher t;
+        while(itr2.hasNext()){
+            t = (Teacher)itr2.next();
+            System.out.println(t.id);
+            System.out.println(t.name);
+            System.out.println(t.timePreference);
+        }
+    */  //END RETRIEVAL TESTING
+        
+        //printList(courses);
+    }
+    
+    /**
+     * @author AJ
+     * @param teachers 
+     */
+    public static void storeProfessors(List<Teacher> teachers)
+    {
+        Teacher teacher;
+        int id = 1;//tempCode
+        Iterator itr = teachers.iterator();
+        while(itr.hasNext())
+        {
+            teacher = (Teacher)itr.next();
+            teacher.id = id;//tempCode
+            db.addNewProfessor(teacher);
+            id++;//tempCode
+        }
+    }
+    
+    /**
+     * @author AJ
+     * @param courses 
+     */
+    public static void storeCourses(List<Course> courses)
+    {
+        Course course;
+        int crn = 1;//tempCode
+        Iterator itr = courses.iterator();
+        while(itr.hasNext())
+        {
+            course = (Course)itr.next();
+            course.crn = crn;//tempCode 
+            db.addNewCourse(course);
+            crn++;//tempCode
+        }
     }
     
     // finds and stores all faculty assignments along with time preferences in a list
@@ -215,7 +294,7 @@ public class Course_Scheduler {
     // Prints out all elements of a List
     public static void printList(List list){
         for(Object ele : list) {
-            //System.out.println(ele);
+            System.out.println(ele);
         }
     }
     

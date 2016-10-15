@@ -18,9 +18,9 @@ public class Database {
     private String username;    //access un
     private String password;    //access pw
     
-    /*
-        Basic Constructor
-    */
+    /**
+     * 
+     */
     public Database(){
         //the host is defualt, un and pw are set and I don't
         //know how to change them without starting a new db
@@ -28,6 +28,47 @@ public class Database {
         username = "user1";
         password = "123456";
     }        
+    
+    /**
+     * 
+     * @param constraint
+     * @return 
+     */
+    public List getProfessors(String constraint)
+    {
+        //constraint - selection limiter - by department, etc. NOT USED YET
+        
+        List<Teacher> profs = new ArrayList();
+        
+        try{
+            Connection con = DriverManager.getConnection(host, username, password);
+            
+            System.out.println("Preparing SQL");
+            String sql = "Select * from PROFESSORS";
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+            
+            //get courses for professors
+            
+            System.out.println("Retrieving...");
+            while(rs.next()){
+                Teacher prof = new Teacher();
+                prof.id = rs.getInt("ID");
+                prof.name = rs.getString("PROFESSORNAME");
+                prof.timePreference = rs.getString("TIME_PREFERENCE");
+                profs.add(prof);
+            }
+            
+            System.out.println("Closing...");
+            con.close();
+        }catch(SQLException err){
+            System.out.println( "Error retrieving Professors!");
+            err.printStackTrace();
+        }
+        
+            System.out.println("Ending...");
+        return profs;
+    }
     
     /**
      * DONE
@@ -62,12 +103,12 @@ public class Database {
             ps2.setString(6, null);
             ps2.executeUpdate();
            
-            System.out.println("maybe it worked");
+            //System.out.println("maybe it worked");
             con.close();         
         }
         catch(SQLException err){
             System.out.println( "Error inputing Professor! Professor may already exist!");
-            err.printStackTrace();
+            //err.printStackTrace();
         } 
     }
     
@@ -100,7 +141,7 @@ public class Database {
         }
         catch(SQLException err){
             System.out.println( "Error deleting Professor!");
-            err.printStackTrace(); 
+            //err.printStackTrace(); 
         }
     }
     
@@ -126,9 +167,55 @@ public class Database {
             con.close();
         }catch(SQLException err){
             System.out.println( "Error altering Professor!");
-            err.printStackTrace(); 
+           //err.printStackTrace(); 
         }
                 
+    }
+    
+    /**
+     * 
+     * @param constraint
+     * @return 
+     */
+    public List getCourses(String constraint)
+    {
+        //constraint - selection limiter - by department, etc. NOT USED YET
+        
+        List<Course> courses = new ArrayList();
+        
+        try{
+            Connection con = DriverManager.getConnection(host, username, password);
+            
+            System.out.println("Preparing SQL");
+            String sql = "Select * from COURSES";
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+            
+            System.out.println("Retrieving...");
+            while(rs.next()){
+                Course course = new Course();
+                course.crn = rs.getInt("CRN");
+                course.courseNum = rs.getInt("COURSE_NUM");
+                course.name = rs.getString("NAME");
+                course.department = rs.getString("DEPARTMENT");
+                course.classroom = rs.getString("CLASSROOM");
+                course.building = rs.getString("BUILDING");
+                course.enrollment = rs.getInt("ENROLLMENT");
+                course.time = rs.getString("TIME");
+                course.length = rs.getInt("LENGTH");
+                course.prof = rs.getString("PROFESSOR");
+                courses.add(course);
+            }
+            
+            System.out.println("Closing...");
+            con.close();
+        }catch(SQLException err){
+            System.out.println( "Error retrieving Courses!");
+            //err.printStackTrace();
+        }
+        
+            System.out.println("Edning...");
+        return courses;
     }
     
     /**
@@ -139,8 +226,10 @@ public class Database {
         try{
             Connection con = DriverManager.getConnection(host, username, password);
             
-            String sql = "insert into COURSES values(?,?,?,?,?,?,?,?,?,?)";
-            PreparedStatement ps = con.prepareStatement(sql);
+
+            
+            String sql = "insert into COURSES values(?,?,?,?,?,?,?,?,?,?)";             
+            PreparedStatement ps = con.prepareStatement(sql);              
             ps.setInt   (1, course.crn);
             ps.setInt   (2, course.courseNum);
             ps.setString(3, course.name);   
@@ -152,7 +241,7 @@ public class Database {
             ps.setString(9, course.prof);          
             ps.setString(10,course.classroom);
             ps.executeUpdate();
-            System.out.println("done?");
+            //System.out.println("done?");
                 
             con.close();
         }
@@ -192,7 +281,7 @@ public class Database {
         }
         catch(SQLException err){
             System.out.println( "Error removing Course!");
-            err.printStackTrace();           
+            //err.printStackTrace();           
         }
     }
     
@@ -234,7 +323,36 @@ public class Database {
         }
         catch(SQLException err){
             System.out.println( "Error altering Course!");
-            err.printStackTrace();           
+            //err.printStackTrace();           
+        }    
+    }
+    
+    /**
+     * 
+     */
+    public void getClassrooms(String constraint)
+    {
+        try{
+            //constraint - selection limiter - by department, etc. NOT USED YET
+            List<Teacher> profs = new ArrayList();
+        
+            Connection con = DriverManager.getConnection(host, username, password);
+            
+            System.out.println("Preparing SQL");
+            String sql = "Select * from CLASSROOM";
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+            
+            System.out.println("Retrieving...");
+            while(rs.next()){
+
+            }
+            
+            System.out.println("Closing...");
+            con.close();           
+        }catch(SQLException err){
+            System.out.println( "Error retireving Classrooms!");
+            //err.printStackTrace();           
         }    
     }
     
@@ -288,12 +406,12 @@ public class Database {
             con.close();
         }catch(SQLException err){
             System.out.println( "Error deleting Classroom!");
-            err.printStackTrace();           
+            //err.printStackTrace();           
         }    
     }
     
     /**
-     * AVOID MANIPULATING CLASSROOMS. *WILL* BREAK STUFF
+     * AVOID MANIPULATING CLASSROOMS. *WILL* BREAK 
      * Due to there not being a classroom object, this function is called via
      * these params.
      * @param roomNum
@@ -321,10 +439,15 @@ public class Database {
 
             }catch(SQLException err){
                 System.out.println( "Error altering Classroom!");
-                err.printStackTrace();           
+                //err.printStackTrace();           
         }          
     }
 
+    public void assignClassroomtoCourse(String roomNum, Course course)
+    {
+        
+    }
+    
     /**
      * Requires there to be a course and professor to exist already 
      * before they are connected.  
@@ -378,7 +501,7 @@ public class Database {
                 con.close();
             }catch(SQLException err){
                 System.out.println("Error");
-                err.printStackTrace();  
+                //err.printStackTrace();  
             }
         }
         else
@@ -415,7 +538,7 @@ public class Database {
             con.close();
         }catch(SQLException err){
             System.out.println("Error Removing Course from Professor!");
-            err.printStackTrace();              
+            //err.printStackTrace();              
         }
     }
 }

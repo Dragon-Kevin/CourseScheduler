@@ -18,6 +18,19 @@ public class Course {
     int length;
     String prof;
     
+    //empty 
+    public Course(){
+        name = "";
+        time = "";
+        department = "";
+        building = "";
+        classroom = "";
+        enrollment = -1;
+        crn = -1;
+        courseNum = -1;
+        prof = "";
+        length = 0; 
+    }
     
     public Course(String name) {
         this.name = name;

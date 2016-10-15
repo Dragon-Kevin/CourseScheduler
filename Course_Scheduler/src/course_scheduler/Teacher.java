@@ -19,6 +19,13 @@ public class Teacher {
     int id;                 //teacher id represents teacher in db
     int courseLoad;         //holds num of course a teacher has, used in db
     
+    //empty
+    public Teacher(){
+        this.id =0;
+        this.name = "";
+        this.timePreference = "";
+    }
+    
     public Teacher(String name, String course1, String course2, String course3, String timePreference) {
         this.name = name;
         this.teachableCourses[0] = course1;
