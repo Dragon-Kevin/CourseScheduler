@@ -5,7 +5,6 @@
  */
 package course_scheduler;
 import java.io.*;
-//import java.awt.*;
 import java.util.*;
 import View.*;
 /**
@@ -14,7 +13,7 @@ import View.*;
  */
 public class Course_Scheduler {
 
-    private static Database db = new Database();
+    private static DatabaseUtility db = new DatabaseUtility();
     /**
      * @param args the command line arguments
      */
@@ -23,7 +22,7 @@ public class Course_Scheduler {
         /** This makes the MainMenu open on running the program. 
          *  EditMenu is just me messing around with the edit menu for
          *  editing teacher.
-        */
+        
         MainMenu my = new MainMenu();
         //EditMenu my2 = new EditMenu();
         
@@ -33,7 +32,7 @@ public class Course_Scheduler {
                 my.setVisible(true);
                 //my2.setVisible(true);
             }
-        }); 
+        }); */
                 
         //!!! - FOR ALL DATABASE STUFF,
         //make sure you go to libraries
@@ -105,6 +104,11 @@ public class Course_Scheduler {
         //db.addClassroom(roomNum, enroll, m_enroll, building);
         //db.removeClassroom(roomNum);
         //db.alterClassroom(201, 22, 30, "Tech Hall");
+        
+        //String name = "";
+        //db.createScheduleTable(name);
+        //db.deleteScheduleTable("SCHEDULE_1");
+        db.clearDatabase();
         //END AJ DB STUFF
         
         
