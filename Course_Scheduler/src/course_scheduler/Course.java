@@ -14,11 +14,13 @@ public class Course {
     int enrollment;
     
     int crn;//aj additions
-    int courseNum;
-    int length;
+    String courseNum;
     String prof;
     
-    //empty 
+    int m_enroll, enroll, avail, waitList;
+    String days, sTime, eTime;
+    
+    //empty constructor made for testing DB
     public Course(){
         name = "";
         time = "";
@@ -27,26 +29,31 @@ public class Course {
         classroom = "";
         enrollment = -1;
         crn = -1;
-        courseNum = -1;
+        courseNum = "";
         prof = "";
-        length = 0; 
+        m_enroll = -1;
+        enroll = -1;
+        avail = -1;
+        waitList = -1;
+        days = "";
+        sTime = "";
+        eTime = "";
     }
     
     public Course(String name) {
         this.name = name;
         this.department = name.split(" ")[0];
         
-        //aj additions
-        //name = "";
-        time = "";
-        //department = "";
-        building = "";
-        classroom = "";
-        enrollment = -1;
-        crn = -1;
-        courseNum = -1;
-        prof = "";
-        length = 0;
+//        //aj additions
+//        //name = "";
+//        time = "";
+//        //department = "";
+//        building = "";
+//        classroom = "";
+//        enrollment = -1;
+//        crn = -1;
+//        courseNum = "";
+//        prof = "";
     }
     
     public void test() {
