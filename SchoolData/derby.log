@@ -1,5 +1,5 @@
-Tue Nov 01 18:12:44 CDT 2016 : Apache Derby Network Server - 10.8.3.2 - (1557835) started and ready to accept connections on port 1527
-Tue Nov 01 18:12:45 CDT 2016 Thread[DRDAConnThread_3,5,main] Cleanup action starting
+Thu Oct 27 18:30:01 CDT 2016 : Apache Derby Network Server - 10.8.3.2 - (1557835) started and ready to accept connections on port 1527
+Thu Oct 27 18:30:01 CDT 2016 Thread[DRDAConnThread_3,5,main] Cleanup action starting
 java.sql.SQLException: Database 'SchoolData' not found.
 	at org.apache.derby.impl.jdbc.SQLExceptionFactory40.getSQLException(Unknown Source)
 	at org.apache.derby.impl.jdbc.Util.newEmbedSQLException(Unknown Source)
@@ -49,8 +49,8 @@ java.sql.SQLException: Database 'SchoolData' not found.
 	at org.apache.derby.impl.drda.DRDAConnThread.run(Unknown Source)
 ============= end nested exception, level (1) ===========
 Cleanup action completed
-Tue Nov 01 18:12:45 CDT 2016 Thread[DRDAConnThread_3,5,main] (DATABASE = SchoolData), (DRDAID = {1}), Database 'SchoolData' not found.
-Tue Nov 01 18:12:50 CDT 2016 Thread[DRDAConnThread_3,5,main] Cleanup action starting
+Thu Oct 27 18:30:01 CDT 2016 Thread[DRDAConnThread_3,5,main] (DATABASE = SchoolData), (DRDAID = {1}), Database 'SchoolData' not found.
+Thu Oct 27 18:31:04 CDT 2016 Thread[DRDAConnThread_3,5,main] Cleanup action starting
 java.sql.SQLException: Database 'SchoolData' not found.
 	at org.apache.derby.impl.jdbc.SQLExceptionFactory40.getSQLException(Unknown Source)
 	at org.apache.derby.impl.jdbc.Util.newEmbedSQLException(Unknown Source)
@@ -100,8 +100,8 @@ java.sql.SQLException: Database 'SchoolData' not found.
 	at org.apache.derby.impl.drda.DRDAConnThread.run(Unknown Source)
 ============= end nested exception, level (1) ===========
 Cleanup action completed
-Tue Nov 01 18:12:50 CDT 2016 Thread[DRDAConnThread_3,5,main] (DATABASE = SchoolData), (DRDAID = {2}), Database 'SchoolData' not found.
-Tue Nov 01 18:12:53 CDT 2016 Thread[DRDAConnThread_3,5,main] Cleanup action starting
+Thu Oct 27 18:31:04 CDT 2016 Thread[DRDAConnThread_3,5,main] (DATABASE = SchoolData), (DRDAID = {2}), Database 'SchoolData' not found.
+Thu Oct 27 18:31:40 CDT 2016 Thread[DRDAConnThread_3,5,main] Cleanup action starting
 java.sql.SQLException: Database 'SchoolData' not found.
 	at org.apache.derby.impl.jdbc.SQLExceptionFactory40.getSQLException(Unknown Source)
 	at org.apache.derby.impl.jdbc.Util.newEmbedSQLException(Unknown Source)
@@ -151,7 +151,7 @@ java.sql.SQLException: Database 'SchoolData' not found.
 	at org.apache.derby.impl.drda.DRDAConnThread.run(Unknown Source)
 ============= end nested exception, level (1) ===========
 Cleanup action completed
-Tue Nov 01 18:12:53 CDT 2016 Thread[DRDAConnThread_3,5,main] (DATABASE = SchoolData), (DRDAID = {3}), Database 'SchoolData' not found.
+Thu Oct 27 18:31:40 CDT 2016 Thread[DRDAConnThread_3,5,main] (DATABASE = SchoolData), (DRDAID = {3}), Database 'SchoolData' not found.
 ----------------------------------------------------------------
-Tue Nov 01 18:13:17 CDT 2016: Shutting down Derby engine
+Thu Oct 27 18:32:20 CDT 2016: Shutting down Derby engine
 ----------------------------------------------------------------
