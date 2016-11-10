@@ -108,7 +108,7 @@ public class Course_Scheduler {
         //String name = "";
         //db.createScheduleTable(name);
         //db.deleteScheduleTable("SCHEDULE_1");
-        db.clearDatabase();
+        //db.clearDatabase(null);
         //END AJ DB STUFF
         
         

@@ -1,6 +1,5 @@
-/**
- * 
- * 
+/**This is the database utility class. It works with the database to store and
+ * retrieve data.
  * @author AJ
  */
 package course_scheduler;
@@ -24,25 +23,24 @@ import java.sql.*;
  */
 public class DatabaseUtility {
     
-    private String host;        //local host for db
-    private String username;    //access un
-    private String password;    //access pw
+    private String host;            //local host for db
+    private String username;        //access un
+    private String password;        //access pw
     private String currentSemester; //current semester is the current schedule being worked on
     
-    /** DONE
-     *  The host is default, username and password are set and I don't 
-     * know how to change them without starting a new database. 
+    /**Constructor. Sets the private members to the the correct login info.
+     * 
      */
     public DatabaseUtility(){
 
         host = "jdbc:derby://localhost:1527/SchoolData";    
         username = "user1";
         password = "123456";
-        currentSemester = "";                               //currently selected semester
+        currentSemester = "";// a new instance of Database Utility will need to
+                                 //have the currently selected semester set 
     }        
     
-    /** DONE
-     * Changes the currently selected semester to a new one. The new semester 
+    /**Changes the currently selected semester to a new one. The new semester 
      * string will come from the db table maintaining all currently created 
      * semesters. These will have to be sent to a drop down list in the view 
      * for the user to select.
@@ -52,7 +50,8 @@ public class DatabaseUtility {
         this.currentSemester = newCurrentSemeter;
     }
     
-    /**DONE
+    /** Returns a list of string of the names of all stored schedules. Use this 
+     * to populate the list structure on the New/Load menu.
      * 
      * @return a list of strings of each semester stored in the database 
      */
@@ -80,130 +79,13 @@ public class DatabaseUtility {
         return semesters;
     }
     
-    /** Deprecated code -- do not use
-     * @param tableName 
-     */
-    public void createSchedule(String tableName)
-    {
-        List<Course> courses = new ArrayList();
-        List<Teacher> teachers = new ArrayList();
-        List<Classroom> classrooms = new ArrayList();
-        
-        try{
-            Connection con = DriverManager.getConnection(host, username, password);
-            
-            //pull and construct three lists from db, course list,
-            //classroom list, teacher list 
-            
-            //pull courses
-            String sql = "select * from COURSES where SEMESTER = '"+ currentSemester +"'";
-            //String sql = "select * from COURSES";
-            Statement st = con.createStatement();
-            ResultSet rs = st.executeQuery(sql);
-            
-            //consruct course list loop
-            while(rs.next()){
-                Course course = new Course();
-                //store data
-                courses.add(course);
-            }
-            
-            //pull teachers
-            String sql2 = "select * from PROFESSORS where SEMESTER = '"+ currentSemester +"'";
-            Statement st2 = con.createStatement();
-            ResultSet rs2 = st2.executeQuery(sql2);
-            
-            //construct teacher list loop
-            while(rs2.next()){
-                Teacher teacher = new Teacher();
-                //store data
-                teachers.add(teacher);
-            }
-            
-            //pull classrooms
-            String sql3 = "select * from CLASSROOMS where SEMESTER = '"+ currentSemester +"'";
-            Statement st3 = con.createStatement();
-            ResultSet rs3 = st2.executeQuery(sql3);
-                        
-            //construct classroom list loop
-            while(rs3.next()){
-                Classroom classroom = new Classroom();
-                //store data
-                classrooms.add(classroom);
-            } 
-            
-            //got lists
-            //store into schedule table with current semester 
-            Iterator courseItr = courses.iterator(); 
-            Iterator teacherItr = teachers.iterator();
-            Iterator classroomItr = classrooms.iterator();
-           
-            Course c;
-            //loop structure
-            while(courseItr.hasNext()){
-                c = (Course)courseItr.next();
-                //insert into SCHEDULE 
-                //a new enrty
-                //semester, crn, course num, course_name, m_enroll, enroll
-                //avaiable, wait listed, days, start_time, end_time, building 
-                //room_num, instructor
-                String sqlConstruct  = "insert into SCHEDULE values(?,?,?,?,?, ?,?,?,?,?, ?,?,?,?)";
-                PreparedStatement ps = con.prepareCall(sqlConstruct);
-                ps.setString(1, currentSemester);   //semester -- string
-                ps.setInt   (2, c.crn);             //crn -- int
-                //ps.setInt   (3, c.courseNum);       //course_num -- string
-                ps.setString(4, c.name);            //course_name -- string
-                //ps.setInt   (5, c.mEnroll);         //m_enroll -- int
-                ps.setInt   (6, c.enrollment);      //enroll -- int
-                //ps.setInt   (7, c.available);       //available -- int
-                //ps.setInt   (8, c.waitList);        //wait_list -- int
-                //ps.setString(9, c.days);            //days -- string
-                //ps.setString(10, c.startTime);      //start time -- string
-                //ps.setString(11, c.endTime);        //end time -- string
-                ps.setString(12, c.building);       //building -- string
-                //ps.setString(13, c.roomNum);        //room_num -- string
-                //ps.setString()//instructor -- sring
-  
-            }
-            
-            con.close();
-        }catch(SQLException err){
-            System.out.println( "Error Storing Semester!");
-            err.printStackTrace();
-        }
-    }
-    
-    /**Deprecated - do not use
+    /**Returns a list of Teacher objects constructed from the Database.
      * 
-     * @param tableName 
-     */
-    public void deleteScheduleTable(String tableName)
-    {
-        try{
-            Connection con = DriverManager.getConnection(host, username, password);
-            
-            //remove table from database
-            String sql = "drop table "+tableName;
-            PreparedStatement ps = con.prepareStatement(sql);
-            ps.executeUpdate();
-            
-            //remove from tables of schedules
-            String sql2 = "delete from USER_SCHEDULES where NAME = '"+tableName+"'";
-            PreparedStatement ps2 = con.prepareStatement(sql2);
-            ps2.executeUpdate();           
-            
-            con.close();
-        }catch(SQLException err){
-            System.out.println( "Error Creating Table!");
-            err.printStackTrace();
-        }        
-    }
-    
-    /**NOT DONE YET - need functionality to select a constraint restricted set 
-     * of data
-     * Returns a list of Teacher objects constructed from the Database.
-     * @param constraint - not use yet
-     * @return 
+     * @param constraint - name of the column being restricted to
+     * @param value - name of the value we are searching for in the constraint 
+     *                column
+     * @return - an ArrayList of Teacher objects constructed from the selected 
+     *           entries in the database
      */
     public List getProfessors(String constraint, String value)
     {
@@ -215,19 +97,20 @@ public class DatabaseUtility {
             Connection con = DriverManager.getConnection(host, username, password);
             ResultSet rs;
             
-            /*if(constraint == null){
-                //select professors based on current semester
+            if(constraint == null){
+                //select professors based on current semester and constraint 
                 String sql = "Select * from PROFESSORS where SEMESTER = '"+ currentSemester +"' and "
-                        + constraint+" = ";
+                        + constraint+" = '"+ value +"'";
                 Statement st = con.createStatement();
                 rs = st.executeQuery(sql);   
             }
-            else{*/
+            else{
                 //select professors based on current semester
                 String sql = "Select * from PROFESSORS where SEMESTER = '"+ currentSemester +"'";
                 Statement st = con.createStatement();
                 rs = st.executeQuery(sql);
-            //}
+            }
+            
             //retrieve and store professors into list
             while(rs.next()){
                 Teacher prof = new Teacher();
@@ -254,7 +137,8 @@ public class DatabaseUtility {
         return profs;
     }
     
-    /** DONE - Might need to refactor to allow for more than 8 courses per prof 
+    /** Adds the passed in Teacher object to the PROFESSORS table. Throws error
+     * if that professor already exists in database
      * 
      * @param prof - teacher object
      */
@@ -307,9 +191,12 @@ public class DatabaseUtility {
         } 
     }
     
-    /**DONE
+    /** Removes teacher entry from database. This handles all references to this entry
+     *  in other tables as well. The getProfessors() method should be called first to obtain
+     *  front-end representation of database. If a teacher is deleted from the front-end, 
+     *  this function should be used to update the database correspondingly.
      * 
-     * @param prof 
+     * @param prof - the teacher object corresponding to the database entry to be removed
      */
     public void removeProfessor(Teacher prof)
     {
@@ -335,8 +222,12 @@ public class DatabaseUtility {
         }
     }
     
-    /**DONE
-     * @param prof 
+    /**Updates teacher entry in database to new values of teacher passed in.
+     * The getProfessors() method should be called first to obtain front-end representation
+     * of database. As a professor is updated, this function should be called to 
+     * change the database entry to new values
+     * 
+     * @param prof - the Teacher object, with new values, to overwrite old existing entry
      */
     public void alterProfessor(Teacher prof)
     {
@@ -370,13 +261,15 @@ public class DatabaseUtility {
                 
     }
     
-    /**DONE - need functionality to select a constraint restricted set 
-     * of data
+    /**Returns a list of Course objects constructed from the Database.
      * 
-     * @param constraint
-     * @return 
+     * @param constraint - name of the column being restricted to
+     * @param value - name of the value we are searching for in the constraint 
+     *                column
+     * @return - an ArrayList of Course objects constructed from the selected 
+     *           entries in the database
      */
-    public List getCourses(String constraint)
+    public List getCourses(String constraint, String value)
     {
         //constraint - selection limiter - by department, etc. NOT USED YET
         
@@ -384,11 +277,21 @@ public class DatabaseUtility {
         
         try{
             Connection con = DriverManager.getConnection(host, username, password);
+            ResultSet rs;
             
-            //select by current semester
-            String sql = "Select * from COURSES where SEMESTER = '"+ currentSemester +"'";
-            Statement st = con.createStatement();
-            ResultSet rs = st.executeQuery(sql);
+            if(constraint == null){
+                //select courses based on current semester and constraint 
+                String sql = "Select * from COURSES where SEMESTER = '"+ currentSemester +"' and "
+                        + constraint +" = '"+ value +"'";
+                Statement st = con.createStatement();
+                rs = st.executeQuery(sql);   
+            }
+            else{
+                //select courses based on current semester
+                String sql = "Select * from COURSES where SEMESTER = '"+ currentSemester +"'";
+                Statement st = con.createStatement();
+                rs = st.executeQuery(sql);
+            }
             
             //capture data and store into array list
             while(rs.next()){
@@ -417,9 +320,10 @@ public class DatabaseUtility {
         return courses;
     }
     
-    /**DONE
+    /** Adds the passed in Course object to the COURSES table. Throws error
+     *  if that course already exists in database
      * 
-     * @param course 
+     * @param course - new classroom object to be recorded into database
      */
     public void addNewCourse(Course course){
         try{
@@ -464,13 +368,12 @@ public class DatabaseUtility {
         }
     }
     
-    /** DONE
-     * FUN FACT: If the SQL query finds no row matching the search requirements
-     * no row is deleted AND no error is thrown! Of course, this doesn't let you
-     * know if what your trying to delete isn't actually there.
+    /** Removes course entry from database. This handles all references to this entry
+     *  in other tables as well. The getCourses() method should be called first to obtain
+     *  front-end representation of database. If a course is deleted from the front-end, 
+     *  this function should be used to update the database correspondingly.
      * 
-     * @param course the course to be deleted, specifically accesses course.name
-     *      to find the course in database tables
+     * @param course - the course object corresponding to the database entry to be removed
      */
     public void removeCourse(Course course)
     {
@@ -497,8 +400,12 @@ public class DatabaseUtility {
         }
     }
     
-    /**DONE
-     * @param course 
+    /**Updates course entry in database to new values of course passed in.
+     * The getCourses() method should be called first to obtain front-end representation
+     * of database. As a course is updated, this function should be called to 
+     * change the database entry to new values
+     * 
+     * @param course - the course object, with new values, to overwrite old existing entry
      */
     public void alterCourse(Course course)
     {
@@ -533,23 +440,35 @@ public class DatabaseUtility {
         }    
     }
     
-    /**NOT DONE YET - need functionality to select a constraint restricted set
+    /**Returns a list of Classroom objects constructed from the Database.
      * 
-     * @param constraint
-     * @return 
+     * @param constraint - name of the column being restricted to
+     * @param value - name of the value we are searching for in the constraint 
+     *                column
+     * @return - an ArrayList of Classroom objects constructed from the selected 
+     *           entries in the database
      */
-    public List getClassrooms(String constraint)
+    public List getClassrooms(String constraint, String value)
     {
         List<Classroom> classrooms = new ArrayList();
         
         try{
-            //constraint - selection limiter - by department, etc. NOT USED YET
-            
             Connection con = DriverManager.getConnection(host, username, password);
+            ResultSet rs;
             
-            String sql = "Select * from CLASSROOM where SEMESTER ='"+ currentSemester +"'";
-            Statement st = con.createStatement();
-            ResultSet rs = st.executeQuery(sql);
+            if(constraint == null){
+                //select classrooms based on current semester and constraint 
+                String sql = "Select * from CLASSROOMS where SEMESTER = '"+ currentSemester +"' and "
+                        + constraint +" = '"+ value +"'";
+                Statement st = con.createStatement();
+                rs = st.executeQuery(sql);   
+            }
+            else{
+                //select classrooms based on current semester
+                String sql = "Select * from CLASSROOM where SEMESTER = '"+ currentSemester +"'";
+                Statement st = con.createStatement();
+                rs = st.executeQuery(sql);
+            }
             
             while(rs.next()){
                 Classroom classroom = new Classroom();
@@ -568,9 +487,10 @@ public class DatabaseUtility {
         return classrooms;
     }
     
-    /**DONE
+    /** Adds the passed in Classroom object to the CLASSROOMS table. Throws error
+     *  if that classroom already exists in database
      * 
-     * @param classroom 
+     * @param classroom - new classroom object to be recorded into database
      */
     public void addClassroom(Classroom classroom)
     {
@@ -605,9 +525,12 @@ public class DatabaseUtility {
         }
     }
     
-    /**DONE
+    /** Removes classroom entry from database. This handles all references to this entry
+     *  in other tables as well. The getClassrooms() method should be called first to obtain
+     *  front-end representation of database. If a classroom is deleted from the front-end, 
+     *  this function should be used to update the database correspondingly.
      * 
-     * @param classroom 
+     * @param classroom - the classroom object corresponding to the database entry to be removed
      */
     public void removeClassroom(Classroom classroom)
     {
@@ -631,9 +554,12 @@ public class DatabaseUtility {
         }    
     }
     
-    /**DONE
+    /**Updates classroom entry in database to new values of classroom passed in.
+     * The getClassrooms() method should be called first to obtain front-end representation
+     * of database. As a classroom is updated, this function should be called to 
+     * change the database entry to new values
      * 
-     * @param classroom 
+     * @param classroom - the classroom object, with new values, to overwrite old existing entry
      */
     public void alterClassroom(Classroom classroom)
     {
@@ -657,131 +583,58 @@ public class DatabaseUtility {
         }          
     }
     
-    /**DEPRECATED DO NOT USE - handle adding courses via alterProfessor
-     * Requires there to be a course and professor to exist already 
-     * before they are connected.  
-     * @param prof
-     * @param course 
-     */
-    public void assignCoursetoProf(Teacher prof, Course course){
-        
-        prof.courseLoad++;
-        
-        //System.out.println(prof.courseLoad);
-        if(prof.courseLoad < 6){    //unfortunately, we are limited to a max number of courses a professor can teach
-            try{  
-                Connection con = DriverManager.getConnection(host, username, password);
-
-                String sqlCheck = "select * from PROF_COURSES where PROF_ID="+prof.id;
-                Statement st = con.createStatement();
-                ResultSet rs = st.executeQuery(sqlCheck);
-                rs.next();                  //bump rs to first entry of result set
-                for (int i = 1; i < 6; i++){//for each course
-                    //System.out.println(rs.getString("COURSE_1"));
-                    System.out.println(i);
-                    System.out.println(rs.getString("COURSE_"+i));
-                    System.out.println(course.name);
-                    if(rs.getString("COURSE_"+i) != null && rs.getString("COURSE_"+i).equals(course.name)){ //else if that course is the same as we are trying to input
-                        //already teaching
-                        System.out.println("Professor already teaching course!");
-                        break;  //bail out
-                    }
-                    else if (rs.getString("COURSE_"+i) != null){ //if that course is not empty
-                        //do nothing, go to next
-                        System.out.println("Course Slot Filled, Skipping");
-                    }
-                    else{
-                        //teacher can teach course
-                        //so add it
-                        System.out.println("add to professor's course list");
-                        String sql = "update PROF_COURSES set COURSE_"+ i +    //the next blank course column
-                                 " = '"+course.name+"' where PROF_ID = "    //store name there
-                                 +prof.id;                                  //where the this is the prof 
-
-                        PreparedStatement ps = con.prepareStatement(sql);
-                        ps.executeUpdate();
-                        break; //inserted, bail out
-                    }
-                }
-                
-                //for COURSES
-                String sql2 = "update COURSES set PROFESSOR = '"+prof.name+"'where CRN = "+course.crn;
-                PreparedStatement ps2 = con.prepareStatement(sql2);
-                ps2.executeUpdate();
-                
-                con.close();
-            }catch(SQLException err){
-                System.out.println("Error");
-                //err.printStackTrace();  
-            }
-        }
-        else
-            System.out.println("Professor at max courses");
-            
-    }
-
-    /**DEPRECATED DO NOT USE - handle adding courses via alterProfessor
-     * Current logic assumes that there will *NEVER* be duplicate courses in a 
-     * professor's courses because there can't be a duplicate added via calling
-     * only this function.
-     * @param prof
-     * @param course 
-     */
-    public void removeCoursefromProf(Teacher prof, Course course)
-    {
-        prof.courseLoad--;
-        
-        try{
-            Connection con = DriverManager.getConnection(host, username, password);
-   
-            //update PROF_COURSES
-            for (int i = 1; i < 6; i++){
-                String sql = "update PROF_COURSES set COURSE_"+ i +" = "+null+" where COURSE_"+ i +" = '"+ course.name +"'";
-                PreparedStatement ps = con.prepareStatement(sql);
-                ps.executeUpdate();
-            }
-            
-            //update COURSES
-            String sql2 = "update COURSES set PROFESSOR = '' where CRN = " + course.crn;
-            PreparedStatement ps2 = con.prepareStatement(sql2);
-            ps2.executeUpdate();
-            
-            con.close();
-        }catch(SQLException err){
-            System.out.println("Error Removing Course from Professor!");
-            //err.printStackTrace();              
-        }
-    }
-    
-    /** DONE 
+    /** Clears out a specified semester from the database. If no semester is 
+     *  specified, the entire database is cleared.
      * 
+     * @param semester - the semester to be cleared. If null, entire database is
+     *                   cleared
      */
-    public void clearDatabase()
+    public void clearDatabase(String semester)
     {
         //clear classrooms, courses, and professors
         try{
             Connection con = DriverManager.getConnection(host, username, password);
             
-            String sql = "delete from CLASSROOMS";
-            PreparedStatement ps = con.prepareStatement(sql);
-            ps.executeUpdate();
-            
-            String sql2 = "delete from COURSES";
-            ps = con.prepareStatement(sql2);
-            ps.executeUpdate();
-            
-            String sql3 = "delete from PROFESSORS";
-            ps = con.prepareStatement(sql3);
-            ps.executeUpdate();            
-            
-            String sql4 = "delete from USER_SCHEDULES";
-            ps = con.prepareStatement(sql4);
-            ps.executeUpdate();
+            if(semester == null){
+                String sql = "delete from CLASSROOMS where SEMESTER ='"+ currentSemester +"'";
+                PreparedStatement ps = con.prepareStatement(sql);
+                ps.executeUpdate();
+
+                String sql2 = "delete from COURSES where SEMESTER ='"+ currentSemester +"'";
+                ps = con.prepareStatement(sql2);
+                ps.executeUpdate();
+
+                String sql3 = "delete from PROFESSORS where SEMESTER ='"+ currentSemester +"'";
+                ps = con.prepareStatement(sql3);
+                ps.executeUpdate();            
+
+                String sql4 = "delete from USER_SCHEDULES where SEMESTER ='"+ currentSemester +"'";
+                ps = con.prepareStatement(sql4);
+                ps.executeUpdate();                  
+            }
+            else{
+                String sql = "delete from CLASSROOMS";
+                PreparedStatement ps = con.prepareStatement(sql);
+                ps.executeUpdate();
+
+                String sql2 = "delete from COURSES";
+                ps = con.prepareStatement(sql2);
+                ps.executeUpdate();
+
+                String sql3 = "delete from PROFESSORS";
+                ps = con.prepareStatement(sql3);
+                ps.executeUpdate();            
+
+                String sql4 = "delete from USER_SCHEDULES";
+                ps = con.prepareStatement(sql4);
+                ps.executeUpdate();  
+            }
+
             
             con.close();
         }catch(SQLException err){
             System.out.println("Error clearing Database");
-            //err.printStackTrace();              
+            err.printStackTrace();              
         }
     }
 }
