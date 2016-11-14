@@ -19,7 +19,7 @@ public class Teacher {
     //aj additions
     int id;                 //teacher id represents teacher in db
     int courseLoad;         //holds num of course a teacher has, used in db
-    List<String> pcourses;
+    List<String> pcourses;  //new course variable I use
     
     //empty
     public Teacher(){

@@ -177,12 +177,14 @@ public class DatabaseUtility {
             ps.executeUpdate();
             
             //insert all courses being taught by that professor
-            for(int i = 0; i < prof.pcourses.size(); i++){
-                String sql2 = "update PROFESSORS set COURSE_"+(i+1)+" = '"+prof.pcourses.get(i)+"' where PROF_ID = "+prof.id;
-                PreparedStatement ps2 = con.prepareStatement(sql2);
-                ps2.executeUpdate();
+            if(prof.pcourses != null && prof.pcourses.isEmpty() == false){   //if not empty
+                for(int i = 0; i < prof.pcourses.size(); i++){
+                    System.out.println(prof.pcourses.get(i));
+                    String sql2 = "update PROFESSORS set COURSE_"+(i+1)+" = '"+prof.pcourses.get(i)+"' where PROF_ID = "+prof.id;
+                    PreparedStatement ps2 = con.prepareStatement(sql2);
+                    ps2.executeUpdate();
+                }
             }
-            
             con.close();         
         }
         catch(SQLException err){
