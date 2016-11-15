@@ -15,11 +15,13 @@ public class Course {
     private String department;
     private String building;
     private String classroom;
+    private int crn;
     private int enrollment;
     
-    public Course(String name) {
+    public Course(int crn, String name, String building) {
         this.name = name;
-        this.department = name.split(" ")[0];
+        this.crn = crn;
+        this.building = building;
     }
     
     public void test() {

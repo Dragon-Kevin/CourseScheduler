@@ -14,8 +14,10 @@ public class Teacher {
     private Course[] courses = new Course[3];
     private String[] teachableCourses = new String[3];
     private String timePreference;
+    private String Anum;
     
-    public Teacher(String name, String course1, String course2, String course3, String timePreference) {
+    public Teacher(String Anum, String name, String course1, String course2, String course3, String timePreference) {
+        this.Anum = Anum;
         this.name = name;
         this.teachableCourses[0] = course1;
         this.teachableCourses[1] = course2;
