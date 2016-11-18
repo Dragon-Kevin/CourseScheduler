@@ -1,0 +1,82 @@
+Department: Computer Science
+Location: Technology Hall
+Semester: Fall 2016
+
+Courses Offered:
+
+	00001, CS 116
+	00002, CS 133
+	00003, CS 148
+	00004, CS 151
+	00005, CS 152
+	00006, CS 163
+	00007, CS 185
+	00008, CS 186
+	00009, CS 204
+	10001, CS 217
+	20001, CS 221
+	30001, CS 227
+	40001, CS 240
+	50001, CS 242
+	60001, CS 291
+	70001, CS 292
+	80001, CS 309
+	90001, CS 317
+	01001, CS 326
+	02001, CS 330
+	03001, CS 354
+	04001, CS 361
+	05001, CS 362
+	06001, CS 364
+	07001, CS 366
+	08001, CS 369
+	09001, CS 383
+	00101, CS 390
+	00201, CS 394
+	00301, CS 395
+	00401, CS 397
+	00501, CS 408
+	00601, CS 430
+	00701, CS 442
+	00801, CS 445
+	00901, CS 465
+	11001, CS 472
+	12001, CS 497
+	22001, CS 538
+	13001, CS 551
+	33001, CS 559
+	21001, CS 564
+	32001, CS 588
+	65001, CS 595
+	01111, CS 597
+
+
+Classroom Preferences: 
+	CS 291 must be taught in Technology Hall, room N327
+	CS 326 must be taught in Technology Hall, room N308
+
+
+Faculty Assignments: 
+	A00000000, Dr. Able, CS 148, CS 227, CS 383 - Preference: None
+	A00000400, Dr. Brovo, CS 361, CS 497, CS 597 - Preference: Evening classes only
+	A00050000, Dr. Charlie, CS 152, CS 217, CS 309 - Preference: None
+	A00000030, Dr. Dog, CS 317, CS 445, CS 551 - Preference: None
+	A00200001, Dr. Echo, CS 185, CS 221, CS 330 - Preference: None
+	A00100000, Dr. Foxtrot, CS 369, CS 408, CS 564 - Preference: None
+	A00010000, Dr. Golf, CS 151, CS 242, CS 390 - Preference: None
+	A10000000, Dr. Hotel, CS 395, CS 430, CS 595 - Preference: None
+	A00000001, Dr. India, CS 186, CS 240, CS 354 - Preference: Evening classes only
+	A00000010, Dr. Juliet, CS 362, CS 465, CS 588 - Preference: All Mon-Wed classes
+	A00000110, Dr. Kilo, CS 116, CS 292, CS 366 - Preference: None
+	A00011002, Dr. Lima, CS 397, CS 472, CS 559 - Preference: None
+	A01000012, Dr. Mike, CS 133, CS 291, CS 394 - Preference: None
+	A00010010, Dr. November, CS 326, CS 442, CS 538 - Preference: Morning classes only
+	A00000001, Dr. Oscar, CS 163, CS 204, CS 364 - Preference: None
+
+
+Class Length: 
+	Duration: 60 minutes
+	intermission: 15 minutes
+
+Classrooms Available: 
+	N304, N306, N308, N327, N324, N326, N329, N328, S104, N155
