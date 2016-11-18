@@ -40,7 +40,6 @@ public class Course_Scheduler_Beta extends Application {
         
         btnOpenCSV.setText("Open");
         
-        
         StackPane root = new StackPane();
         root.getChildren().add(btnOpenCSV);
         
@@ -136,19 +135,30 @@ public class Course_Scheduler_Beta extends Application {
     private VBox configureTable(TableView table, Parser parser) {
         Label label = new Label("Schedule");
         ObservableList<Teacher> data = FXCollections.observableArrayList(parser.getTeachers());
-        TableColumn crnCol = new TableColumn("CRN");
-        TableColumn yearCol = new TableColumn("Year");
+        
         TableColumn semesterCol = new TableColumn("Semester");
-        TableColumn courseCol = new TableColumn("Course");
+        TableColumn crnCol = new TableColumn("CRN");
+        TableColumn depCol = new TableColumn("Department");
+        TableColumn numCol = new TableColumn("#");
+        TableColumn nameCol = new TableColumn("Name");
+        TableColumn m_EnrollCol = new TableColumn("Seats");
+        TableColumn enrollCol = new TableColumn("Enrolled");
+        TableColumn availCol = new TableColumn("Available");
+        TableColumn waitCol = new TableColumn("Wait List");
+        TableColumn daysCol = new TableColumn("Days");
+        TableColumn startCol = new TableColumn("Start");
+        TableColumn endCol = new TableColumn("End");
+        TableColumn buildingCol = new TableColumn("Building");
+        TableColumn roomCol = new TableColumn("Room #");
         TableColumn teacherCol = new TableColumn("Teacher");
         teacherCol.setCellValueFactory(
                 new PropertyValueFactory<>("name"));
-        TableColumn buildingCol = new TableColumn("Building");
-        TableColumn roomCol = new TableColumn("Room #");
-        TableColumn timeCol = new TableColumn("Time");
         
         table.setItems(data);
-        table.getColumns().addAll(crnCol, yearCol, semesterCol, courseCol, teacherCol, buildingCol, roomCol, timeCol);
+        table.getColumns().addAll(semesterCol, crnCol, depCol, 
+                numCol, nameCol, m_EnrollCol, enrollCol, waitCol, 
+                availCol, daysCol, startCol, endCol, buildingCol, 
+                roomCol, teacherCol);
         VBox vbox = new VBox();
         vbox.setPadding(new Insets(0, 0, 0, 10));
         vbox.getChildren().addAll(label, table);
