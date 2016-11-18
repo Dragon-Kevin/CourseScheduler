@@ -11,10 +11,10 @@ import static javafx.application.Application.launch;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -28,7 +28,7 @@ import javafx.stage.Stage;
 
 /**
  *
- * @author mv0003
+ * @author myk
  */
 public class Course_Scheduler_Beta extends Application {
     
@@ -39,6 +39,7 @@ public class Course_Scheduler_Beta extends Application {
         Button btnOpenCSV = new Button();
         
         btnOpenCSV.setText("Open");
+        
         
         StackPane root = new StackPane();
         root.getChildren().add(btnOpenCSV);
@@ -71,7 +72,7 @@ public class Course_Scheduler_Beta extends Application {
         
         border.setLeft(configureButtons());
         border.setRight(configureTable(table, data));
-        Scene scene = new Scene(border, 1000, 500);
+        Scene scene = new Scene(border, 1100, 500);
         stage.setTitle("Course Scheduler");
         stage.setScene(scene);
         stage.show();
@@ -84,6 +85,12 @@ public class Course_Scheduler_Beta extends Application {
         Button btnAdd = new Button();
         Button btn1 = new Button();
         Button btn2 = new Button();
+        ComboBox cbAddWhat = new ComboBox();
+        cbAddWhat.getItems().addAll(
+            "Teacher",
+            "Course",
+            "Classroom"
+        );
         
         btnAdd.setMinWidth(100.0);
         btn1.setMinWidth(100.0);
@@ -95,6 +102,7 @@ public class Course_Scheduler_Beta extends Application {
         vbox.getChildren().addAll(btnAdd, btn1, btn2);
         
         border.setPadding(new Insets(20,20,20,20));
+        border.setLeft(cbAddWhat);
         border.setBottom(vbox);
         Scene scene = new Scene(border, 500, 300);
         stage.setTitle("Add");
@@ -151,16 +159,14 @@ public class Course_Scheduler_Beta extends Application {
         TableColumn buildingCol = new TableColumn("Building");
         TableColumn roomCol = new TableColumn("Room #");
         TableColumn teacherCol = new TableColumn("Teacher");
-        teacherCol.setCellValueFactory(
-                new PropertyValueFactory<>("name"));
-        
+        teacherCol.setCellValueFactory(new PropertyValueFactory<>("name"));
         table.setItems(data);
         table.getColumns().addAll(semesterCol, crnCol, depCol, 
                 numCol, nameCol, m_EnrollCol, enrollCol, waitCol, 
                 availCol, daysCol, startCol, endCol, buildingCol, 
                 roomCol, teacherCol);
         VBox vbox = new VBox();
-        vbox.setPadding(new Insets(0, 0, 0, 10));
+        vbox.setPadding(new Insets(0, 100, 0, 10));
         vbox.getChildren().addAll(label, table);
         
         return vbox;

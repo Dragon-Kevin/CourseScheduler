@@ -23,11 +23,12 @@ public class Parser {
     private List<Course> courses = new ArrayList();
     private List<Teacher> teachers = new ArrayList();
     private List LinesOfFile = new ArrayList();
-    private List availableRooms = new ArrayList();
+    private List<Classroom> availableRooms = new ArrayList();
     private String department;
     private String semester;
     private String building;
     private int[] classDuration = new int[2];
+    private static DatabaseUtility db = new DatabaseUtility();
     
     public Parser(File file){
         LinesOfFile = readFile(file);
@@ -145,7 +146,6 @@ public class Parser {
         for(; !list.get(index).equals("Class Length:"); index++) {
             String[] tokens = list.get(index).toString().split("\n");
             String[] subtokens = tokens[0].split(", | - ");
-            System.out.println(subtokens[0]);
             teachers.add(new Teacher(subtokens[0], subtokens[1], subtokens[2], subtokens[3], subtokens[4], subtokens[5]));
         }
     }
@@ -161,7 +161,10 @@ public class Parser {
         int index = isObjectInList(list, "Classrooms Available:") + 1;
         
         String[] tokens = list.get(index).toString().split(", ");
-        getAvailableRooms().addAll(Arrays.asList(tokens));
+        for(String subtok: tokens){
+            availableRooms.add(new Classroom(subtok));
+        }
+        //getAvailableRooms().addAll(Arrays.asList(tokens));
     }
     
     // Prints out all elements of a List
@@ -169,6 +172,23 @@ public class Parser {
         list.stream().forEach((ele) -> {
             System.out.println(ele);
         });
+    }
+    
+    public static void storeList(List list, int x){
+        if(x == 0){
+            for(Teacher ele: (List<Teacher>)list) {
+                db.addNewProfessor(ele);
+            }
+        }else if (x == 1){
+            for(Course ele: (List<Course>)list) {
+                db.addNewCourse(ele);
+            }
+        }else if (x == 2){
+            for( Classroom ele: (List<Classroom>)list) {
+                db.addClassroom(ele);
+            }
+        }else 
+            System.out.println("Error Storing List");
     }
     
     // Searches a list for an element, returns index if found, -1 if not

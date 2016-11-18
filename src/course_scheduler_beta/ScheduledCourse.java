@@ -175,28 +175,28 @@ public class ScheduledCourse {
     /**
      * @return the sTime
      */
-    public String get_sTime() {
+    public String getsTime() {
         return sTime;
     }
 
     /**
      * @param sTime the sTime to set
      */
-    public void set_sTime(String sTime) {
+    public void setsTime(String sTime) {
         this.sTime = sTime;
     }
 
     /**
      * @return the eTime
      */
-    public String get_eTime() {
+    public String geteTime() {
         return eTime;
     }
 
     /**
      * @param eTime the eTime to set
      */
-    public void set_eTime(String eTime) {
+    public void seteTime(String eTime) {
         this.eTime = eTime;
     }
 

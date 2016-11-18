@@ -95,7 +95,7 @@ public class DatabaseUtility {
             Connection con = DriverManager.getConnection(host, username, password);
             ResultSet rs;
             
-            if(constraint != null && value != null){
+            if(constraint == null){
                 //select professors based on current semester and constraint 
                 String sql = "Select * from PROFESSORS where SEMESTER = '"+ currentSemester +"' and "
                         + constraint +" = '"+ value +"'";
@@ -279,21 +279,22 @@ public class DatabaseUtility {
      */
     public List getCourses(String constraint, String value)
     {
-        List<ScheduledCourse> schedule = new ArrayList();
+        //constraint - selection limiter - by department, etc. NOT USED YET
+        
+        List<Course> courses = new ArrayList();
         
         try{
             Connection con = DriverManager.getConnection(host, username, password);
             ResultSet rs;
             
-            //if there is a constraint and value
-            if(constraint != null && value != null){
+            if(constraint == null){
                 //select courses based on current semester and constraint 
                 String sql = "Select * from COURSES where SEMESTER = '"+ currentSemester +"' and "
                         + constraint +" = '"+ value +"'";
                 Statement st = con.createStatement();
                 rs = st.executeQuery(sql);   
             }
-            else{//if no constraint 
+            else{
                 //select courses based on current semester
                 String sql = "Select * from COURSES where SEMESTER = '"+ currentSemester +"'";
                 Statement st = con.createStatement();
@@ -302,29 +303,29 @@ public class DatabaseUtility {
             
             //capture data and store into array list
             while(rs.next()){
-                ScheduledCourse course = new ScheduledCourse();
-                course.setCrn           (rs.getInt   ("CRN"));
-                course.setDepartment    (rs.getString("DEPARTMENT"));
-                course.setCourse_num    (rs.getString("COURSE_NUM"));
-                course.setCourse_name   (rs.getString("COURSE_NAME"));
-                course.setM_enroll      (rs.getInt   ("M_ENROLL"));
-                course.setEnroll        (rs.getInt   ("ENROLL"));
-                course.setAvail         (rs.getInt   ("AVAIL"));
-                course.setWait_list     (rs.getInt   ("WAIT_LIST"));
-                course.setDays          (rs.getString("DAYS"));
-                course.set_sTime        (rs.getString("START_TIME"));
-                course.set_eTime        (rs.getString("END_TIME"));
-                course.setBuilding      (rs.getString("BUILDING"));
-                course.setClassroom     (rs.getString("CLASSROOM"));
-                course.setProf          (rs.getString("PROFESSOR"));
-                schedule.add(course);
+                Course course = new Course();
+                course.crn =        rs.getInt   ("CRN");
+                course.department = rs.getString("DEPARTMENT");
+                course.courseNum =  rs.getString("COURSE_NUM");
+                course.name =       rs.getString("COURSE_NAME");
+                course.m_enroll =   rs.getInt   ("M_ENROLL");
+                course.enroll =     rs.getInt   ("ENROLL");
+                course.avail=       rs.getInt   ("AVAIL");
+                course.waitList =   rs.getInt   ("WAIT_LIST");
+                course.days =       rs.getString("DAYS");
+                course.sTime =      rs.getString("START_TIME");
+                course.eTime =      rs.getString("END_TIME");
+                course.building =   rs.getString("BUILDING");
+                course.classroom =  rs.getString("CLASSROOM");
+                course.prof =       rs.getString("PROFESSOR");
+                courses.add(course);
             }
             con.close();
         }catch(SQLException err){
             System.out.println( "Error retrieving Courses!");
             err.printStackTrace();
         }
-        return schedule;
+        return courses;
     }
     
     /** Utility function for getProfessor(). Retrieves a single course
@@ -500,7 +501,7 @@ public class DatabaseUtility {
             Connection con = DriverManager.getConnection(host, username, password);
             ResultSet rs;
             
-            if(constraint != null && value != null){
+            if(constraint == null){
                 //select classrooms based on current semester and constraint 
                 String sql = "Select * from CLASSROOMS where SEMESTER = '"+ currentSemester +"' and "
                         + constraint +" = '"+ value +"'";

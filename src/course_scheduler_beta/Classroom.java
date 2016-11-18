@@ -19,6 +19,15 @@ public class Classroom {
         this.mEnroll = -1;
         this.buildingName = "";
     }
+    
+    public Classroom(String roomNum){
+        this.roomNum  = roomNum;
+    }
+    
+    @Override
+    public String toString () {
+        return "Room = " + roomNum + "; Max Enrollment = " + mEnroll + "; Building = " + buildingName;
+    }
 
     /**
      * @return the roomNum
