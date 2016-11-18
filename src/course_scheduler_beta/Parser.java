@@ -39,7 +39,7 @@ public class Parser {
         findFacultyAssignments(LinesOfFile);
         assignDuration(LinesOfFile);
         findAvailableRooms(LinesOfFile);
-        printList(availableRooms);
+        //printList(availableRooms);
     }    
     
     // Takes file path as an argument then tries to read the file. Returns the file as list with each line as an individual element
@@ -87,7 +87,7 @@ public class Parser {
         if(tokens.length > 0 && tokens[0].equalsIgnoreCase("Semester")){
             setSemester(afterColon(list, 2));
         }
-        
+        db.setSemester(semester);
         //System.out.println(department + " " + semester + " " + building);
     }
     
@@ -169,6 +169,7 @@ public class Parser {
     
     // Prints out all elements of a List
     public static void printList(List list){
+        System.out.println("Printing List: ");
         list.stream().forEach((ele) -> {
             System.out.println(ele);
         });

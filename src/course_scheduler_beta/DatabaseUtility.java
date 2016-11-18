@@ -47,7 +47,7 @@ public class DatabaseUtility {
      * @param newCurrentSemeter - the new semester to set as currently selected
      */
     public void setSemester(String newCurrentSemeter){
-        this.currentSemester = newCurrentSemeter;
+        this.setCurrentSemester(newCurrentSemeter);
     }
     
     /** Returns a list of string of the names of all stored schedules. Use this 
@@ -97,14 +97,14 @@ public class DatabaseUtility {
             
             if(constraint == null){
                 //select professors based on current semester and constraint 
-                String sql = "Select * from PROFESSORS where SEMESTER = '"+ currentSemester +"' and "
+                String sql = "Select * from PROFESSORS where SEMESTER = '"+ getCurrentSemester() +"' and "
                         + constraint +" = '"+ value +"'";
                 Statement st = con.createStatement();
                 rs = st.executeQuery(sql);   
             }
             else{
                 //select professors based on current semester
-                String sql = "Select * from PROFESSORS where SEMESTER = '"+ currentSemester +"'";
+                String sql = "Select * from PROFESSORS where SEMESTER = '"+ getCurrentSemester() +"'";
                 Statement st = con.createStatement();
                 rs = st.executeQuery(sql);
             }
@@ -151,7 +151,7 @@ public class DatabaseUtility {
             Connection con = DriverManager.getConnection(host, username, password);
             
             //manual dup checking
-            String sqlCheck = "select * from PROFESSORS where SEMESTER = '"+ currentSemester +"'";
+            String sqlCheck = "select * from PROFESSORS where SEMESTER = '"+ getCurrentSemester() +"'";
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery(sqlCheck);
             
@@ -168,18 +168,18 @@ public class DatabaseUtility {
             //create an entry in PROFESSORS
             String sql = "insert into PROFESSORS values(?,?,?,?, ?,?,?,?,?,?,?,?)";
             PreparedStatement ps = con.prepareStatement(sql);           
-            ps.setString(1, currentSemester);
+            ps.setString(1, getCurrentSemester());
             ps.setString(2, prof.getAnum());
             ps.setString(3, prof.getName());
             ps.setString(4, prof.getTimePreference());
-            ps.setInt   (5,  c.get(0).crn);
-            ps.setInt   (6,  c.get(1).crn);
-            ps.setInt   (7,  c.get(2).crn);
-            ps.setInt   (8,  c.get(3).crn);
-            ps.setInt   (9,  c.get(4).crn);
-            ps.setInt   (10, c.get(5).crn);
-            ps.setInt   (11, c.get(6).crn);
-            ps.setInt   (12, c.get(7).crn);
+            ps.setInt   (5, c.get(0).getCrn());
+            ps.setInt   (6, c.get(1).getCrn());
+            ps.setInt   (7, c.get(2).getCrn());
+            ps.setInt   (8, c.get(3).getCrn());
+            ps.setInt   (9, c.get(4).getCrn());
+            ps.setInt   (10, c.get(5).getCrn());
+            ps.setInt   (11, c.get(6).getCrn());
+            ps.setInt   (12, c.get(7).getCrn());
             ps.executeUpdate();
             /*
             //insert all courses being taught by that professor
@@ -211,13 +211,13 @@ public class DatabaseUtility {
             Connection con = DriverManager.getConnection(host, username, password);
            
             //remove from PROFESSORS
-            String sql = "delete from PROFESSORS where PROF_ID = '"+ prof.getAnum()+"' and SEMESTER = '"+currentSemester+"'";
+            String sql = "delete from PROFESSORS where PROF_ID = '"+ prof.getAnum()+"' and SEMESTER = '"+getCurrentSemester()+"'";
             PreparedStatement ps = con.prepareStatement(sql);
             ps.executeUpdate();
 
             //remove from COURSES
             String sql3 = "update COURSES set PROFESSOR = "+ null +" "
-                    + "where PROFESSOR = '"+ prof.getName() +"' and SEMESTER = '"+currentSemester+"'";
+                    + "where PROFESSOR = '"+ prof.getName() +"' and SEMESTER = '"+getCurrentSemester()+"'";
             PreparedStatement ps3 = con.prepareStatement(sql3);
             ps3.executeUpdate();
            
@@ -244,21 +244,21 @@ public class DatabaseUtility {
 
             //alter PROFESSORS
             String sql = "update PROFESSORS set values(?,?,?,?, ?,?,?,?, ?,?,?,?) "
-                    + "where PROF_ID = '"+prof.getAnum()+"' and SEMESTER = '"+currentSemester+"'";      
+                    + "where PROF_ID = '"+prof.getAnum()+"' and SEMESTER = '"+getCurrentSemester()+"'";      
             PreparedStatement ps = con.prepareStatement(sql);
             List<Course> c = prof.getCourses();
-            ps.setString(1,  currentSemester);
+            ps.setString(1, getCurrentSemester());
             ps.setString(2,  prof.getAnum());
             ps.setString(3,  prof.getName());
             ps.setString(4,  prof.getTimePreference());
-            ps.setInt   (5,  c.get(0).crn);
-            ps.setInt   (6,  c.get(1).crn);
-            ps.setInt   (7,  c.get(2).crn);
-            ps.setInt   (8,  c.get(3).crn);
-            ps.setInt   (9,  c.get(4).crn);
-            ps.setInt   (10, c.get(5).crn);
-            ps.setInt   (11, c.get(6).crn);
-            ps.setInt   (12, c.get(7).crn);
+            ps.setInt   (5, c.get(0).getCrn());
+            ps.setInt   (6, c.get(1).getCrn());
+            ps.setInt   (7, c.get(2).getCrn());
+            ps.setInt   (8, c.get(3).getCrn());
+            ps.setInt   (9, c.get(4).getCrn());
+            ps.setInt   (10, c.get(5).getCrn());
+            ps.setInt   (11, c.get(6).getCrn());
+            ps.setInt   (12, c.get(7).getCrn());
             ps.executeUpdate();
             
             con.close();
@@ -282,21 +282,23 @@ public class DatabaseUtility {
         //constraint - selection limiter - by department, etc. NOT USED YET
         
         List<Course> courses = new ArrayList();
-        
+        /* FOR TESTING BY MYK */
+        setCurrentSemester("Fall 2016");
+        /**********************/
         try{
             Connection con = DriverManager.getConnection(host, username, password);
             ResultSet rs;
             
-            if(constraint == null){
+            if(constraint != null){
                 //select courses based on current semester and constraint 
-                String sql = "Select * from COURSES where SEMESTER = '"+ currentSemester +"' and "
+                String sql = "Select * from COURSES where SEMESTER = '"+ getCurrentSemester() +"' and "
                         + constraint +" = '"+ value +"'";
                 Statement st = con.createStatement();
                 rs = st.executeQuery(sql);   
             }
             else{
                 //select courses based on current semester
-                String sql = "Select * from COURSES where SEMESTER = '"+ currentSemester +"'";
+                String sql = "Select * from COURSES where SEMESTER = '"+ getCurrentSemester() +"'";
                 Statement st = con.createStatement();
                 rs = st.executeQuery(sql);
             }
@@ -304,20 +306,22 @@ public class DatabaseUtility {
             //capture data and store into array list
             while(rs.next()){
                 Course course = new Course();
-                course.crn =        rs.getInt   ("CRN");
-                course.department = rs.getString("DEPARTMENT");
-                course.courseNum =  rs.getString("COURSE_NUM");
-                course.name =       rs.getString("COURSE_NAME");
-                course.m_enroll =   rs.getInt   ("M_ENROLL");
-                course.enroll =     rs.getInt   ("ENROLL");
-                course.avail=       rs.getInt   ("AVAIL");
-                course.waitList =   rs.getInt   ("WAIT_LIST");
-                course.days =       rs.getString("DAYS");
-                course.sTime =      rs.getString("START_TIME");
-                course.eTime =      rs.getString("END_TIME");
-                course.building =   rs.getString("BUILDING");
-                course.classroom =  rs.getString("CLASSROOM");
-                course.prof =       rs.getString("PROFESSOR");
+                course.setSemester(currentSemester);
+                course.setCrn(rs.getInt          ("CRN"));
+                course.setDepartment(rs.getString("DEPARTMENT"));
+                course.setCourseNum(rs.getString ("COURSE_NUM"));
+                course.setName(rs.getString      ("COURSE_NAME"));
+                course.setM_enroll(rs.getInt     ("M_ENROLL"));
+                course.setEnroll(rs.getInt       ("ENROLL"));
+                course.setAvail(rs.getInt        ("AVAIL"));
+                course.setWaitList(rs.getInt     ("WAIT_LIST"));
+                course.setDays(rs.getString      ("DAYS"));
+                course.setsTime(rs.getString     ("START_TIME"));
+                course.seteTime(rs.getString     ("END_TIME"));
+                course.setBuilding(rs.getString  ("BUILDING"));
+                course.setClassroom(rs.getString ("CLASSROOM"));
+                course.setProf(rs.getString      ("PROFESSOR"));
+                //System.out.println(course);
                 courses.add(course);
             }
             con.close();
@@ -325,6 +329,7 @@ public class DatabaseUtility {
             System.out.println( "Error retrieving Courses!");
             err.printStackTrace();
         }
+
         return courses;
     }
     
@@ -338,24 +343,24 @@ public class DatabaseUtility {
         try{
             Connection con = DriverManager.getConnection(host, username, password);
             
-            String sql = "select from COURSES where SEMESTER = '"+currentSemester+"' and CRN = "+crn;
+            String sql = "select from COURSES where SEMESTER = '"+getCurrentSemester()+"' and CRN = "+crn;
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery(sql);
 
-            course.crn =        rs.getInt   ("CRN");
-            course.department = rs.getString("DEPARTMENT");
-            course.courseNum =  rs.getString("COURSE_NUM");
-            course.name =       rs.getString("COURSE_NAME");
-            course.m_enroll =   rs.getInt   ("M_ENROLL");
-            course.enroll =     rs.getInt   ("ENROLL");
-            course.avail=       rs.getInt   ("AVAIL");
-            course.waitList =   rs.getInt   ("WAIT_LIST");
-            course.days =       rs.getString("DAYS");
-            course.sTime =      rs.getString("START_TIME");
-            course.eTime =      rs.getString("END_TIME");
-            course.building =   rs.getString("BUILDING");
-            course.classroom =  rs.getString("CLASSROOM");
-            course.prof =       rs.getString("PROFESSOR");
+            course.setCrn(rs.getInt   ("CRN"));
+            course.setDepartment(rs.getString("DEPARTMENT"));
+            course.setCourseNum(rs.getString("COURSE_NUM"));
+            course.setName(rs.getString("COURSE_NAME"));
+            course.setM_enroll(rs.getInt   ("M_ENROLL"));
+            course.setEnroll(rs.getInt   ("ENROLL"));
+            course.setAvail(rs.getInt   ("AVAIL"));
+            course.setWaitList(rs.getInt   ("WAIT_LIST"));
+            course.setDays(rs.getString("DAYS"));
+            course.setsTime(rs.getString("START_TIME"));
+            course.seteTime(rs.getString("END_TIME"));
+            course.setBuilding(rs.getString("BUILDING"));
+            course.setClassroom(rs.getString("CLASSROOM"));
+            course.setProf(rs.getString("PROFESSOR"));
 
             
         }catch(SQLException err){
@@ -375,12 +380,12 @@ public class DatabaseUtility {
             Connection con = DriverManager.getConnection(host, username, password);
            
             //manual dup checking
-            String sqlCheck = "select * from COURSES where SEMESTER = '"+currentSemester+"'";
+            String sqlCheck = "select * from COURSES where SEMESTER = '"+getCurrentSemester()+"'";
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery(sqlCheck);
             
             while(rs.next()){
-                if(rs.getInt("CRN") == course.crn){
+                if(rs.getInt("CRN") == course.getCrn()){
                     SQLException err = new SQLException();
                     throw err;
                 }
@@ -388,21 +393,21 @@ public class DatabaseUtility {
             
             String sql = "insert into COURSES values(?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?)";             
             PreparedStatement ps = con.prepareStatement(sql);   
-            ps.setString(1, currentSemester);   
-            ps.setInt   (2, course.crn);
-            ps.setString(3, course.department);
-            ps.setString(4, course.courseNum);
-            ps.setString(5, course.name);   
-            ps.setInt   (6, course.m_enroll);   
-            ps.setInt   (7, course.enroll);   
-            ps.setInt   (8, course.avail);   
-            ps.setInt   (9, course.waitList);
-            ps.setString(10, course.days);             
-            ps.setString(11, course.sTime);             
-            ps.setString(12, course.eTime);
-            ps.setString(13, course.building);      
-            ps.setString(14, course.classroom);         
-            ps.setString(15, course.prof);     
+            ps.setString(1, getCurrentSemester());   
+            ps.setInt   (2, course.getCrn());
+            ps.setString(3, course.getDepartment());
+            ps.setString(4, course.getCourseNum());
+            ps.setString(5, course.getName());   
+            ps.setInt   (6, course.getM_enroll());   
+            ps.setInt   (7, course.getEnroll());   
+            ps.setInt   (8, course.getAvail());   
+            ps.setInt   (9, course.getWaitList());
+            ps.setString(10, course.getDays());             
+            ps.setString(11, course.getSTime());             
+            ps.setString(12, course.getETime());
+            ps.setString(13, course.getBuilding());      
+            ps.setString(14, course.getClassroom());         
+            ps.setString(15, course.getProf());     
             ps.executeUpdate();
                 
             con.close();
@@ -426,14 +431,14 @@ public class DatabaseUtility {
             Connection con = DriverManager.getConnection(host, username, password);
             
             //remove course from COURSES
-            String sql = "delete from COURSES where CRN = " + course.crn +" and SEMESTER = '"+currentSemester+"'";
+            String sql = "delete from COURSES where CRN = " + course.getCrn() +" and SEMESTER = '"+getCurrentSemester()+"'";
             PreparedStatement ps = con.prepareStatement(sql);
             ps.executeUpdate();
             
             //remove course from professors teaching it
             for (int i = 1; i < 9; i++){
                 String sql2 = "update PROFESSORS set COURSE_"+ Integer.toString(i) +" = "+null+" "
-                        + "where COURSE_"+ i +" = '"+ course.crn +"' and  SEMESTER = '"+currentSemester+"'";
+                        + "where COURSE_"+ i +" = '"+ course.getCrn() +"' and  SEMESTER = '"+getCurrentSemester()+"'";
                 PreparedStatement ps2 = con.prepareStatement(sql2);
                 ps2.executeUpdate();
             }
@@ -458,23 +463,23 @@ public class DatabaseUtility {
             Connection con = DriverManager.getConnection(host, username, password);
             
             String sql =  "update COURSES set values(?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?)"
-                        + "where CRN = " + course.crn +" and SEMESTER = '"+currentSemester+"'";
+                        + "where CRN = " + course.getCrn() +" and SEMESTER = '"+getCurrentSemester()+"'";
             PreparedStatement ps = con.prepareStatement(sql);
-            ps.setString(1, currentSemester);
-            ps.setInt   (2, course.crn);
-            ps.setString(5, course.department);
-            ps.setString(3, course.courseNum);
-            ps.setString(4, course.name);
-            ps.setInt   (6, course.m_enroll);
-            ps.setInt   (7, course.enroll);
-            ps.setInt   (8, course.avail);
-            ps.setInt   (9, course.waitList);
-            ps.setString(10, course.days);
-            ps.setString(11, course.sTime);
-            ps.setString(12, course.eTime);
-            ps.setString(13, course.building);
-            ps.setString(14, course.classroom);
-            ps.setString(15, course.prof);
+            ps.setString(1, getCurrentSemester());
+            ps.setInt   (2, course.getCrn());
+            ps.setString(5, course.getDepartment());
+            ps.setString(3, course.getCourseNum());
+            ps.setString(4, course.getName());
+            ps.setInt   (6, course.getM_enroll());
+            ps.setInt   (7, course.getEnroll());
+            ps.setInt   (8, course.getAvail());
+            ps.setInt   (9, course.getWaitList());
+            ps.setString(10, course.getDays());
+            ps.setString(11, course.getSTime());
+            ps.setString(12, course.getETime());
+            ps.setString(13, course.getBuilding());
+            ps.setString(14, course.getClassroom());
+            ps.setString(15, course.getProf());
             ps.executeUpdate();
  
             con.close(); 
@@ -501,16 +506,16 @@ public class DatabaseUtility {
             Connection con = DriverManager.getConnection(host, username, password);
             ResultSet rs;
             
-            if(constraint == null){
+            if(constraint != null){
                 //select classrooms based on current semester and constraint 
-                String sql = "Select * from CLASSROOMS where SEMESTER = '"+ currentSemester +"' and "
+                String sql = "Select * from CLASSROOMS where SEMESTER = '"+ getCurrentSemester() +"' and "
                         + constraint +" = '"+ value +"'";
                 Statement st = con.createStatement();
                 rs = st.executeQuery(sql);   
             }
             else{
                 //select classrooms based on current semester
-                String sql = "Select * from CLASSROOM where SEMESTER = '"+ currentSemester +"'";
+                String sql = "Select * from CLASSROOMS where SEMESTER = '"+ getCurrentSemester() +"'";
                 Statement st = con.createStatement();
                 rs = st.executeQuery(sql);
             }
@@ -525,10 +530,9 @@ public class DatabaseUtility {
             
             con.close();           
         }catch(SQLException err){
-            System.out.println( "Error retireving Classrooms!");
+            System.out.println( "Error retrieving Classrooms!");
             err.printStackTrace();           
         }
-        
         return classrooms;
     }
     
@@ -543,7 +547,7 @@ public class DatabaseUtility {
             Connection con = DriverManager.getConnection(host, username, password);
         
             //manual dup checking
-            String sqlCheck = "select * from CLASSROOMS where SEMESTER = '"+ currentSemester +"'";
+            String sqlCheck = "select * from CLASSROOMS where SEMESTER = '"+ getCurrentSemester() +"'";
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery(sqlCheck);
             
@@ -556,7 +560,7 @@ public class DatabaseUtility {
         
             String sql = "insert into CLASSROOMS values(?,?,?,?)";
             PreparedStatement ps = con.prepareStatement(sql);
-            ps.setString(1, currentSemester);
+            ps.setString(1, getCurrentSemester());
             ps.setString(2, classroom.getRoomNum());
             ps.setString(3, classroom.getBuildingName());
             ps.setInt   (4, classroom.getmEnroll());
@@ -582,12 +586,12 @@ public class DatabaseUtility {
             Connection con = DriverManager.getConnection(host, username, password);
 
             //remove from CLASSROOMS
-            String sql = "delete from CLASSROOMS where ROOM_NUM = '"+ classroom.getRoomNum() +"' and SEMESTER = '"+ currentSemester +"'";
+            String sql = "delete from CLASSROOMS where ROOM_NUM = '"+ classroom.getRoomNum() +"' and SEMESTER = '"+ getCurrentSemester() +"'";
             PreparedStatement ps = con.prepareStatement(sql);
             ps.executeUpdate();
 
             //remove from COURSES
-            String sql2 = "update COURSES set CLASSROOM = "+ null +" where CLASSROOM = '"+ classroom.getRoomNum() +"' and SEMESTER = '"+ currentSemester +"'";
+            String sql2 = "update COURSES set CLASSROOM = "+ null +" where CLASSROOM = '"+ classroom.getRoomNum() +"' and SEMESTER = '"+ getCurrentSemester() +"'";
             PreparedStatement ps2 = con.prepareStatement(sql2);
             ps2.executeUpdate();
             
@@ -611,9 +615,9 @@ public class DatabaseUtility {
             Connection con = DriverManager.getConnection(host, username, password);
 
             String sql = "update CLASSROOMS values(?,?,?,?) where ROOM_NUM = " 
-                    + classroom.getRoomNum() + " and SEMESTER = '"+currentSemester+"'";
+                    + classroom.getRoomNum() + " and SEMESTER = '"+getCurrentSemester()+"'";
             PreparedStatement ps = con.prepareStatement(sql);
-            ps.setString(1, currentSemester);
+            ps.setString(1, getCurrentSemester());
             ps.setString(2, classroom.getRoomNum());
             ps.setString(3, classroom.getBuildingName());
             ps.setInt   (4, classroom.getmEnroll());
@@ -640,19 +644,19 @@ public class DatabaseUtility {
             Connection con = DriverManager.getConnection(host, username, password);
             
             if(semester == null){
-                String sql = "delete from CLASSROOMS where SEMESTER ='"+ currentSemester +"'";
+                String sql = "delete from CLASSROOMS where SEMESTER ='"+ getCurrentSemester() +"'";
                 PreparedStatement ps = con.prepareStatement(sql);
                 ps.executeUpdate();
 
-                String sql2 = "delete from COURSES where SEMESTER ='"+ currentSemester +"'";
+                String sql2 = "delete from COURSES where SEMESTER ='"+ getCurrentSemester() +"'";
                 ps = con.prepareStatement(sql2);
                 ps.executeUpdate();
 
-                String sql3 = "delete from PROFESSORS where SEMESTER ='"+ currentSemester +"'";
+                String sql3 = "delete from PROFESSORS where SEMESTER ='"+ getCurrentSemester() +"'";
                 ps = con.prepareStatement(sql3);
                 ps.executeUpdate();            
 
-                String sql4 = "delete from USER_SCHEDULES where SEMESTER ='"+ currentSemester +"'";
+                String sql4 = "delete from USER_SCHEDULES where SEMESTER ='"+ getCurrentSemester() +"'";
                 ps = con.prepareStatement(sql4);
                 ps.executeUpdate();                  
             }
@@ -680,5 +684,19 @@ public class DatabaseUtility {
             System.out.println("Error clearing Database");
             err.printStackTrace();              
         }
+    }
+
+    /**
+     * @return the currentSemester
+     */
+    public String getCurrentSemester() {
+        return currentSemester;
+    }
+
+    /**
+     * @param currentSemester the currentSemester to set
+     */
+    public void setCurrentSemester(String currentSemester) {
+        this.currentSemester = currentSemester;
     }
 }

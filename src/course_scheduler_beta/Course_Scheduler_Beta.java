@@ -31,6 +31,8 @@ import javafx.stage.Stage;
  * @author myk
  */
 public class Course_Scheduler_Beta extends Application {
+    private static DatabaseUtility db = new DatabaseUtility();
+    ObservableList<Course> data = FXCollections.observableArrayList(db.getCourses(null, null));
     
     @Override
     public void start(Stage stage) {
@@ -58,6 +60,7 @@ public class Course_Scheduler_Beta extends Application {
             //mainWindow();
             //stage.close();
         });
+        //Parser.printList(db.getCourses(null,null));
         stage.setTitle("Welcome!");
         stage.setScene(scene);
         stage.show();
@@ -65,14 +68,15 @@ public class Course_Scheduler_Beta extends Application {
     
     public void mainWindow(Parser data){
         Stage stage = new Stage();
-        stage.setResizable(false);
+        //stage.setResizable(false);
         BorderPane border = new BorderPane();
-        border.setPadding(new Insets(20, 20, 20, 20));
+        border.setPadding(new Insets(20, 200, 100, 20));    // top, right, bottom, left
         TableView table = new TableView();
         
         border.setLeft(configureButtons());
         border.setRight(configureTable(table, data));
-        Scene scene = new Scene(border, 1100, 500);
+
+        Scene scene = new Scene(border, 1600, 500);
         stage.setTitle("Course Scheduler");
         stage.setScene(scene);
         stage.show();
@@ -142,31 +146,51 @@ public class Course_Scheduler_Beta extends Application {
     
     private VBox configureTable(TableView table, Parser parser) {
         Label label = new Label("Schedule");
-        ObservableList<Teacher> data = FXCollections.observableArrayList(parser.getTeachers());
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         
+        //ObservableList<Course> data = FXCollections.observableArrayList(db.getCourses(null, null));
         TableColumn semesterCol = new TableColumn("Semester");
-        TableColumn crnCol = new TableColumn("CRN");
-        TableColumn depCol = new TableColumn("Department");
-        TableColumn numCol = new TableColumn("#");
-        TableColumn nameCol = new TableColumn("Name");
+        TableColumn crnCol =      new TableColumn("CRN");
+        TableColumn depCol =      new TableColumn("Department");
+        TableColumn numCol =      new TableColumn("#");
+        TableColumn nameCol =     new TableColumn("Name");
         TableColumn m_EnrollCol = new TableColumn("Seats");
-        TableColumn enrollCol = new TableColumn("Enrolled");
-        TableColumn availCol = new TableColumn("Available");
-        TableColumn waitCol = new TableColumn("Wait List");
-        TableColumn daysCol = new TableColumn("Days");
-        TableColumn startCol = new TableColumn("Start");
-        TableColumn endCol = new TableColumn("End");
+        TableColumn enrollCol =   new TableColumn("Enrolled");
+        TableColumn availCol =    new TableColumn("Available");
+        TableColumn waitCol =     new TableColumn("Wait List");
+        TableColumn daysCol =     new TableColumn("Days");
+        TableColumn startCol =    new TableColumn("Start");
+        TableColumn endCol =      new TableColumn("End");
         TableColumn buildingCol = new TableColumn("Building");
-        TableColumn roomCol = new TableColumn("Room #");
-        TableColumn teacherCol = new TableColumn("Teacher");
-        teacherCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+        TableColumn roomCol =     new TableColumn("Room #");
+        TableColumn teacherCol =  new TableColumn("Teacher");
+        
+        semesterCol.setCellValueFactory(new PropertyValueFactory<>("semester")); 
+        crnCol.setCellValueFactory(     new PropertyValueFactory<>("crn"));
+        depCol.setCellValueFactory(     new PropertyValueFactory<>("department"));
+        numCol.setCellValueFactory(     new PropertyValueFactory<>("courseNum"));
+        nameCol.setCellValueFactory(    new PropertyValueFactory<>("name"));
+        m_EnrollCol.setCellValueFactory(new PropertyValueFactory<>("m_enroll"));
+        enrollCol.setCellValueFactory(  new PropertyValueFactory<>("enroll"));
+        availCol.setCellValueFactory(   new PropertyValueFactory<>("avail"));
+        waitCol.setCellValueFactory(    new PropertyValueFactory<>("waitList"));
+        daysCol.setCellValueFactory(    new PropertyValueFactory<>("days"));
+        startCol.setCellValueFactory(   new PropertyValueFactory<>("sTime"));
+        endCol.setCellValueFactory(     new PropertyValueFactory<>("eTime"));
+        buildingCol.setCellValueFactory(new PropertyValueFactory<>("building"));
+        roomCol.setCellValueFactory(    new PropertyValueFactory<>("classroom"));
+        teacherCol.setCellValueFactory( new PropertyValueFactory<>("prof"));
         table.setItems(data);
+        
+        //teacherCol.widthProperty().set(125);
         table.getColumns().addAll(semesterCol, crnCol, depCol, 
                 numCol, nameCol, m_EnrollCol, enrollCol, waitCol, 
                 availCol, daysCol, startCol, endCol, buildingCol, 
                 roomCol, teacherCol);
+        
+        System.out.println(table.getWidth());
         VBox vbox = new VBox();
-        vbox.setPadding(new Insets(0, 100, 0, 10));
+        vbox.setPadding(new Insets(0, 0, 0, 10));
         vbox.getChildren().addAll(label, table);
         
         return vbox;

@@ -10,15 +10,24 @@ package course_scheduler_beta;
  * @author Myk
  */
 public class Course {
-    int crn;                                //unique identifier
-    String department, courseNum, name;     //Name Data
-    int m_enroll, enroll, avail, waitList;  //Enroll Data    
-    String days, sTime, eTime;              //Time Data
-    String building, classroom;             //Location Data
-    String prof;                            //Professor Name
-    Teacher prof_;                          //Actual Professor
+    private int crn;                                //unique identifier
+    private String department;                            //Professor Name
+    private String courseNum;
+    private String name;                          //Actual Professor
     
-    String time;
+    private int m_enroll;
+    private int enroll;
+    private int avail;
+    private int waitList;
+    private String days;
+    private String sTime;
+    private String eTime;
+    private String building;
+    private String classroom;
+    private String prof;
+    private String semester;
+    private Teacher prof_;
+    private String time;
  
     //empty constructor made for testing DB
     public Course(){
@@ -55,7 +64,9 @@ public class Course {
     
     @Override
     public String toString () {
-        return "department = " + department + "; time = " + time + "; building = " + building + "; classroom = " + classroom + "; name = " + name;
+        return "semester = " + getSemester() + ";CRN = "+ getCrn() + "department = " + getDepartment() + "; Course Num = " + getCourseNum() + "; name = " + getName() + "; max enrollment = "
+                + getM_enroll() + "; Enrolled = " + getEnroll() + "; wait list = " + getWaitList() + "; Available = " + getAvail() + "; Start = " + getSTime() + "; End = " + getETime() +
+                "; building = " + getBuilding() + "; classroom = " + getClassroom() + "Professor =" + getProf();
     }
     
     /**
@@ -132,13 +143,181 @@ public class Course {
      * @return the enrollment
      */
     public int getEnrollment() {
-        return enroll;
+        return getEnroll();
     }
 
     /**
      * @param enrollment the enrollment to set
      */
     public void setEnrollment(int enrollment) {
-        this.enroll = enrollment;
+        this.setEnroll(enrollment);
+    }
+
+    /**
+     * @return the crn
+     */
+    public int getCrn() {
+        return crn;
+    }
+
+    /**
+     * @param crn the crn to set
+     */
+    public void setCrn(int crn) {
+        this.crn = crn;
+    }
+
+    /**
+     * @return the courseNum
+     */
+    public String getCourseNum() {
+        return courseNum;
+    }
+
+    /**
+     * @param courseNum the courseNum to set
+     */
+    public void setCourseNum(String courseNum) {
+        this.courseNum = courseNum;
+    }
+
+    /**
+     * @return the m_enroll
+     */
+    public int getM_enroll() {
+        return m_enroll;
+    }
+
+    /**
+     * @param m_enroll the m_enroll to set
+     */
+    public void setM_enroll(int m_enroll) {
+        this.m_enroll = m_enroll;
+    }
+
+    /**
+     * @return the enroll
+     */
+    public int getEnroll() {
+        return enroll;
+    }
+
+    /**
+     * @param enroll the enroll to set
+     */
+    public void setEnroll(int enroll) {
+        this.enroll = enroll;
+    }
+
+    /**
+     * @return the avail
+     */
+    public int getAvail() {
+        return avail;
+    }
+
+    /**
+     * @param avail the avail to set
+     */
+    public void setAvail(int avail) {
+        this.avail = avail;
+    }
+
+    /**
+     * @return the waitList
+     */
+    public int getWaitList() {
+        return waitList;
+    }
+
+    /**
+     * @param waitList the waitList to set
+     */
+    public void setWaitList(int waitList) {
+        this.waitList = waitList;
+    }
+
+    /**
+     * @return the days
+     */
+    public String getDays() {
+        return days;
+    }
+
+    /**
+     * @param days the days to set
+     */
+    public void setDays(String days) {
+        this.days = days;
+    }
+
+    /**
+     * @return the sTime
+     */
+    public String getSTime() {
+        return sTime;
+    }
+
+    /**
+     * @param sTime the sTime to set
+     */
+    public void setsTime(String sTime) {
+        this.sTime = sTime;
+    }
+
+    /**
+     * @return the eTime
+     */
+    public String getETime() {
+        return eTime;
+    }
+
+    /**
+     * @param eTime the eTime to set
+     */
+    public void seteTime(String eTime) {
+        this.eTime = eTime;
+    }
+
+    /**
+     * @return the prof
+     */
+    public String getProf() {
+        return prof;
+    }
+
+    /**
+     * @param prof the prof to set
+     */
+    public void setProf(String prof) {
+        this.prof = prof;
+    }
+
+    /**
+     * @return the semester
+     */
+    public String getSemester() {
+        return semester;
+    }
+
+    /**
+     * @param semester the semester to set
+     */
+    public void setSemester(String semester) {
+        this.semester = semester;
+    }
+
+    /**
+     * @return the prof_
+     */
+    public Teacher getProf_() {
+        return prof_;
+    }
+
+    /**
+     * @param prof_ the prof_ to set
+     */
+    public void setProf_(Teacher prof_) {
+        this.prof_ = prof_;
     }
 }
