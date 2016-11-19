@@ -10,9 +10,9 @@ import java.util.*;
  * @author Myk
  */
 public class Teacher {
-    private String name;
+    String name;
     private List<Course> courses = new ArrayList();
-    private String[] teachableCourses = new String[3];
+    String[] teachableCourses = new String[3];
     private String timePreference;
     private String Anum;
     

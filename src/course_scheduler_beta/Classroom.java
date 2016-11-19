@@ -13,6 +13,9 @@ public class Classroom {
     private String roomNum;
     private int mEnroll;
     private String buildingName;
+    public boolean[] timeSlot;
+    public String name;
+    public int numberOfSeats;
     
     public Classroom(){
         this.roomNum  = "";

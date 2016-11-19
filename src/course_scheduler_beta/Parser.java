@@ -43,7 +43,7 @@ public class Parser {
     }    
     
     // Takes file path as an argument then tries to read the file. Returns the file as list with each line as an individual element
-    public static List readFile(File file) {
+    public List readFile(File file) {
         String line;                        // temporary storage for each line when read in (file is read line by line)
         List lines = new ArrayList();       // store file (will store all lines of the file in one variable)
         
@@ -175,7 +175,7 @@ public class Parser {
         });
     }
     
-    public static void storeList(List list, int x){
+    public void storeList(List list, int x){
         if(x == 0){
             for(Teacher ele: (List<Teacher>)list) {
                 db.addNewProfessor(ele);

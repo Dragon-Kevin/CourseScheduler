@@ -11,9 +11,9 @@ package course_scheduler_beta;
  */
 public class Course {
     private int crn;                                //unique identifier
-    private String department;                            //Professor Name
+    String department;                            //Professor Name
     private String courseNum;
-    private String name;                          //Actual Professor
+    String name;                          //Actual Professor
     
     private int m_enroll;
     private int enroll;
@@ -22,12 +22,13 @@ public class Course {
     private String days;
     private String sTime;
     private String eTime;
-    private String building;
-    private String classroom;
-    private String prof;
+    String building;
+    String classroom;
+    String prof;
     private String semester;
     private Teacher prof_;
-    private String time;
+    String time;
+    boolean assigned;
  
     //empty constructor made for testing DB
     public Course(){
@@ -45,6 +46,7 @@ public class Course {
         building = "";
         classroom = "";        
         prof = "";
+        assigned = false;
     }
     
     public Course(String name) {
