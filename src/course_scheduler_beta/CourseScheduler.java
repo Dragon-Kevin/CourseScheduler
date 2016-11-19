@@ -42,21 +42,21 @@ public class CourseScheduler {
     
     public void scheduleCourses(){
         
-        Parser p = new Parser(new File(""));      
-        List preferences = p.getPreferences();
+//        Parser p = new Parser(new File(""));      
+//        List preferences = p.getPreferences();
         
         DatabaseUtility db = new DatabaseUtility();
       
-        /* Read from database */
-        List<Course> courses = db.getCourses("", "");
-        List<Teacher> teachers = db.getProfessors("", "");
-        List<Classroom> classrooms = db.getClassrooms("", "");
+        /* Get all courses, teachers and classrooms from database */
+        List<Course> courses = db.getCourses(null, null);
+        List<Teacher> teachers = db.getProfessors(null, null);
+        List<Classroom> classrooms = db.getClassrooms(null, null);
         
         // Make the time slots for assigning classes
         makeTimeSlots();
                 
         /* Handle the classroom preferences first */
-        assignClassroomPreferences(courses, preferences, teachers, courseMeetingTimes, classrooms);
+//        assignClassroomPreferences(courses, preferences, teachers, courseMeetingTimes, classrooms);
         
         /* Handle faculty preferences second */
         //assignFacultyPreferences();
