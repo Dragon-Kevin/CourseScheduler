@@ -144,9 +144,18 @@ public class CourseScheduler {
         int totalDayTime = 720; // Because there are MW and TR classes
         int numberOfTimeSlots = totalDayTime/totalClassTime;
         courseMeetingTimes = new String[2*numberOfTimeSlots];
+        
+        
+        // For MW classes
         for(int i = 0; i < numberOfTimeSlots; i++){
             int slot = startOfDay + (totalClassTime * i);
-            courseMeetingTimes[i] = String.valueOf(slot) + " - " + String.valueOf(slot + totalClassTime);
+            courseMeetingTimes[i] = String.valueOf(slot) + " - " + String.valueOf(slot + totalClassTime) + " MW ";
+        }
+        
+        // For TR classes
+        for(int i = 0; i < numberOfTimeSlots; i++){
+            int slot = startOfDay + (totalClassTime * i);
+            courseMeetingTimes[i + numberOfTimeSlots] = String.valueOf(slot) + " - " + String.valueOf(slot + totalClassTime) + " TR ";
         }
     }
     
