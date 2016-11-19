@@ -178,7 +178,7 @@ public class CourseScheduler {
                         }
                     }
                                         
-                    for (int iTimeSlot=0; iTimeSlot<16; iTimeSlot++){    
+                    for (int iTimeSlot=0; iTimeSlot<courseMeetingTimes.length; iTimeSlot++){    
                             ele.time = courseMeetingTimes[iTimeSlot];
                             for (Classroom thisRoom : classrooms){
                                 if (thisRoom.name.equals(ele.classroom)){
