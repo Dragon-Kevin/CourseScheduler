@@ -8,7 +8,9 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="Course_Scheduler_Beta.jar" size="26150" download="eager" />
+    <jar href="Course_Scheduler_Beta.jar" size="29605" download="eager" />
+    <jar href="lib\derbyclient.jar" size="585704" download="eager" />
+    <jar href="lib\jfxswt.jar" size="33932" download="eager" />
   </resources>
   <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="Course_Scheduler_Beta" >
     <param name="requiredFXVersion" value="8.0+"/>

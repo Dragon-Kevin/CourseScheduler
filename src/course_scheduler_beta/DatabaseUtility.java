@@ -40,14 +40,37 @@ public class DatabaseUtility {
                                 //have the currently selected semester set right after it is created
     }        
     
-    /**Changes the currently selected semester to a new one. The new semester 
-     * string will come from the db table maintaining all currently created 
-     * semesters. These will have to be sent to a drop down list in the view 
-     * for the user to select.
-     * @param newCurrentSemeter - the new semester to set as currently selected
+    /**
+     * @return the currentSemester
      */
-    public void setSemester(String newCurrentSemeter){
-        this.setCurrentSemester(newCurrentSemeter);
+    public String getCurrentSemester() {
+        return currentSemester;
+    }
+
+    /**Changes the currently selected semester to a new one.
+     * @param currentSemester the currentSemester to set
+     */
+    public void setCurrentSemester(String currentSemester) {
+        this.currentSemester = currentSemester;
+    }
+
+    /** Adds a new semester name to semester table
+     * @param newSemeter - the new semester to set as currently selected
+     */
+    public void addSemester(String newSemeter)
+    {
+        try{
+            Connection con = DriverManager.getConnection(host, username, password);
+            
+            String sql = "insert into USER_SCHEDULES values(?)";
+            PreparedStatement ps = con.prepareStatement(sql); 
+            ps.setString(1, newSemeter);
+            
+            con.close();
+        }catch(SQLException err){
+            System.out.println( "Error Storing Semester!");
+            err.printStackTrace();
+        }
     }
     
     /** Returns a list of string of the names of all stored schedules. Use this 
@@ -73,7 +96,7 @@ public class DatabaseUtility {
             
             con.close();
         }catch(SQLException err){
-            System.out.println( "Error Storing Semester!");
+            System.out.println( "Error Getting Semesters!");
             err.printStackTrace();
         }
         return semesters;
@@ -95,7 +118,7 @@ public class DatabaseUtility {
             Connection con = DriverManager.getConnection(host, username, password);
             ResultSet rs;
             
-            if(constraint == null){
+            if(constraint != null && value != null){
                 //select professors based on current semester and constraint 
                 String sql = "Select * from PROFESSORS where SEMESTER = '"+ getCurrentSemester() +"' and "
                         + constraint +" = '"+ value +"'";
@@ -113,8 +136,8 @@ public class DatabaseUtility {
             while(rs.next()){
                 Teacher prof = new Teacher();
                 prof.setAnum          (rs.getString("PROF_ID"));
-                prof.setName          (rs.getString("PROFESSORNAME"));
-                prof.setTimePreference(rs.getString("TIME_PREFERENCE"));
+                prof.setName          (rs.getString("PROF_NAME"));
+                prof.setTimePreference(rs.getString("TIME_PREF"));
                 //soft max 8 courses so far
                 for(int i = 1; i < 9; i++){
                     prof.addCourse(getSingleCourse(rs.getInt("COURSE_"+Integer.toString(i))));
@@ -289,7 +312,7 @@ public class DatabaseUtility {
             Connection con = DriverManager.getConnection(host, username, password);
             ResultSet rs;
             
-            if(constraint != null){
+            if(constraint != null && value != null){
                 //select courses based on current semester and constraint 
                 String sql = "Select * from COURSES where SEMESTER = '"+ getCurrentSemester() +"' and "
                         + constraint +" = '"+ value +"'";
@@ -343,10 +366,10 @@ public class DatabaseUtility {
         try{
             Connection con = DriverManager.getConnection(host, username, password);
             
-            String sql = "select from COURSES where SEMESTER = '"+getCurrentSemester()+"' and CRN = "+crn;
+            String sql = "select * from COURSES where SEMESTER = '"+getCurrentSemester()+"' and CRN = "+crn;
             Statement st = con.createStatement();
             ResultSet rs = st.executeQuery(sql);
-
+            if(rs.next()){
             course.setCrn(rs.getInt   ("CRN"));
             course.setDepartment(rs.getString("DEPARTMENT"));
             course.setCourseNum(rs.getString("COURSE_NUM"));
@@ -361,7 +384,7 @@ public class DatabaseUtility {
             course.setBuilding(rs.getString("BUILDING"));
             course.setClassroom(rs.getString("CLASSROOM"));
             course.setProf(rs.getString("PROFESSOR"));
-
+            }
             
         }catch(SQLException err){
             System.out.println( "Error");
@@ -506,7 +529,7 @@ public class DatabaseUtility {
             Connection con = DriverManager.getConnection(host, username, password);
             ResultSet rs;
             
-            if(constraint != null){
+            if(constraint != null && value != null){
                 //select classrooms based on current semester and constraint 
                 String sql = "Select * from CLASSROOMS where SEMESTER = '"+ getCurrentSemester() +"' and "
                         + constraint +" = '"+ value +"'";
@@ -684,19 +707,5 @@ public class DatabaseUtility {
             System.out.println("Error clearing Database");
             err.printStackTrace();              
         }
-    }
-
-    /**
-     * @return the currentSemester
-     */
-    public String getCurrentSemester() {
-        return currentSemester;
-    }
-
-    /**
-     * @param currentSemester the currentSemester to set
-     */
-    public void setCurrentSemester(String currentSemester) {
-        this.currentSemester = currentSemester;
     }
 }

@@ -87,7 +87,7 @@ public class Parser {
         if(tokens.length > 0 && tokens[0].equalsIgnoreCase("Semester")){
             setSemester(afterColon(list, 2));
         }
-        db.setSemester(semester);
+        db.setCurrentSemester(semester);
         //System.out.println(department + " " + semester + " " + building);
     }
     
