@@ -20,7 +20,6 @@ import javax.swing.JFileChooser;
 
 /**
  *
- * @author Myk
  * @author Victoria
  * 
  * This class handles the scheduling process
