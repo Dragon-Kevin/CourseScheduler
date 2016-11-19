@@ -40,15 +40,12 @@ public class CourseScheduler {
         this.gap = 15;
     }
     
-    public void IDK(DatabaseUtility db){
+    public void scheduleCourses(){
         
-        File testFile = new File("/Users/laconmitchell/laconCourseScheduler/CourseScheduler/src/course_scheduler_beta/Dept1ClassData.csv");
-        
-        Parser p = new Parser(testFile);        
-        List myList = p.readFile(testFile);
-        p.storeList(myList, 0);
-        
+        Parser p = new Parser(new File(""));      
         List preferences = p.getPreferences();
+        
+        DatabaseUtility db = new DatabaseUtility();
       
         /* Read from database */
         List<Course> courses = db.getCourses("", "");
@@ -197,6 +194,6 @@ public class CourseScheduler {
     public static void main(String[] argv){
         
         CourseScheduler cs = new CourseScheduler();
-        cs.IDK(null);
+        cs.scheduleCourses();
     }
 }
