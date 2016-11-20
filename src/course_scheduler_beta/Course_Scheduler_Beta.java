@@ -41,12 +41,14 @@ import javafx.util.Duration;
  */
 public class Course_Scheduler_Beta extends Application {
     private static DatabaseUtility db = new DatabaseUtility();
+    
     ObservableList<Course> data = FXCollections.observableArrayList(db.getCourses(null, null));
     
     @Override
     public void start(Stage stage) {
         //set semseter to default
         db.setCurrentSemester("Fall 2016");
+        db.clearDatabase("Fall 2016"); // Since the database can't handle duplicate submissions yet, we need to clear every time we run
         
         stage.setResizable(false);
         FileChooser fileChooser = new FileChooser();
@@ -83,9 +85,6 @@ public class Course_Scheduler_Beta extends Application {
                 mainWindow(parser);
                 stage.close();
             }
-            //Parser parser = new Parser();
-            //mainWindow();
-            //stage.close();
         });
         
         Scene scene = new Scene(bPane, 300, 250);
@@ -709,11 +708,11 @@ public class Course_Scheduler_Beta extends Application {
         TableColumn crnCol =      new TableColumn("CRN");
         TableColumn depCol =      new TableColumn("Department");
         TableColumn numCol =      new TableColumn("#");
-        TableColumn nameCol =     new TableColumn("Name");
-        TableColumn m_EnrollCol = new TableColumn("Seats");
-        TableColumn enrollCol =   new TableColumn("Enrolled");
-        TableColumn availCol =    new TableColumn("Available");
-        TableColumn waitCol =     new TableColumn("Wait List");
+        //TableColumn nameCol =     new TableColumn("Name");
+        //TableColumn m_EnrollCol = new TableColumn("Seats");
+        //TableColumn enrollCol =   new TableColumn("Enrolled");
+        //TableColumn availCol =    new TableColumn("Available");
+        //TableColumn waitCol =     new TableColumn("Wait List");
         TableColumn daysCol =     new TableColumn("Days");
         TableColumn startCol =    new TableColumn("Start");
         TableColumn endCol =      new TableColumn("End");
@@ -724,12 +723,12 @@ public class Course_Scheduler_Beta extends Application {
         semesterCol.setCellValueFactory(new PropertyValueFactory<>("semester")); 
         crnCol.setCellValueFactory(     new PropertyValueFactory<>("crn"));
         depCol.setCellValueFactory(     new PropertyValueFactory<>("department"));
-        numCol.setCellValueFactory(     new PropertyValueFactory<>("courseNum"));
-        nameCol.setCellValueFactory(    new PropertyValueFactory<>("name"));
-        m_EnrollCol.setCellValueFactory(new PropertyValueFactory<>("m_enroll"));
-        enrollCol.setCellValueFactory(  new PropertyValueFactory<>("enroll"));
-        availCol.setCellValueFactory(   new PropertyValueFactory<>("avail"));
-        waitCol.setCellValueFactory(    new PropertyValueFactory<>("waitList"));
+        numCol.setCellValueFactory(     new PropertyValueFactory<>("name"));
+        //nameCol.setCellValueFactory(    new PropertyValueFactory<>("name"));
+        //m_EnrollCol.setCellValueFactory(new PropertyValueFactory<>("m_enroll"));
+        //enrollCol.setCellValueFactory(  new PropertyValueFactory<>("enroll"));
+        //availCol.setCellValueFactory(   new PropertyValueFactory<>("avail"));
+        //waitCol.setCellValueFactory(    new PropertyValueFactory<>("waitList"));
         daysCol.setCellValueFactory(    new PropertyValueFactory<>("days"));
         startCol.setCellValueFactory(   new PropertyValueFactory<>("sTime"));
         endCol.setCellValueFactory(     new PropertyValueFactory<>("eTime"));
@@ -740,8 +739,8 @@ public class Course_Scheduler_Beta extends Application {
         
         //teacherCol.widthProperty().set(125);
         table.getColumns().addAll(semesterCol, crnCol, depCol, 
-                numCol, nameCol, m_EnrollCol, enrollCol, waitCol, 
-                availCol, daysCol, startCol, endCol, buildingCol, 
+                numCol, /*nameCol, m_EnrollCol, enrollCol, waitCol, 
+                availCol,*/ daysCol, startCol, endCol, buildingCol, 
                 roomCol, teacherCol);
         
         System.out.println(table.getWidth());

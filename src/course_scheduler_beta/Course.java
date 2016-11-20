@@ -22,9 +22,9 @@ public class Course {
     private String days;
     private String sTime;
     private String eTime;
-    String building;
-    String classroom;
-    String prof;
+    private String building;
+    private String classroom;
+    private String prof;
     private String semester;
     private Teacher prof_;
     String time;
@@ -54,10 +54,11 @@ public class Course {
         this.department = name.split(" ")[0];
     }
     
-    public Course(int crn, String name, String building) {
+    public Course(int crn, String name, String building, String department) {
         this.name = name;
         this.crn = crn;
         this.building = building;
+        this.department = department;
     }
     
     public void test() {
@@ -66,9 +67,9 @@ public class Course {
     
     @Override
     public String toString () {
-        return "semester = " + getSemester() + ";CRN = "+ getCrn() + "department = " + getDepartment() + "; Course Num = " + getCourseNum() + "; name = " + getName() + "; max enrollment = "
+        return "semester = " + getSemester() + "; CRN = "+ getCrn() + "; department = " + getDepartment() + "; Course Num = " + getCourseNum() + "; name = " + getName() + "; max enrollment = "
                 + getM_enroll() + "; Enrolled = " + getEnroll() + "; wait list = " + getWaitList() + "; Available = " + getAvail() + "; Start = " + getSTime() + "; End = " + getETime() +
-                "; building = " + getBuilding() + "; classroom = " + getClassroom() + "Professor =" + getProf();
+                "; building = " + getBuilding() + "; classroom = " + getClassroom() + "; Professor =" + getProf();
     }
     
     /**
@@ -307,5 +308,6 @@ public class Course {
      */
     public void setProf_(Teacher prof_) {
         this.prof_ = prof_;
+        this.prof = prof_.getName();
     }
 }

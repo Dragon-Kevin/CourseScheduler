@@ -39,11 +39,13 @@ public class Parser {
         findFacultyAssignments(LinesOfFile);
         assignDuration(LinesOfFile);
         findAvailableRooms(LinesOfFile);
+        assignTeacherToCourse();
+        storeData();
         //printList(availableRooms);
     }    
     
     // Takes file path as an argument then tries to read the file. Returns the file as list with each line as an individual element
-    public List readFile(File file) {
+    private List readFile(File file) {
         String line;                        // temporary storage for each line when read in (file is read line by line)
         List lines = new ArrayList();       // store file (will store all lines of the file in one variable)
         
@@ -103,7 +105,7 @@ public class Parser {
         // starting from the location, loop until it reaches the end point (classroom preferences)
         for(; !list.get(index).equals("Classroom Preferences:"); index++) {
             String[] tokens = list.get(index).toString().split(", ");
-            courses.add(new Course(Integer.parseInt(tokens[0]), tokens[1], getBuilding()));
+            courses.add(new Course(Integer.parseInt(tokens[0]), tokens[1], getBuilding(), getDepartment()));
         }
     }
     
@@ -165,6 +167,32 @@ public class Parser {
             availableRooms.add(new Classroom(subtok));
         }
         //getAvailableRooms().addAll(Arrays.asList(tokens));
+    }
+    
+    private void assignTeacherToCourse(){
+        for(Teacher t:teachers){
+            for(Course c:courses){
+                //String[] temp = t.getTeachableCourses();
+                for(String x:t.getTeachableCourses()){
+                    if(c.getName().equalsIgnoreCase(x)){
+                        c.setProf_(t);
+                    }
+                }
+            }
+        }
+    }
+    
+    private void storeData(){
+        teachers.stream().forEach((t) -> {
+            db.addNewProfessor(t);
+        });
+        courses.stream().forEach((c) -> {
+            db.addNewCourse(c);
+           //System.out.println(c);
+        });
+        availableRooms.stream().forEach((r) -> {
+            db.addClassroom(r);
+        });
     }
     
     // Prints out all elements of a List

@@ -70,7 +70,7 @@ public class CourseScheduler {
                 for (Teacher iTeacher : teachers){
                     for (String teacherCourse : iTeacher.teachableCourses){
                         if (iCourse.name.equalsIgnoreCase(teacherCourse)) {
-                            iCourse.prof = iTeacher.name;
+                            iCourse.setProf(iTeacher.name);
                         }                
                     }
                 }
@@ -85,7 +85,7 @@ public class CourseScheduler {
                     if (iRoom.numberOfSeats >= iCourse.getEnroll()){
                         for (int iTimeSlot=0; iTimeSlot<16; iTimeSlot++){                        
                             if (!iCourse.assigned && iRoom.timeSlot[iTimeSlot]){
-                                iCourse.classroom = iRoom.name;
+                                iCourse.setClassroom(iRoom.name);
                                 iCourse.time = courseMeetingTimes[iTimeSlot];
                                 iRoom.timeSlot[iTimeSlot] = false;
                                 iCourse.assigned = true;
@@ -172,15 +172,15 @@ public class CourseScheduler {
             System.out.println(prefs.get(i));
             for(Course ele: courses) {
                 if (prefs.get(i).equals(ele.name)) {
-                    ele.building = prefs.get(++i);
-                    ele.classroom = prefs.get(++i);
+                    ele.setBuilding(prefs.get(++i));
+                    ele.setClassroom(prefs.get(++i));
                     ele.assigned = true;
                     
                     /* Set the course professor */
                     for (Teacher iTeacher : teachers){
                         for (String teacherCourse : iTeacher.teachableCourses){
                             if (ele.name.equalsIgnoreCase(teacherCourse)) {
-                                ele.prof = iTeacher.name;
+                                ele.setProf(iTeacher.name);
                             }                
                         }
                     }
@@ -188,7 +188,7 @@ public class CourseScheduler {
                     for (int iTimeSlot=0; iTimeSlot<courseMeetingTimes.length; iTimeSlot++){    
                             ele.time = courseMeetingTimes[iTimeSlot];
                             for (Classroom thisRoom : classrooms){
-                                if (thisRoom.name.equals(ele.classroom)){
+                                if (thisRoom.name.equals(ele.getClassroom())){
                                     thisRoom.timeSlot[iTimeSlot] = false;
                                 }
                             }                            
