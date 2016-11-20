@@ -323,8 +323,11 @@ public class DatabaseUtility {
             
             
             if(value == null && constraint != null){
+                System.out.println("hitting");
                 String sql = "Select * from COURSES where SEMESTER = '"+ getCurrentSemester() +"' and "
                         + constraint +" is null";
+                
+                System.out.println(sql);
                 Statement st = con.createStatement();
                 rs = st.executeQuery(sql);                   
             }
@@ -369,7 +372,6 @@ public class DatabaseUtility {
                 course.setBuilding(rs.getString  ("BUILDING"));
                 course.setClassroom(rs.getString ("CLASSROOM"));
                 course.setProf(rs.getString      ("PROFESSOR"));
-                //System.out.println(course);
                 courses.add(course);
             }
             

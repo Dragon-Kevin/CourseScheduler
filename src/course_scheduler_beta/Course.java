@@ -33,19 +33,19 @@ public class Course {
     //empty constructor made for testing DB
     public Course(){
         crn = -1;
-        department = "";
-        courseNum = "";
-        name = "";
+        department = null;
+        courseNum = null;
+        name = null;
         m_enroll = -1;
         enroll = -1;
         avail = -1;
         waitList = -1;
-        days = "";
-        sTime = "";
-        eTime = "";       
-        building = "";
-        classroom = "";        
-        prof = "";
+        days = null;
+        sTime = null;
+        eTime = null;       
+        building = null;
+        classroom = null;        
+        prof = null;
         assigned = false;
     }
     
