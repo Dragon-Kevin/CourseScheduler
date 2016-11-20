@@ -36,7 +36,7 @@ public class CourseScheduler {
     }
     
     public CourseScheduler(){
-        this.duration = 80;
+        this.duration = 60;
         this.gap = 15;
     }
     
@@ -76,9 +76,9 @@ public class CourseScheduler {
                 }
 
                 /* Set the building for the course */
-                if (iCourse.department.equalsIgnoreCase("CS")){
-                    iCourse.building = "Technology Hall";
-                }
+               // if (iCourse.department.equalsIgnoreCase("CS")){
+               //     iCourse.building = "Technology Hall";
+                //}
 
                 /* Set the room for the course */
                 for (Classroom iRoom : classrooms){
@@ -135,7 +135,7 @@ public class CourseScheduler {
     
     // create time slots (military time) based on duration of classes (dur), and time between classes (gap)
     private void makeTimeSlots(){
-        int startOfDay = 800;
+        int startOfDay = 805;
         int totalClassTime = duration + gap;
         int totalDayTime = 720; // Because there are MW and TR classes
         int numberOfTimeSlots = totalDayTime/totalClassTime;
@@ -144,8 +144,18 @@ public class CourseScheduler {
         
         // For MW classes
         for(int i = 0; i < numberOfTimeSlots; i++){
-            int slot = startOfDay + (totalClassTime * i);
-            courseMeetingTimes[i] = String.valueOf(slot) + " - " + String.valueOf(slot + totalClassTime) + " MW ";
+            String amORpm1 = " am";
+            int slot1 = startOfDay + ((int)((totalClassTime * i)/60))*(100) + (totalClassTime * i)%60;;
+            if(slot1%100 >= 60) slot1+=40;
+            if(slot1 >= 1200) { amORpm1 = " pm"; slot1-=1200;}
+            
+            String amORpm2 = " am";
+            int slot2 = slot1 + ((int)((totalClassTime)/60))*(100) + ((totalClassTime)%60);
+            if(slot2%100 >= 60) slot2+=40;
+            if(slot2 >= 1200) {amORpm2 = " pm"; slot2-=1200; }
+            
+            courseMeetingTimes[i] = String.valueOf(slot1) + amORpm1 + " - " + String.valueOf(slot2) + amORpm2 + " MW ";
+            System.out.println(String.format("%d:%02d %s - %d:%02d %s MW",(int)(slot1/100),slot1%100, amORpm1, (int)(slot2/100),slot2%100, amORpm2));
         }
         
         // For TR classes
@@ -153,6 +163,8 @@ public class CourseScheduler {
             int slot = startOfDay + (totalClassTime * i);
             courseMeetingTimes[i + numberOfTimeSlots] = String.valueOf(slot) + " - " + String.valueOf(slot + totalClassTime) + " TR ";
         }
+        //for(String ele:courseMeetingTimes)
+            //System.out.println(ele);
     }
     
     /* Modified by Victoria Mitchell */
