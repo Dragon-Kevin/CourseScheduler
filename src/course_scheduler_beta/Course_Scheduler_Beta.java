@@ -8,16 +8,17 @@ package course_scheduler_beta;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.animation.FadeTransition;
+import javafx.animation.SequentialTransition;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 //import javafx.scene.control.Button;
 //import javafx.scene.control.Label;
@@ -32,6 +33,7 @@ import javafx.stage.Stage;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.util.Duration;
 
 /**
  *
@@ -101,7 +103,7 @@ public class Course_Scheduler_Beta extends Application {
         
         border.setLeft(configureButtons());
         border.setRight(configureTable(table, data));
-        Scene scene = new Scene(border, 1000, 500);
+        Scene scene = new Scene(border, 1400, 500);
         stage.setTitle("Course Scheduler");
         stage.setScene(scene);
         stage.show();
@@ -211,22 +213,61 @@ public class Course_Scheduler_Beta extends Application {
         bPane.setRight(gPane2);
         
         //COURSE PANE BOTTOM
-        Button addBtn = new Button("Add Course");
-        bPane.setBottom(addBtn);
+        GridPane gPane3 = new GridPane();
+        gPane3.setHgap(10);
+        gPane3.setVgap(10);
+        gPane3.setPadding(new Insets(10));
+        
+        Button addBtn = new Button("Add Course"); 
+        gPane3.add(addBtn, 0, 0);
         
         addBtn.setOnAction((ActionEvent event) -> {
             //take data from text fields, construct course obj
-            //check if fields are valid?
-            //Course c = new Course();
-            //if((crn_tField.getText() != null && !crn_tField.getText().isEmpty()))
-            //c.crn = Integer.parseInt(crn_tField.getText());
-            //shove in database
+            //check if fields are valid
+            Course c = new Course();
+            if((crn_tField.getText() != null && !crn_tField.getText().isEmpty()))   //crn
+                c.setCrn(Integer.parseInt(crn_tField.getText()));
+            if((dep_tField.getText() != null && !dep_tField.getText().isEmpty()))   //department
+                c.setDepartment(dep_tField.getText());
+            if((num_tField.getText() != null && !num_tField.getText().isEmpty()))   //Course Number
+                c.setCourseNum(num_tField.getText());
+            if((name_tField.getText() != null && !name_tField.getText().isEmpty()))   //course name
+                c.setName(name_tField.getText());
+            if((me_tField.getText() != null && !me_tField.getText().isEmpty()))   //max enrollment
+                c.setM_enroll(Integer.parseInt(me_tField.getText()));
+            if((e_tField.getText() != null && !e_tField.getText().isEmpty()))   //enrollment
+                c.setEnroll(Integer.parseInt(e_tField.getText()));
+            if((a_tField.getText() != null && !a_tField.getText().isEmpty()))   //available
+                c.setAvail(Integer.parseInt(a_tField.getText()));
+            if((wl_tField.getText() != null && !wl_tField.getText().isEmpty()))   //wait list
+                c.setWaitList(Integer.parseInt(wl_tField.getText()));
+            
+            if(!list.getSelectionModel().isEmpty()){//if selection exists
+                c.setProf(list.getSelectionModel().getSelectedItem());
+            }
                 
+            //shove in database
+            if(!(c.getCrn() == -1)){    //response text only checks crn. it needs to check ALL values. Also, this does not account for the store function
+                db.addNewCourse(c);     //just boucing off due to a duplicate crn. So, the user does not know if the store is successful, just whether the
+                Label success = new Label("Course Added");  //data they entered by valid
+                FadeTransition fader = createFader(success);
+                SequentialTransition fade = new SequentialTransition(success,fader);
+                gPane3.add(success,1,0);
+                fade.play();
+            }
+            else{
+                Label success = new Label("Unable to add Course");
+                FadeTransition fader = createFader(success);
+                SequentialTransition fade = new SequentialTransition(success,fader);
+                gPane3.add(success,1,0);
+                fade.play(); 
+            }
         });
+        bPane.setBottom(gPane3);
         
         return bPane;
     }
-    
+
     //used by Add Window
     private BorderPane teacherPane()
     {
@@ -283,7 +324,7 @@ public class Course_Scheduler_Beta extends Application {
         
         //list of courses to be assigned to teacher
         Label coursesToTeach_label = new Label("Courses Assigned");
-        gPane2.add(coursesToTeach_label, 0,0);
+        gPane2.add(coursesToTeach_label, 0,0);   
         
         ListView<String> list = new ListView();
         ObservableList<String> coursesToTeach = FXCollections.observableArrayList();
@@ -292,11 +333,20 @@ public class Course_Scheduler_Beta extends Application {
         list.getSelectionModel().select(null);
         gPane2.add(list, 0,1);
         
+        //list of courses available to be taught
         Label coursesAvail_label = new Label("Courses Available");
         gPane2.add(coursesAvail_label, 1,0); 
         
         ListView<String> list2 = new ListView();
-        ObservableList<String> coursesAvail = FXCollections.observableArrayList("ex1","ex2");
+        
+        List<Course> c = db.getCourses("PROFESSOR", null);
+        List<String> c_crns = new ArrayList();
+        for(Course ele: c){
+            System.out.println("1: "+ele);
+            c_crns.add(Integer.toString(ele.getCrn()));
+        }
+        
+        ObservableList<String> coursesAvail = FXCollections.observableArrayList(c_crns);
         list2.setItems(coursesAvail);
         list2.setPrefWidth(150);
         list2.getSelectionModel().select(null);
@@ -335,16 +385,65 @@ public class Course_Scheduler_Beta extends Application {
         bPane.setRight(gPane2);
       
         //TEACHER PANE BOTTOM
-        Button addBtn = new Button("Add Professor");
-        bPane.setBottom(addBtn);
+        GridPane gPane3 = new GridPane();
+        gPane3.setHgap(10);
+        gPane3.setVgap(10);
+        gPane3.setPadding(new Insets(10));
+        
+        Button addBtn = new Button("Add Teacher"); 
+        gPane3.add(addBtn, 0, 0);
         
         addBtn.setOnAction((ActionEvent event) -> {
-            //add teacher to database
+            //take data from text fields, construct course obj
+            //check if fields are valid
+            Teacher t = new Teacher();
+            if((id_tField.getText() != null && !id_tField.getText().isEmpty()))   //teacher id
+                t.setAnum(id_tField.getText());
+            if((name_tField.getText() != null && !name_tField.getText().isEmpty()))   //teacher name
+                t.setName(name_tField.getText());
+            
+            //retrieve data from radio buttons
+            if(none_rb.isSelected()){
+                t.setTimePreference("None");
+            }
+            else if(morning_rb.isSelected()){
+                t.setTimePreference("Morning");
+            }
+            else{
+                t.setTimePreference("Afternoon");
+            }
+            
+            //retrieve course objs
+            for(String ele: coursesToTeach){
+                Course toAdd = new Course();
+                toAdd = (Course)db.getCourses("CRN", ele).get(0);
+                t.addCourse(toAdd);
+            }
+            
+            //shove in database
+            if(!(t.getAnum().isEmpty())){    
+                db.addNewProfessor(t);     
+                Label success = new Label("Teacher Added"); 
+                FadeTransition fader = createFader(success);
+                SequentialTransition fade = new SequentialTransition(success,fader);
+                gPane3.add(success,1,0);
+                fade.play();
+            }
+            else{
+                Label success = new Label("Unable to add Teacher");
+                FadeTransition fader = createFader(success);
+                SequentialTransition fade = new SequentialTransition(success,fader);
+                gPane3.add(success,1,0);
+                fade.play(); 
+            }
         });
+        
+        bPane.setBottom(gPane3);
         
         return bPane;
     }
     
+    //used by Add Window
     private BorderPane classroomPane()
     {
         BorderPane bPane = new BorderPane();
@@ -379,15 +478,57 @@ public class Course_Scheduler_Beta extends Application {
         bPane.setLeft(gPane);
         
        //CLASSROOM PANE BOTTOM
-        Button addBtn = new Button("Add Classroom");
-        bPane.setBottom(addBtn);
+        GridPane gPane3 = new GridPane();
+        gPane3.setHgap(10);
+        gPane3.setVgap(10);
+        gPane3.setPadding(new Insets(10));
+        
+        Button addBtn = new Button("Add Classroom"); 
+        gPane3.add(addBtn, 0, 0);
         
         addBtn.setOnAction((ActionEvent event) -> {
-            //add classroom to database
+            //take data from text fields, construct course obj
+            //check if fields are valid
+            Classroom c = new Classroom();
+            if((num_tField.getText() != null && !num_tField.getText().isEmpty()))       //room num
+                c.setRoomNum(num_tField.getText());
+            if((build_tField.getText() != null && !build_tField.getText().isEmpty()))   //building
+                c.setBuildingName(build_tField.getText());            
+            if((me_tField.getText() != null && !me_tField.getText().isEmpty()))         //room size
+                c.setmEnroll(Integer.parseInt(me_tField.getText()));
+            
+            
+            //shove in database
+            if(!(c.getRoomNum().isEmpty())){    
+                db.addClassroom(c);     
+                Label success = new Label("Classroom Added"); 
+                FadeTransition fader = createFader(success);
+                SequentialTransition fade = new SequentialTransition(success,fader);
+                gPane3.add(success,1,0);
+                fade.play();
+            }
+            else{
+                Label success = new Label("Unable to add Classroom");
+                FadeTransition fader = createFader(success);
+                SequentialTransition fade = new SequentialTransition(success,fader);
+                gPane3.add(success,1,0);
+                fade.play(); 
+            }
         });
+        
+        bPane.setBottom(gPane3);        
         
         return bPane;
     }
+    
+    //util functions to fade labels and other things
+    private FadeTransition createFader(Node node)
+    {        
+        FadeTransition fade = new FadeTransition(Duration.seconds(2), node);
+        fade.setFromValue(1);
+        fade.setToValue(0);
+        return fade;
+    }    
     
     public void deleteWindow(){
         Stage stage = new Stage();

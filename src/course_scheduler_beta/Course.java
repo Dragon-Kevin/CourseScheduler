@@ -142,20 +142,6 @@ public class Course {
     }
 
     /**
-     * @return the enrollment
-     */
-    public int getEnrollment() {
-        return getEnroll();
-    }
-
-    /**
-     * @param enrollment the enrollment to set
-     */
-    public void setEnrollment(int enrollment) {
-        this.setEnroll(enrollment);
-    }
-
-    /**
      * @return the crn
      */
     public int getCrn() {

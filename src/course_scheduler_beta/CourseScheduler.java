@@ -85,7 +85,7 @@ public class CourseScheduler {
 
                 /* Set the room for the course */
                 for (Classroom iRoom : classrooms){
-                    if (iRoom.numberOfSeats >= iCourse.getEnrollment()){
+                    if (iRoom.numberOfSeats >= iCourse.getEnroll()){
                         for (int iTimeSlot=0; iTimeSlot<16; iTimeSlot++){                        
                             if (!iCourse.assigned && iRoom.timeSlot[iTimeSlot]){
                                 iCourse.classroom = iRoom.name;

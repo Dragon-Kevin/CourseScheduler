@@ -118,7 +118,14 @@ public class DatabaseUtility {
             Connection con = DriverManager.getConnection(host, username, password);
             ResultSet rs;
             
-            if(constraint != null && value != null){
+            if(value == null && constraint != null){
+                String sql = "Select * from PROFESSORS where SEMESTER = '"+ getCurrentSemester() +"' and "
+                        + constraint +" is null";
+                System.out.println(sql);
+                Statement st = con.createStatement();
+                rs = st.executeQuery(sql);                   
+            }
+            else if(constraint != null){
                 //select professors based on current semester and constraint 
                 String sql = "Select * from PROFESSORS where SEMESTER = '"+ getCurrentSemester() +"' and "
                         + constraint +" = '"+ value +"'";
@@ -192,27 +199,29 @@ public class DatabaseUtility {
             String sql = "insert into PROFESSORS values(?,?,?,?, ?,?,?,?,?,?,?,?)";
             PreparedStatement ps = con.prepareStatement(sql);           
             ps.setString(1, getCurrentSemester());
-            ps.setString(2, prof.getAnum());
-            ps.setString(3, prof.getName());
-            ps.setString(4, prof.getTimePreference());
-            ps.setInt   (5, c.get(0).getCrn());
-            ps.setInt   (6, c.get(1).getCrn());
-            ps.setInt   (7, c.get(2).getCrn());
-            ps.setInt   (8, c.get(3).getCrn());
-            ps.setInt   (9, c.get(4).getCrn());
-            ps.setInt   (10, c.get(5).getCrn());
-            ps.setInt   (11, c.get(6).getCrn());
-            ps.setInt   (12, c.get(7).getCrn());
+            ps.setString(2, prof.getName());
+            ps.setString(3, prof.getTimePreference());
+            ps.setInt   (4, 0);
+            ps.setInt   (5, 0);
+            ps.setInt   (6, 0);
+            ps.setInt   (7, 0);
+            ps.setInt   (8, 0);
+            ps.setInt   (9,0);
+            ps.setInt   (10,0);
+            ps.setInt   (11,0);
+            ps.setString(12, prof.getAnum());
             ps.executeUpdate();
-            /*
-            //insert all courses being taught by that professor
-            if(prof. != null && prof.pcourses.isEmpty() == false){   //if not empty
-                for(int i = 0; i < prof.pcourses.size(); i++){
-                    String sql2 = "update PROFESSORS set COURSE_"+(i+1)+" = '"+prof.pcourses.get(i)+"' where PROF_ID = "+prof.id;
-                    PreparedStatement ps2 = con.prepareStatement(sql2);
-                    ps2.executeUpdate();
-                }
-            }*/
+                        
+            for(int i = 0; i < c.size(); i++){
+                String sql2 = "update PROFESSORS set COURSE_"+ (i+1) +" = "+ c.get(i).getCrn() +" where PROF_ID = '"+ prof.getAnum() +"'";
+                PreparedStatement ps2 = con.prepareStatement(sql2);
+                ps2.executeUpdate();
+            }
+            for(int i = 0; i < c.size(); i++){ 
+                String sql3 = "update COURSES set PROFESSOR = '"+ prof.getName() +"' where CRN = " + c.get(i).getCrn();
+                PreparedStatement ps3 = con.prepareStatement(sql3);
+                ps3.executeUpdate();
+            }           
             con.close();         
         }
         catch(SQLException err){
@@ -304,20 +313,36 @@ public class DatabaseUtility {
     {
         //constraint - selection limiter - by department, etc. NOT USED YET
         
-        List<Course> courses = new ArrayList();
-        /* FOR TESTING BY MYK */
         setCurrentSemester("Fall 2016");
-        /**********************/
+        System.out.println(constraint +","+value);
+        List<Course> courses = new ArrayList();
+
         try{
             Connection con = DriverManager.getConnection(host, username, password);
             ResultSet rs;
             
-            if(constraint != null && value != null){
-                //select courses based on current semester and constraint 
+            
+            if(value == null && constraint != null){
+                String sql = "Select * from COURSES where SEMESTER = '"+ getCurrentSemester() +"' and "
+                        + constraint +" is null";
+                Statement st = con.createStatement();
+                rs = st.executeQuery(sql);                   
+            }
+            else if(constraint != null){
+                //select courses based on current semester and constraint
+                if(constraint.equals("CRN")){
+                    int ivalue = Integer.parseInt(value);
+                    String sql = "Select * from COURSES where SEMESTER = '"+ getCurrentSemester() +"' and "
+                        + constraint +" = "+ ivalue;
+                    Statement st = con.createStatement();
+                    rs = st.executeQuery(sql); 
+                }
+                else{
                 String sql = "Select * from COURSES where SEMESTER = '"+ getCurrentSemester() +"' and "
                         + constraint +" = '"+ value +"'";
                 Statement st = con.createStatement();
-                rs = st.executeQuery(sql);   
+                rs = st.executeQuery(sql);
+                }
             }
             else{
                 //select courses based on current semester
@@ -347,6 +372,9 @@ public class DatabaseUtility {
                 //System.out.println(course);
                 courses.add(course);
             }
+            
+            
+            
             con.close();
         }catch(SQLException err){
             System.out.println( "Error retrieving Courses!");
@@ -529,7 +557,14 @@ public class DatabaseUtility {
             Connection con = DriverManager.getConnection(host, username, password);
             ResultSet rs;
             
-            if(constraint != null && value != null){
+            if(value == null && constraint != null){
+                String sql = "Select * from PROFESSORS where SEMESTER = '"+ getCurrentSemester() +"' and "
+                        + constraint +" is null";
+                System.out.println(sql);
+                Statement st = con.createStatement();
+                rs = st.executeQuery(sql);                   
+            }
+            else if(constraint != null){
                 //select classrooms based on current semester and constraint 
                 String sql = "Select * from CLASSROOMS where SEMESTER = '"+ getCurrentSemester() +"' and "
                         + constraint +" = '"+ value +"'";
