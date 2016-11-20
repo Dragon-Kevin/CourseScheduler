@@ -36,30 +36,27 @@ public class CourseScheduler {
     }
     
     public CourseScheduler(){
-        this.duration = 80;
+        this.duration = 60;
         this.gap = 15;
     }
     
-    public void IDK(DatabaseUtility db){
+    public void scheduleCourses(){
         
-        File testFile = new File("/Users/laconmitchell/laconCourseScheduler/CourseScheduler/src/course_scheduler_beta/Dept1ClassData.csv");
+//        Parser p = new Parser(new File(""));      
+//        List preferences = p.getPreferences();
         
-        Parser p = new Parser(testFile);        
-        List myList = p.readFile(testFile);
-        p.storeList(myList, 0);
-        
-        List preferences = p.getPreferences();
+        DatabaseUtility db = new DatabaseUtility();
       
-        /* Read from database */
-        List<Course> courses = db.getCourses("", "");
-        List<Teacher> teachers = db.getProfessors("", "");
-        List<Classroom> classrooms = db.getClassrooms("", "");
+        /* Get all courses, teachers and classrooms from database */
+        List<Course> courses = db.getCourses(null, null);
+        List<Teacher> teachers = db.getProfessors(null, null);
+        List<Classroom> classrooms = db.getClassrooms(null, null);
         
         // Make the time slots for assigning classes
         makeTimeSlots();
                 
         /* Handle the classroom preferences first */
-        assignClassroomPreferences(courses, preferences, teachers, courseMeetingTimes, classrooms);
+//        assignClassroomPreferences(courses, preferences, teachers, courseMeetingTimes, classrooms);
         
         /* Handle faculty preferences second */
         //assignFacultyPreferences();
@@ -79,9 +76,9 @@ public class CourseScheduler {
                 }
 
                 /* Set the building for the course */
-                if (iCourse.department.equalsIgnoreCase("CS")){
-                    iCourse.building = "Technology Hall";
-                }
+               // if (iCourse.department.equalsIgnoreCase("CS")){
+               //     iCourse.building = "Technology Hall";
+                //}
 
                 /* Set the room for the course */
                 for (Classroom iRoom : classrooms){
@@ -138,24 +135,34 @@ public class CourseScheduler {
     
     // create time slots (military time) based on duration of classes (dur), and time between classes (gap)
     private void makeTimeSlots(){
-        int startOfDay = 800;
+        int startOfDay = 805;
         int totalClassTime = duration + gap;
         int totalDayTime = 720; // Because there are MW and TR classes
         int numberOfTimeSlots = totalDayTime/totalClassTime;
         courseMeetingTimes = new String[2*numberOfTimeSlots];
         
         
-        // For MW classes
+        // Find time slots
         for(int i = 0; i < numberOfTimeSlots; i++){
-            int slot = startOfDay + (totalClassTime * i);
-            courseMeetingTimes[i] = String.valueOf(slot) + " - " + String.valueOf(slot + totalClassTime) + " MW ";
+            String amORpm1 = " am";
+            String amORpm2 = " am";
+            int slot1 = startOfDay + ((int)((totalClassTime * i)/60))*(100) + (totalClassTime * i)%60;;
+            if(slot1%100 >= 60) slot1+=40;
+            if(slot1 >= 1200) { amORpm1 = " pm"; amORpm2 = " pm"; slot1-=1200;}
+            
+            
+            int slot2 = slot1 + ((int)((totalClassTime)/60))*(100) + ((totalClassTime)%60);
+            if(slot2%100 >= 60) slot2+=40;
+            if(slot2 >= 1200) {amORpm2 = " pm"; slot2-=1200; }
+            
+            // the top one is for monday/wednesday classes, bottom is for tuesday/thursday classes.
+            courseMeetingTimes[i] = String.format("%d:%02d %s - %d:%02d %s MW",(int)(slot1/100),slot1%100, amORpm1, (int)(slot2/100),slot2%100, amORpm2);
+            courseMeetingTimes[i + numberOfTimeSlots] = String.format("%d:%02d %s - %d:%02d %s TR",(int)(slot1/100),slot1%100, amORpm1, (int)(slot2/100),slot2%100, amORpm2);
         }
         
-        // For TR classes
-        for(int i = 0; i < numberOfTimeSlots; i++){
-            int slot = startOfDay + (totalClassTime * i);
-            courseMeetingTimes[i + numberOfTimeSlots] = String.valueOf(slot) + " - " + String.valueOf(slot + totalClassTime) + " TR ";
-        }
+        /* Myk: Prints out the courseMeetingTimes array*/ 
+        for(String ele:courseMeetingTimes)
+            System.out.println(ele);
     }
     
     /* Modified by Victoria Mitchell */
@@ -197,6 +204,6 @@ public class CourseScheduler {
     public static void main(String[] argv){
         
         CourseScheduler cs = new CourseScheduler();
-        cs.IDK(null);
+        cs.scheduleCourses();
     }
 }
