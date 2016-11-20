@@ -253,6 +253,8 @@ public class Course_Scheduler_Beta extends Application {
                 SequentialTransition fade = new SequentialTransition(success,fader);
                 gPane3.add(success,1,0);
                 fade.play();
+                // edit by myk
+                updateTable();
             }
             else{
                 Label success = new Label("Unable to add Course");
@@ -520,7 +522,6 @@ public class Course_Scheduler_Beta extends Application {
         return bPane;
     }
     
-    
     public void deleteWindow(){
         Stage stage = new Stage();
         stage.setResizable(false);
@@ -695,8 +696,17 @@ public class Course_Scheduler_Beta extends Application {
         launch(args);
     }
     
-    private void updateTable(TableView table) {
-        
+    private void updateTable() {
+        List<Course> tmp = db.getCourses(null, null);
+        data.clear();
+        data.addAll(db.getCourses(null, null));
+        /*for(Course x: data){
+            for(Course y: tmp){
+                if(x.getCrn() != y.getCrn()){}
+                    data.add(y);
+            }
+        }*/
+        //Parser.printList(data);
     }
     
     private VBox configureTable(TableView table, Parser parser) {

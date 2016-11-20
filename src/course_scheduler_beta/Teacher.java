@@ -10,7 +10,7 @@ import java.util.*;
  * @author Myk
  */
 public class Teacher {
-    String name;
+    private String name;
     private List<Course> courses = new ArrayList();
     String[] teachableCourses = new String[3];
     private String timePreference;
