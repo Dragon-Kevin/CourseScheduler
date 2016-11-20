@@ -274,6 +274,14 @@ public class DatabaseUtility {
         try{
             Connection con = DriverManager.getConnection(host, username, password);
 
+            String sqlCheck = "select * from PROFESSORS where PROF_ID = '"+prof.getAnum()+"' and SEMESTER = '"+getCurrentSemester()+"'";
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(sqlCheck);
+            
+            if(rs.next()){
+                
+            }
+            
             //alter PROFESSORS
             String sql = "update PROFESSORS set values(?,?,?,?, ?,?,?,?, ?,?,?,?) "
                     + "where PROF_ID = '"+prof.getAnum()+"' and SEMESTER = '"+getCurrentSemester()+"'";      
@@ -292,6 +300,7 @@ public class DatabaseUtility {
             ps.setInt   (11, c.get(6).getCrn());
             ps.setInt   (12, c.get(7).getCrn());
             ps.executeUpdate();
+            
             
             con.close();
         }catch(SQLException err){

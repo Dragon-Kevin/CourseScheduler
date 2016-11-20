@@ -108,7 +108,8 @@ public class Course_Scheduler_Beta extends Application {
         stage.setScene(scene);
         stage.show();
     }
-    
+
+//AJ CODE///////////////////////////////////////////////
     public void addWindow(){
         Stage stage = new Stage();
         stage.setResizable(false);
@@ -521,7 +522,6 @@ public class Course_Scheduler_Beta extends Application {
         return bPane;
     }
     
-    
     public void deleteWindow(){
         Stage stage = new Stage();
         stage.setResizable(false);
@@ -617,7 +617,6 @@ public class Course_Scheduler_Beta extends Application {
         ObservableList<String> options = FXCollections.observableArrayList(getList("teacher"));
         ComboBox comboBox = new ComboBox(options);        
         gPane.add(comboBox, 1, 8);
-        
         bPane.setRight(gPane); 
         
         //LEFT
@@ -647,7 +646,54 @@ public class Course_Scheduler_Beta extends Application {
             comboBox.setValue(update.getProf());
         });
         
-        bPane.setLeft(list);       
+        bPane.setLeft(list);
+        
+        //BOTTOM
+        GridPane gPane3 = new GridPane();
+        gPane3.setHgap(10);
+        gPane3.setVgap(10);
+        gPane3.setPadding(new Insets(10));
+        
+        Button updateBtn = new Button("Update"); 
+        gPane3.add(updateBtn, 0, 0);
+        
+        updateBtn.setOnAction((ActionEvent event) -> {
+            
+            Course alter = new Course();
+            alter.setCrn(Integer.parseInt(crn_tField.getText()));
+            alter.setDepartment(crn_tField.getText());
+            alter.setCourseNum(crn_tField.getText());
+            alter.setName(crn_tField.getText());
+            alter.setM_enroll(Integer.parseInt(crn_tField.getText()));
+            alter.setEnroll(Integer.parseInt(crn_tField.getText()));
+            alter.setAvail(Integer.parseInt(crn_tField.getText()));
+            alter.setWaitList(Integer.parseInt(crn_tField.getText()));
+            
+            Teacher t = new Teacher();
+            //remove all instances of course from all entries in teacher table
+            //add reference 
+            //db.alterProfessor(t);
+            
+            //shove in database
+            if(alter.getCrn() == 0){    
+                db.alterCourse(alter);
+                Label success = new Label("Classroom Added"); 
+                FadeTransition fader = createFader(success);
+                SequentialTransition fade = new SequentialTransition(success,fader);
+                gPane3.add(success,1,0);
+                fade.play();
+            }
+            else{
+                Label success = new Label("Unable to add Classroom");
+                FadeTransition fader = createFader(success);
+                SequentialTransition fade = new SequentialTransition(success,fader);
+                gPane3.add(success,1,0);
+                fade.play(); 
+            }
+        });
+        
+        bPane.setBottom(gPane3);        
+        
         return bPane;
     }
     
@@ -687,15 +733,48 @@ public class Course_Scheduler_Beta extends Application {
         bPane.setLeft(list);       
         
         return bPane;
-    }
-            
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        launch(args);
+    }    
+
+    //util functions to fade labels and other things
+    private FadeTransition createFader(Node node)
+    {        
+        FadeTransition fade = new FadeTransition(Duration.seconds(2), node);
+        fade.setFromValue(1);
+        fade.setToValue(0);
+        return fade;
     }
     
+    /**Util function to return a list of the names of the courses, teachers, or classrooms
+     * 
+     * @param option - "course", "teacher", "classroom"
+     * @return a list of the names
+     */
+    private List getList(String option)
+    {
+        List<String> list = new ArrayList();
+        
+        switch (option) {
+            case "course":
+                List<Course> c = db.getCourses(null, null);
+                for(Course ele: c){
+                    list.add(ele.getName());
+                }   break;
+            case "teacher":
+                List<Teacher> t = db.getProfessors(null, null);
+                for(Teacher ele: t){
+                    list.add(ele.getName());
+                }   break;
+            case "classroom":
+                List<Classroom> cl = db.getClassrooms(null, null);
+                for(Classroom ele: cl){
+                    list.add(ele.getBuildingName() +" "+ ele.getRoomNum());
+            }   break;              
+        }
+
+        return list;
+    }   
+//AJ CODE///////////////////////////////////////////////
+
     private void updateTable(TableView table) {
         
     }
@@ -791,42 +870,10 @@ public class Course_Scheduler_Beta extends Application {
         );
     }
     
-    //util functions to fade labels and other things
-    private FadeTransition createFader(Node node)
-    {        
-        FadeTransition fade = new FadeTransition(Duration.seconds(2), node);
-        fade.setFromValue(1);
-        fade.setToValue(0);
-        return fade;
-    }
-    
-    /**Util function to return a list of the names of the courses, teachers, or classrooms
-     * 
-     * @param option - "course", "teacher", "classroom"
-     * @return a list of the names
+    /**
+     * @param args the command line arguments
      */
-    private List getList(String option)
-    {
-        List<String> list = new ArrayList();
-        
-        switch (option) {
-            case "course":
-                List<Course> c = db.getCourses(null, null);
-                for(Course ele: c){
-                    list.add(ele.getName());
-                }   break;
-            case "teacher":
-                List<Teacher> t = db.getProfessors(null, null);
-                for(Teacher ele: t){
-                    list.add(ele.getName());
-                }   break;
-            case "classroom":
-                List<Classroom> cl = db.getClassrooms(null, null);
-                for(Classroom ele: cl){
-                    list.add(ele.getBuildingName() +" "+ ele.getRoomNum());
-            }   break;              
-        }
-
-        return list;
+    public static void main(String[] args) {
+        launch(args);
     }
 }
