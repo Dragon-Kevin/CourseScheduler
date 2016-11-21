@@ -285,11 +285,10 @@ public class DatabaseUtility {
     public List getCourses(String constraint, String value)
     {
         List<Course> courses = new ArrayList();
-
+        System.out.println(currentSemester);
         try{
             Connection con = DriverManager.getConnection(host, username, password);
             ResultSet rs;
-            
             
             if(value == null && constraint != null){
                 String sql = "Select * from COURSES where SEMESTER = '"+ getCurrentSemester() +"' and "
@@ -338,6 +337,7 @@ public class DatabaseUtility {
                 course.setBuilding(rs.getString  ("BUILDING"));
                 course.setClassroom(rs.getString ("CLASSROOM"));
                 course.setProf(rs.getString      ("PROFESSOR"));
+                System.out.println(course);
                 courses.add(course);
             }
             
@@ -662,22 +662,22 @@ public class DatabaseUtility {
         try{
             Connection con = DriverManager.getConnection(host, username, password);
             
-            if(semester == null){
-                String sql = "delete from CLASSROOMS where SEMESTER ='"+ getCurrentSemester() +"'";
+            if(semester != null){
+                String sql = "delete from CLASSROOMS where SEMESTER ='"+ semester +"'";
                 PreparedStatement ps = con.prepareStatement(sql);
                 ps.executeUpdate();
 
-                String sql2 = "delete from COURSES where SEMESTER ='"+ getCurrentSemester() +"'";
+                String sql2 = "delete from COURSES where SEMESTER ='"+ semester +"'";
                 ps = con.prepareStatement(sql2);
                 ps.executeUpdate();
 
-                String sql3 = "delete from PROFESSORS where SEMESTER ='"+ getCurrentSemester() +"'";
+                String sql3 = "delete from PROFESSORS where SEMESTER ='"+ semester +"'";
                 ps = con.prepareStatement(sql3);
                 ps.executeUpdate();            
 
-                String sql4 = "delete from USER_SCHEDULES where SEMESTER ='"+ getCurrentSemester() +"'";
+                String sql4 = "delete from USER_SCHEDULES where NAME ='"+ semester +"'";
                 ps = con.prepareStatement(sql4);
-                ps.executeUpdate();                  
+                ps.executeUpdate();
             }
             else{
                 String sql = "delete from CLASSROOMS";

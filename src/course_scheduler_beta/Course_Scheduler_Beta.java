@@ -75,7 +75,7 @@ public class Course_Scheduler_Beta extends Application {
         
         //list of semesters, pulled from database
         ListView semesterList = new ListView();
-        semesterList.setPrefHeight(100);
+        semesterList.setPrefHeight(200);
         List<String> s = db.getSemesters();
         ObservableList<String> semesters = FXCollections.observableArrayList(s);
         semesterList.setItems(semesters);
@@ -95,9 +95,9 @@ public class Course_Scheduler_Beta extends Application {
         });
 
         btnLoadCSV.setOnAction((ActionEvent event) -> {
-                String theSemester = semesterList.getSelectionModel().getSelectedItem().toString();     //setting for code simplicity
-                if(theSemester != null && !theSemester.isEmpty()){                                      //if the user acutally selected something
-                    db.setCurrentSemester(theSemester);                                                 //set the semester from user choice
+                //String theSemester = semesterList.getSelectionModel().getSelectedItem().toString();     //setting for code simplicity
+                if(semesterList.getSelectionModel().getSelectedItem() != null && !semesterList.getSelectionModel().getSelectedItem().toString().isEmpty()){                                      //if the user acutally selected something
+                    db.setCurrentSemester(semesterList.getSelectionModel().getSelectedItem().toString());                                                 //set the semester from user choice
                     mainWindow();                                                                       //start the stuff
                     stage.close();
                 }//else do nothing, probably need a label to appear to tell user they messed up
@@ -112,7 +112,7 @@ public class Course_Scheduler_Beta extends Application {
 
 //    public void mainWindow(Parser data){            //I've noticed that this Parser param does nothing. 
                                                       //I left this here in case there are plans for that Parser Param, 
-                                                      //though I think the data course list replaced whatever this was doing
+                                                      //git though I think the data course list replaced whatever this was doing
 //        Stage stage = new Stage();
 //        //stage.setResizable(false);
 //        BorderPane border = new BorderPane();
@@ -198,14 +198,14 @@ public class Course_Scheduler_Beta extends Application {
         gPane.add(numLabel, 0,  2);
         Label nameLabel = new Label("Course Name");
         gPane.add(nameLabel, 0, 3);
-        Label m_eLabel = new Label("Max Enrollment");
-        gPane.add(m_eLabel, 0,  4);
-        Label eLabel = new Label("Enrollment");
-        gPane.add(eLabel, 0,    5);
-        Label aLabel = new Label("Available");
-        gPane.add(aLabel, 0,    6);
-        Label w_lLabel = new Label("Wait List");
-        gPane.add(w_lLabel, 0,  7);
+//        Label m_eLabel = new Label("Max Enrollment");
+//        gPane.add(m_eLabel, 0,  4);
+//        Label eLabel = new Label("Enrollment");
+//        gPane.add(eLabel, 0,    5);
+//        Label aLabel = new Label("Available");
+//        gPane.add(aLabel, 0,    6);
+//        Label w_lLabel = new Label("Wait List");
+//        gPane.add(w_lLabel, 0,  7);
 
         TextField crn_tField = new TextField();
         gPane.add(crn_tField, 1,    0);
@@ -215,15 +215,15 @@ public class Course_Scheduler_Beta extends Application {
         gPane.add(num_tField, 1,    2);
         TextField name_tField = new TextField();
         gPane.add(name_tField, 1,   3);
-        TextField me_tField = new TextField();
-        gPane.add(me_tField, 1,     4);
-        TextField e_tField = new TextField();
-        gPane.add(e_tField, 1,      5);
-        TextField a_tField = new TextField();
-        gPane.add(a_tField, 1,      6);
-        TextField wl_tField = new TextField();
-        gPane.add(wl_tField, 1,     7);
-        
+//        TextField me_tField = new TextField();
+//        gPane.add(me_tField, 1,     4);
+//        TextField e_tField = new TextField();
+//        gPane.add(e_tField, 1,      5);
+//        TextField a_tField = new TextField();
+//        gPane.add(a_tField, 1,      6);
+//        TextField wl_tField = new TextField();
+//        gPane.add(wl_tField, 1,     7);
+//        
         bPane.setLeft(gPane);
         
         //COURSE PANE RIGHT
@@ -274,14 +274,14 @@ public class Course_Scheduler_Beta extends Application {
                 c.setCourseNum(num_tField.getText());
             if((name_tField.getText() != null && !name_tField.getText().isEmpty()))   //course name
                 c.setName(name_tField.getText());
-            if((me_tField.getText() != null && !me_tField.getText().isEmpty()))   //max enrollment
-                c.setM_enroll(Integer.parseInt(me_tField.getText()));
-            if((e_tField.getText() != null && !e_tField.getText().isEmpty()))   //enrollment
-                c.setEnroll(Integer.parseInt(e_tField.getText()));
-            if((a_tField.getText() != null && !a_tField.getText().isEmpty()))   //available
-                c.setAvail(Integer.parseInt(a_tField.getText()));
-            if((wl_tField.getText() != null && !wl_tField.getText().isEmpty()))   //wait list
-                c.setWaitList(Integer.parseInt(wl_tField.getText()));
+//            if((me_tField.getText() != null && !me_tField.getText().isEmpty()))   //max enrollment
+//                c.setM_enroll(Integer.parseInt(me_tField.getText()));
+//            if((e_tField.getText() != null && !e_tField.getText().isEmpty()))   //enrollment
+//                c.setEnroll(Integer.parseInt(e_tField.getText()));
+//            if((a_tField.getText() != null && !a_tField.getText().isEmpty()))   //available
+//                c.setAvail(Integer.parseInt(a_tField.getText()));
+//            if((wl_tField.getText() != null && !wl_tField.getText().isEmpty()))   //wait list
+//                c.setWaitList(Integer.parseInt(wl_tField.getText()));
             
             if(!list.getSelectionModel().isEmpty()){//if selection exists
                 c.setProf(list.getSelectionModel().getSelectedItem());
@@ -454,13 +454,6 @@ public class Course_Scheduler_Beta extends Application {
                 }                                               
             }
             
-//            //retrieve course objs
-//            for(String ele: coursesToTeach){
-//                Course toAdd = new Course();
-//                toAdd = (Course)db.getCourses("CRN", ele).get(0);
-//                t.addCourse(toAdd);
-//            }
-            
             //shove in database
             if(!(t.getAnum().isEmpty())){    
                 db.addNewProfessor(t);     
@@ -571,12 +564,241 @@ public class Course_Scheduler_Beta extends Application {
     public void deleteWindow(){
         Stage stage = new Stage();
         stage.setResizable(false);
-        StackPane root = new StackPane();
-        Scene scene = new Scene(root, 500, 300);
+
+        //create tabbed view
+        TabPane tabPane = new TabPane();
+        tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
+        Tab courseTab = new Tab();
+        Tab teacherTab = new Tab();
+        Tab classroomTab = new Tab();
+        Tab semesterTab = new Tab();
+        courseTab.setText("Course");
+        teacherTab.setText("Teacher");
+        classroomTab.setText("Classroom");
+        semesterTab.setText("Semester");
+        tabPane.getTabs().addAll(courseTab, teacherTab, classroomTab, semesterTab);        
+        
+        courseTab.setContent(deleteCoursePane(stage));
+        
+        teacherTab.setContent(deleteTeacherPane(stage));
+        
+        classroomTab.setContent(deleteClassroomPane(stage));
+        
+        semesterTab.setContent(deleteSemesterPane(stage));
+        
+        Scene scene = new Scene(tabPane, 600, 300);
         stage.setTitle("Delete");
         stage.setScene(scene);
         stage.show();
     }
+    
+    private BorderPane deleteCoursePane(Stage stage)
+    {
+        BorderPane bPane = new BorderPane();
+        bPane.setPadding(new Insets(10));
+        
+        //TOP
+        Label header = new Label("Select a Course to Delete");
+        header.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        bPane.setTop(header);
+        
+        //LEFT
+        ListView<String> list = new ListView<String>();     //listview of strings
+        List<Course> c = db.getCourses(null, null);         //get list of course objects from database
+        ObservableList<String> courses = FXCollections.observableArrayList(getList("course")); //get a list of strings
+        list.setItems(courses);     //use courses to populate listview
+        
+        bPane.setLeft(list);
+        
+        //BOTTOM
+        GridPane gPane3 = new GridPane();
+        gPane3.setHgap(10);
+        gPane3.setVgap(10);
+        gPane3.setPadding(new Insets(10));
+        
+        Button updateBtn = new Button("Delete"); 
+        gPane3.add(updateBtn, 0, 0);
+        
+        updateBtn.setOnAction((ActionEvent event) -> {
+            
+            Course delete = new Course();
+            for(Course ele: c){
+                if(ele.getName().equals(list.getSelectionModel().getSelectedItem())){
+                  delete = ele;
+                }
+            }
+            db.removeCourse(delete);
+            Label success = new Label("Course Deleted"); 
+            FadeTransition fader = createFader(success);
+            SequentialTransition fade = new SequentialTransition(success,fader);
+            gPane3.add(success,1,0);
+            fade.play();
+
+            updateTable();
+            courses.remove(list.getSelectionModel().getSelectedItem());
+            list.setItems(courses);
+            //stage.close();  
+        });
+        
+        bPane.setBottom(gPane3);        
+        
+        return bPane;        
+    }
+    
+    private BorderPane deleteTeacherPane(Stage stage)
+    {
+        BorderPane bPane = new BorderPane();
+        bPane.setPadding(new Insets(10));
+        
+        //TOP
+        Label header = new Label("Select a Teacher to Delete");
+        header.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        bPane.setTop(header);
+        
+        //LEFT
+        ListView<String> list = new ListView<String>();     //listview of strings
+        List<Teacher> t = db.getProfessors(null, null);         //get list of course objects from database
+        ObservableList<String> teachers = FXCollections.observableArrayList(getList("teacher")); //get a list of strings
+        list.setItems(teachers);     //use courses to populate listview
+        
+        bPane.setLeft(list);
+        
+        //BOTTOM
+        GridPane gPane = new GridPane();
+        gPane.setHgap(10);
+        gPane.setVgap(10);
+        gPane.setPadding(new Insets(10));
+        
+        Button updateBtn = new Button("Delete"); 
+        gPane.add(updateBtn, 0, 0);
+        
+        updateBtn.setOnAction((ActionEvent event) -> {
+            
+            Teacher delete = new Teacher();
+            for(Teacher ele: t){
+                if(ele.getName().equals(list.getSelectionModel().getSelectedItem())){   
+                    delete = ele;
+                }
+            }
+            db.removeProfessor(delete);
+            Label success = new Label("Teacher Deleted"); 
+            FadeTransition fader = createFader(success);
+            SequentialTransition fade = new SequentialTransition(success,fader);
+            gPane.add(success,1,0);
+            fade.play();
+
+            updateTable();
+            teachers.remove(list.getSelectionModel().getSelectedItem());
+            list.setItems(teachers);
+            //stage.close();             
+        });
+        
+        bPane.setBottom(gPane);        
+        
+        return bPane;      
+    }
+        
+    private BorderPane deleteClassroomPane(Stage stage)
+    {
+        BorderPane bPane = new BorderPane();
+        bPane.setPadding(new Insets(10));
+        
+        //TOP
+        Label header = new Label("Select a Classroom to Delete");
+        header.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        bPane.setTop(header);
+        
+        //LEFT
+        ListView<String> list = new ListView<String>();     //listview of strings
+        List<Classroom> cl = db.getClassrooms(null, null);         //get list of course objects from database
+        
+                System.out.println("HELLOooo");
+        ObservableList<String> classrooms = FXCollections.observableArrayList(getList("classroom")); //get a list of strings
+        list.setItems(classrooms);     //use courses to populate listview
+        
+        bPane.setLeft(list);
+        
+        //BOTTOM
+        GridPane gPane = new GridPane();
+        gPane.setHgap(10);
+        gPane.setVgap(10);
+        gPane.setPadding(new Insets(10));
+        
+        Button updateBtn = new Button("Delete"); 
+        gPane.add(updateBtn, 0, 0);
+        
+        updateBtn.setOnAction((ActionEvent event) -> {
+            
+            Classroom delete = new Classroom();
+            for(Classroom ele: cl){
+                if(ele.getRoomNum().equals(list.getSelectionModel().getSelectedItem())){   
+                    delete = ele;
+                }
+            }
+            db.removeClassroom(delete);
+            Label success = new Label("Classroom Deleted"); 
+            FadeTransition fader = createFader(success);
+            SequentialTransition fade = new SequentialTransition(success,fader);
+            gPane.add(success,1,0);
+            fade.play();
+
+            updateTable();
+            classrooms.remove(list.getSelectionModel().getSelectedItem());
+            list.setItems(classrooms);
+            //stage.close();             
+        });
+        
+        bPane.setBottom(gPane);        
+        
+        return bPane;        
+    }
+    
+    private BorderPane deleteSemesterPane(Stage stage)
+    {
+        BorderPane bPane = new BorderPane();
+        bPane.setPadding(new Insets(10));
+        
+        //TOP
+        Label header = new Label("Select a Semester to Delete");
+        header.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        bPane.setTop(header);
+        
+        //LEFT
+        ListView<String> list = new ListView();     //listview of strings
+        ObservableList<String> sems = FXCollections.observableArrayList(db.getSemesters()); //get a list of strings
+        list.setItems(sems);     //use courses to populate listview
+        bPane.setLeft(list);
+        
+        //BOTTOM
+        GridPane gPane = new GridPane();
+        gPane.setHgap(10);
+        gPane.setVgap(10);
+        gPane.setPadding(new Insets(10));
+        
+        Button updateBtn = new Button("Delete"); 
+        gPane.add(updateBtn, 0, 0);
+        
+        updateBtn.setOnAction((ActionEvent event) -> {
+            String delete = list.getSelectionModel().getSelectedItem();
+            System.out.println(delete);
+            db.clearDatabase(delete);
+            
+            Label success = new Label("Semester Deleted"); 
+            FadeTransition fader = createFader(success);
+            SequentialTransition fade = new SequentialTransition(success,fader);
+            gPane.add(success,1,0);
+            fade.play();
+
+            updateTable();
+            sems.remove(list.getSelectionModel().getSelectedItem());
+            list.setItems(sems);
+            //stage.close();             
+        });
+        
+        bPane.setBottom(gPane);        
+        
+        return bPane;        
+    }   
     
     public void editWindow(){
         
@@ -989,6 +1211,7 @@ public class Course_Scheduler_Beta extends Application {
                         list.add(ele.getName());
                 }   break;
             case "classroom":
+                System.out.println("HELLO");
                 List<Classroom> cl = db.getClassrooms(null, null);
                 for(Classroom ele: cl){
                     //list.add(ele.getBuildingName() +" "+ ele.getRoomNum());
@@ -1001,7 +1224,7 @@ public class Course_Scheduler_Beta extends Application {
 //AJ CODE///////////////////////////////////////////////
 
     private void updateTable() {
-        List<Course> tmp = db.getCourses(null, null);
+        //List<Course> tmp = db.getCourses(null, null);
         data.clear();
         data.addAll(db.getCourses(null, null));
         /*for(Course x: data){
