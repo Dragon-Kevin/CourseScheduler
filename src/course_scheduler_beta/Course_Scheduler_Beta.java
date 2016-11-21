@@ -713,7 +713,8 @@ public class Course_Scheduler_Beta extends Application {
         Label label = new Label("Schedule");
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         
-        //ObservableList<Course> data = FXCollections.observableArrayList(db.getCourses(null, null));
+        updateTable();
+        
         TableColumn semesterCol = new TableColumn("Semester");
         TableColumn crnCol =      new TableColumn("CRN");
         TableColumn depCol =      new TableColumn("Department");

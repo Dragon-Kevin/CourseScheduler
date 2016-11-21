@@ -25,7 +25,7 @@ import javax.swing.JFileChooser;
  * This class handles the scheduling process
  */
 public class CourseScheduler {
-    List timeSlots;
+    List<String> timeSlots = new ArrayList();
     String[] courseMeetingTimes;
     int duration, gap;
 
@@ -54,7 +54,7 @@ public class CourseScheduler {
         
         // Make the time slots for assigning classes
         makeTimeSlots();
-                
+        teacherPrefs(db);
         /* Handle the classroom preferences first */
 //        assignClassroomPreferences(courses, preferences, teachers, courseMeetingTimes, classrooms);
         
@@ -67,13 +67,14 @@ public class CourseScheduler {
             if (!iCourse.assigned){
 
                 /* Set the course professor */
+                /*
                 for (Teacher iTeacher : teachers){
                     for (String teacherCourse : iTeacher.teachableCourses){
                         if (iCourse.name.equalsIgnoreCase(teacherCourse)) {
                             iCourse.setProf(iTeacher.name);
                         }                
                     }
-                }
+                }*/
 
                 /* Set the building for the course */
                // if (iCourse.department.equalsIgnoreCase("CS")){
@@ -81,7 +82,7 @@ public class CourseScheduler {
                 //}
 
                 /* Set the room for the course */
-                for (Classroom iRoom : classrooms){
+                /*for (Classroom iRoom : classrooms){
                     if (iRoom.numberOfSeats >= iCourse.getEnroll()){
                         for (int iTimeSlot=0; iTimeSlot<16; iTimeSlot++){                        
                             if (!iCourse.assigned && iRoom.timeSlot[iTimeSlot]){
@@ -92,7 +93,7 @@ public class CourseScheduler {
                             }
                         }
                     }
-                }
+                }*/
             }
         }
         
@@ -112,7 +113,7 @@ public class CourseScheduler {
         for (Course iCourse : courses) {
             
             /* Write to screen for viewing */
-            System.out.println(iCourse.toString());
+            //System.out.println(iCourse.toString());
             
             try {
                 writer.write(iCourse.toString() + "\n");
@@ -131,6 +132,50 @@ public class CourseScheduler {
         catch ( IOException e){
             System.out.println(e);
         }
+    }
+    
+    private void teacherPrefs(DatabaseUtility db) {
+        List<Teacher> t = new ArrayList();
+        t.addAll(db.getProfessors("TIME_PREF","Evening"));
+        t.addAll(db.getProfessors("TIME_PREF","Morning"));
+        t.addAll(db.getProfessors("TIME_PREF","Afternoon"));
+        t.addAll(db.getProfessors("TIME_PREF","MW"));
+        t.addAll(db.getProfessors("TIME_PREF","TR"));
+        
+        Parser.printList(t);
+        
+        for(Teacher i: t){
+            List<Course> c = db.getCourses("PROFESSOR", i.getName());
+            //if(checkTime(i.getTimePreference()))
+            List<String> possibleTimes = matchPref(i.getTimePreference());
+            Parser.printList(possibleTimes);
+        }
+    }
+    
+    private List matchPref(String time){
+        List<String> s = new ArrayList();
+
+        for(String i:timeSlots){
+            String[] tmp = i.split(":| ");
+            //for(String x:tmp)
+            //    System.out.print(x + "; ");
+            if(tmp[8].equalsIgnoreCase("am") && time.equalsIgnoreCase("Morning")){
+                s.add(i);
+            }
+            if(tmp[8].equalsIgnoreCase("pm") && time.equalsIgnoreCase("Afternoon") && Integer.parseInt(tmp[5])<6){
+                s.add(i);
+            }
+            if(tmp[8].equalsIgnoreCase("pm") && time.equalsIgnoreCase("Evening") && Integer.parseInt(tmp[5])>6){
+                s.add(i);
+            }
+            if(tmp[9].equalsIgnoreCase("MW") && time.equalsIgnoreCase("MW")){
+                s.add(i);
+            }
+            if(tmp[9].equalsIgnoreCase("TR") && time.equalsIgnoreCase("TR")){
+                s.add(i);
+            }
+        }
+        return s; 
     }
     
     // create time slots (military time) based on duration of classes (dur), and time between classes (gap)
@@ -161,8 +206,10 @@ public class CourseScheduler {
         }
         
         /* Myk: Prints out the courseMeetingTimes array*/ 
-        for(String ele:courseMeetingTimes)
-            System.out.println(ele);
+        for(String ele:courseMeetingTimes){
+            timeSlots.add(ele);
+            //System.out.println(ele);
+        }
     }
     
     /* Modified by Victoria Mitchell */
@@ -177,13 +224,14 @@ public class CourseScheduler {
                     ele.assigned = true;
                     
                     /* Set the course professor */
+                    /*
                     for (Teacher iTeacher : teachers){
                         for (String teacherCourse : iTeacher.teachableCourses){
                             if (ele.name.equalsIgnoreCase(teacherCourse)) {
                                 ele.setProf(iTeacher.name);
                             }                
                         }
-                    }
+                    }*/
                                         
                     for (int iTimeSlot=0; iTimeSlot<courseMeetingTimes.length; iTimeSlot++){    
                             ele.time = courseMeetingTimes[iTimeSlot];
