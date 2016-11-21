@@ -8,7 +8,7 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="Course_Scheduler_Beta.jar" size="36112" download="eager" />
+    <jar href="Course_Scheduler_Beta.jar" size="36907" download="eager" />
     <jar href="lib\derbyclient.jar" size="585704" download="eager" />
     <jar href="lib\jfxswt.jar" size="33932" download="eager" />
   </resources>

@@ -45,7 +45,7 @@ public class Course {
         eTime = "";       
         building = "";
         classroom = "";        
-        prof = "";
+        prof = null;
         assigned = false;
     }
     
