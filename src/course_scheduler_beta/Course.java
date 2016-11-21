@@ -24,6 +24,7 @@ public class Course {
     private String eTime;
     private String building;
     private String classroom;
+    private Classroom classroom_;
     private String prof;
     private String semester;
     private Teacher prof_;
@@ -33,9 +34,9 @@ public class Course {
     //empty constructor made for testing DB
     public Course(){
         crn = -1;
-        department = "";
-        courseNum = "";
-        name = "";
+        department = null;
+        courseNum = null;
+        name = null;
         m_enroll = -1;
         enroll = -1;
         avail = -1;
@@ -85,7 +86,7 @@ public class Course {
     public void setName(String name) {
         this.name = name;
     }
-
+    
     /**
      * @return the time
      */
@@ -97,7 +98,11 @@ public class Course {
      * @param time the time to set
      */
     public void setTime(String time) {
+        //System.out.println("Set Time");
+        //System.out.println(time);
         this.time = time;
+        sTime = time.split(" ")[0];
+        eTime = time.split(" ")[3];
     }
 
     /**
@@ -134,12 +139,15 @@ public class Course {
     public String getClassroom() {
         return classroom;
     }
-
+    public Classroom getClassroom_(){
+        return classroom_;
+    }
     /**
      * @param classroom the classroom to set
      */
     public void setClassroom(String classroom) {
         this.classroom = classroom;
+        classroom_ = new Classroom(classroom);
     }
 
     /**

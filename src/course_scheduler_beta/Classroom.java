@@ -13,7 +13,8 @@ public class Classroom {
     private String roomNum;
     private int mEnroll;
     private String buildingName;
-    public boolean[] timeSlot;
+    private String[] timeSlots;
+    private boolean[] emptySlots;
     public String name;
     public int numberOfSeats;
     
@@ -31,7 +32,41 @@ public class Classroom {
     public String toString () {
         return "Room = " + roomNum + "; Max Enrollment = " + mEnroll + "; Building = " + buildingName;
     }
-
+    
+    public boolean isSlotEmpty(String slot){
+        for(int i = 0; i < timeSlots.length; i++){
+            if(slot.equalsIgnoreCase(timeSlots[i])){
+                //System.out.println("empty slot " + slot);
+                //System.out.println(emptySlots[i]);
+                return emptySlots[i];
+            }
+        }
+        //System.out.println("nop");
+        return false;
+    }
+    
+    public void useSlot(String slot){
+        for(int i=0;i<timeSlots.length; i++){
+            if(timeSlots[i].equalsIgnoreCase(slot))
+                emptySlots[i] = false;
+        }
+        
+    }
+    
+    public void setTimeSlots(String[] timeSlots) {
+        this.timeSlots = timeSlots;
+        emptySlots = new boolean[timeSlots.length];
+        for(int i = 0; i<timeSlots.length; i++){
+            emptySlots[i] = true;
+            //System.out.println(b);
+        }
+        //System.out.println(emptySlots[1]);
+    }  
+    
+    public boolean[] getEmptySlots(){
+        return emptySlots;
+    }
+    
     /**
      * @return the roomNum
      */
