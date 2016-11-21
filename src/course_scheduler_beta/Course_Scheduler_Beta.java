@@ -908,7 +908,8 @@ public class Course_Scheduler_Beta extends Application {
         //aj edit - sets the table to larger width
         table.setMinWidth(1200);
         
-        //ObservableList<Course> data = FXCollections.observableArrayList(db.getCourses(null, null));
+        updateTable();
+        
         TableColumn semesterCol = new TableColumn("Semester");
         TableColumn crnCol =      new TableColumn("CRN");
         TableColumn depCol =      new TableColumn("Department");

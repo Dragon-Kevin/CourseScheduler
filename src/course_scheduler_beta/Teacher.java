@@ -28,7 +28,21 @@ public class Teacher {
         this.teachableCourses[0] = course1;
         this.teachableCourses[1] = course2;
         this.teachableCourses[2] = course3;
-        this.timePreference = timePreference.split(": ")[1];
+        setTimePreference(timePreference.split(": ")[1]);
+        shortenTimePref();
+    }
+    
+    public void shortenTimePref(){
+        if(timePreference.equalsIgnoreCase("Morning classes only"))
+                this.timePreference = "Morning";
+            else if(timePreference.equalsIgnoreCase("Evening classes only"))
+                this.timePreference = "Evening";
+            else if(timePreference.equalsIgnoreCase("Afternoon classes only"))
+                this.timePreference = "Afternoon";
+            else if(timePreference.equalsIgnoreCase("All Mon-Wed classes"))
+                this.timePreference = "MW";
+            else if(timePreference.equalsIgnoreCase("All Tue-Thu classes"))
+                this.timePreference = "TR";
     }
     
     public void test() {

@@ -184,6 +184,7 @@ public class Parser {
     
     private void storeData(){
         teachers.stream().forEach((t) -> {
+            System.out.println(t);
             db.addNewProfessor(t);
         });
         courses.stream().forEach((c) -> {

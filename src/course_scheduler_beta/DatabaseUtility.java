@@ -145,6 +145,7 @@ public class DatabaseUtility {
                 prof.setAnum          (rs.getString("PROF_ID"));
                 prof.setName          (rs.getString("PROF_NAME"));
                 prof.setTimePreference(rs.getString("TIME_PREF"));
+                System.out.println(prof.getTimePreference());
                 //soft max 8 courses so far
                 for(int i = 1; i < 9; i++){
                     prof.addCourse(getSingleCourse(rs.getInt("COURSE_"+Integer.toString(i))));
