@@ -10,7 +10,7 @@ import java.util.*;
  * @author Myk
  */
 public class Teacher {
-    String name;
+    private String name;
     private List<Course> courses = new ArrayList();
     String[] teachableCourses = new String[3];
     private String timePreference;
@@ -37,7 +37,7 @@ public class Teacher {
     
     @Override
     public String toString () {
-        return "Name = " + getName() + "; Course 1 = " + getTeachableCourses()[0] + "; Course 2 = " + getTeachableCourses()[1] + "; Course 3 = " + getTeachableCourses()[2] + "; Preferred Time = " + getTimePreference();
+        return "A# = " + Anum + "Name = " + getName() + "; Course 1 = " + getTeachableCourses()[0] + "; Course 2 = " + getTeachableCourses()[1] + "; Course 3 = " + getTeachableCourses()[2] + "; Preferred Time = " + getTimePreference();
     }
 
     /**

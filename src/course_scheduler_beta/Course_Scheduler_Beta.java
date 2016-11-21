@@ -41,12 +41,14 @@ import javafx.util.Duration;
  */
 public class Course_Scheduler_Beta extends Application {
     private static DatabaseUtility db = new DatabaseUtility();
+    
     ObservableList<Course> data = FXCollections.observableArrayList(db.getCourses(null, null));
     
     @Override
     public void start(Stage stage) {
         //set semseter to default
         db.setCurrentSemester("Fall 2016");
+        db.clearDatabase("Fall 2016"); // Since the database can't handle duplicate submissions yet, we need to clear every time we run
         
         stage.setResizable(false);
         FileChooser fileChooser = new FileChooser();
@@ -83,9 +85,6 @@ public class Course_Scheduler_Beta extends Application {
                 mainWindow(parser);
                 stage.close();
             }
-            //Parser parser = new Parser();
-            //mainWindow();
-            //stage.close();
         });
         
         Scene scene = new Scene(bPane, 300, 250);
@@ -98,7 +97,7 @@ public class Course_Scheduler_Beta extends Application {
         Stage stage = new Stage();
         //stage.setResizable(false);
         BorderPane border = new BorderPane();
-        border.setPadding(new Insets(20, 200, 100, 20));    // top, right, bottom, left
+        border.setPadding(new Insets(20, 20, 20, 20));    // top, right, bottom, left
         TableView table = new TableView();
         
         border.setLeft(configureButtons());
@@ -126,11 +125,11 @@ public class Course_Scheduler_Beta extends Application {
         tabPane.getTabs().addAll(courseTab, teacherTab, classroomTab);
         
         //set content in course tab
-        courseTab.setContent(addCoursePane());        
+        courseTab.setContent(addCoursePane(stage));        
         //set content in teacher tab
-        teacherTab.setContent(addTeacherPane());
+        teacherTab.setContent(addTeacherPane(stage));
         //set content in classroom tab
-        classroomTab.setContent(addClassroomPane());
+        classroomTab.setContent(addClassroomPane(stage));
         
         Scene scene = new Scene(tabPane, 600, 450);
         stage.setTitle("Add");
@@ -139,7 +138,7 @@ public class Course_Scheduler_Beta extends Application {
     }
     
     //used by  Add Window
-    private BorderPane addCoursePane()
+    private BorderPane addCoursePane(Stage stage)
     {//CREATE COURSE PANE CONTENT
         BorderPane bPane = new BorderPane();
         bPane.setPadding(new Insets(10));
@@ -255,6 +254,9 @@ public class Course_Scheduler_Beta extends Application {
                 SequentialTransition fade = new SequentialTransition(success,fader);
                 gPane3.add(success,1,0);
                 fade.play();
+                // edit by myk
+                updateTable();
+                stage.close();
             }
             else{
                 Label success = new Label("Unable to add Course");
@@ -270,7 +272,7 @@ public class Course_Scheduler_Beta extends Application {
     }
 
     //used by Add Window
-    private BorderPane addTeacherPane()
+    private BorderPane addTeacherPane(Stage stage)
     {
         BorderPane bPane = new BorderPane();
         bPane.setPadding(new Insets(10));
@@ -298,22 +300,12 @@ public class Course_Scheduler_Beta extends Application {
         gPane.add(name_tField, 1,    1);
         
         //radio buttons
-        final ToggleGroup timePref = new ToggleGroup();
-        
-        RadioButton none_rb = new RadioButton("None");
-        none_rb.setToggleGroup(timePref);
-        none_rb.setSelected(true);
-        RadioButton morning_rb = new RadioButton("Morning");
-        morning_rb.setToggleGroup(timePref);
-        RadioButton afternoon_rb = new RadioButton("Afternoon");
-        afternoon_rb.setToggleGroup(timePref);
-        
         Label timePrefLabel = new Label("Time Preference:");
         gPane.add(timePrefLabel, 0,3);
-        
-        gPane.add(none_rb, 0,4);
-        gPane.add(morning_rb, 0,5);
-        gPane.add(afternoon_rb, 0,6);
+
+        ObservableList<String> options = FXCollections.observableArrayList("None", "Morning", "Afternoon", "Evening", "MW", "TR");
+        ComboBox comboBox = new ComboBox(options);        
+        gPane.add(comboBox, 1, 3);
 
         bPane.setLeft(gPane);
         
@@ -360,7 +352,6 @@ public class Course_Scheduler_Beta extends Application {
         
         removeBtn.setOnAction((ActionEvent event) -> {
             String removed = list.getSelectionModel().getSelectedItem();
-            System.out.println(removed);
             if((!removed.equals(null) && !removed.isEmpty())){
                 coursesToTeach.remove(removed);
                 coursesAvail.add(removed);
@@ -375,7 +366,6 @@ public class Course_Scheduler_Beta extends Application {
         
         addCourseBtn.setOnAction((ActionEvent event) -> {
             String removed = list2.getSelectionModel().getSelectedItem();
-            System.out.println(removed);
             if((!removed.equals(null) && !removed.isEmpty())){
                 coursesAvail.remove(removed);
                 coursesToTeach.add(removed);
@@ -404,15 +394,7 @@ public class Course_Scheduler_Beta extends Application {
                 t.setName(name_tField.getText());
             
             //retrieve data from radio buttons
-            if(none_rb.isSelected()){
-                t.setTimePreference("None");
-            }
-            else if(morning_rb.isSelected()){
-                t.setTimePreference("Morning");
-            }
-            else{
-                t.setTimePreference("Afternoon");
-            }
+            t.setTimePreference(comboBox.getSelectionModel().getSelectedItem().toString());
             
             //retrieve course objs
             for(String ele: coursesToTeach){
@@ -429,6 +411,9 @@ public class Course_Scheduler_Beta extends Application {
                 SequentialTransition fade = new SequentialTransition(success,fader);
                 gPane3.add(success,1,0);
                 fade.play();
+                
+                updateTable();
+                stage.close();
             }
             else{
                 Label success = new Label("Unable to add Teacher");
@@ -445,7 +430,7 @@ public class Course_Scheduler_Beta extends Application {
     }
     
     //used by Add Window
-    private BorderPane addClassroomPane()
+    private BorderPane addClassroomPane(Stage stage)
     {
         BorderPane bPane = new BorderPane();
         bPane.setPadding(new Insets(10));
@@ -507,6 +492,9 @@ public class Course_Scheduler_Beta extends Application {
                 SequentialTransition fade = new SequentialTransition(success,fader);
                 gPane3.add(success,1,0);
                 fade.play();
+                
+                updateTable();
+                stage.close();
             }
             else{
                 Label success = new Label("Unable to add Classroom");
@@ -533,6 +521,7 @@ public class Course_Scheduler_Beta extends Application {
     }
     
     public void editWindow(){
+        
         Stage stage = new Stage();
         stage.setResizable(false);
       
@@ -548,11 +537,11 @@ public class Course_Scheduler_Beta extends Application {
         tabPane.getTabs().addAll(courseTab, teacherTab, classroomTab);
         
         //set content in course tab
-        courseTab.setContent(editCoursePane());        
+        courseTab.setContent(editCoursePane(stage));        
         //set content in teacher tab
-        teacherTab.setContent(editTeacherPane());
+        teacherTab.setContent(editTeacherPane(stage));
         //set content in classroom tab
-        classroomTab.setContent(editClassroomPane());
+        classroomTab.setContent(editClassroomPane(stage));
         
         Scene scene = new Scene(tabPane, 600, 450);
         stage.setTitle("Edit");
@@ -560,7 +549,7 @@ public class Course_Scheduler_Beta extends Application {
         stage.show();
     }
     
-    private BorderPane editCoursePane()
+    private BorderPane editCoursePane(Stage stage)
     {
         BorderPane bPane = new BorderPane();
         bPane.setPadding(new Insets(10));
@@ -580,35 +569,35 @@ public class Course_Scheduler_Beta extends Application {
         gPane.add(crnLabel, 0,  0);
         Label depLabel = new Label("Department");
         gPane.add(depLabel, 0,  1);
-        Label numLabel = new Label("Course Number");
-        gPane.add(numLabel, 0,  2);
+//        Label numLabel = new Label("Course Number");
+//        gPane.add(numLabel, 0,  2);
         Label nameLabel = new Label("Course Name");
-        gPane.add(nameLabel, 0, 3);
-        Label m_eLabel = new Label("Max Enrollment");
-        gPane.add(m_eLabel, 0,  4);
-        Label eLabel = new Label("Enrollment");
-        gPane.add(eLabel, 0,    5);
-        Label aLabel = new Label("Available");
-        gPane.add(aLabel, 0,    6);
-        Label w_lLabel = new Label("Wait List");
-        gPane.add(w_lLabel, 0,  7);
+        gPane.add(nameLabel, 0, 2);
+//        Label m_eLabel = new Label("Max Enrollment");
+//        gPane.add(m_eLabel, 0,  4);
+//        Label eLabel = new Label("Enrollment");
+//        gPane.add(eLabel, 0,    5);
+//        Label aLabel = new Label("Available");
+//        gPane.add(aLabel, 0,    6);
+//        Label w_lLabel = new Label("Wait List");
+//        gPane.add(w_lLabel, 0,  7);
 
         TextField crn_tField = new TextField("sample");
         gPane.add(crn_tField, 1,    0);
         TextField dep_tField = new TextField("sample");
         gPane.add(dep_tField, 1,    1);
-        TextField num_tField = new TextField("sample");
-        gPane.add(num_tField, 1,    2);
+//        TextField num_tField = new TextField("sample");
+//        gPane.add(num_tField, 1,    2);
         TextField name_tField = new TextField("sample");
-        gPane.add(name_tField, 1,   3);
-        TextField me_tField = new TextField("sample");
-        gPane.add(me_tField, 1,     4);
-        TextField e_tField = new TextField("sample");
-        gPane.add(e_tField, 1,      5);
-        TextField a_tField = new TextField("sample");
-        gPane.add(a_tField, 1,      6);
-        TextField wl_tField = new TextField("sample");
-        gPane.add(wl_tField, 1,     7);
+        gPane.add(name_tField, 1,   2);
+//        TextField me_tField = new TextField("sample");
+//        gPane.add(me_tField, 1,     4);
+//        TextField e_tField = new TextField("sample");
+//        gPane.add(e_tField, 1,      5);
+//        TextField a_tField = new TextField("sample");
+//        gPane.add(a_tField, 1,      6);
+//        TextField wl_tField = new TextField("sample");
+//        gPane.add(wl_tField, 1,     7);
         
         //frop drown lost
         Label teach_CBox = new Label("Teacher");
@@ -622,8 +611,7 @@ public class Course_Scheduler_Beta extends Application {
         //LEFT
         ListView<String> list = new ListView<String>();
         List<Course> c = db.getCourses(null, null);
-        List<String> courseNames = getList("course");
-        ObservableList<String> courses = FXCollections.observableArrayList(courseNames);
+        ObservableList<String> courses = FXCollections.observableArrayList(getList("course"));
         list.setItems(courses);
         
         list.getSelectionModel().selectedItemProperty().addListener((observable) -> {
@@ -636,12 +624,12 @@ public class Course_Scheduler_Beta extends Application {
             
             crn_tField.setText(Integer.toString(update.getCrn()));
             dep_tField.setText(update.getDepartment());
-            num_tField.setText(update.getCourseNum());
+//            num_tField.setText(update.getCourseNum());
             name_tField.setText(update.getName());
-            me_tField.setText(Integer.toString(update.getM_enroll()));
-            e_tField.setText(Integer.toString(update.getEnroll()));
-            a_tField.setText(Integer.toString(update.getAvail()));
-            wl_tField.setText(Integer.toString(update.getWaitList()));
+//            me_tField.setText(Integer.toString(update.getM_enroll()));
+//            e_tField.setText(Integer.toString(update.getEnroll()));
+//            a_tField.setText(Integer.toString(update.getAvail()));
+//            wl_tField.setText(Integer.toString(update.getWaitList()));
             
             comboBox.setValue(update.getProf());
         });
@@ -659,32 +647,40 @@ public class Course_Scheduler_Beta extends Application {
         
         updateBtn.setOnAction((ActionEvent event) -> {
             
+            //course obj alter copies the course we are editing
+            //then holds all changes
             Course alter = new Course();
-            alter.setCrn(Integer.parseInt(crn_tField.getText()));
-            alter.setDepartment(crn_tField.getText());
-            alter.setCourseNum(crn_tField.getText());
-            alter.setName(crn_tField.getText());
-            alter.setM_enroll(Integer.parseInt(crn_tField.getText()));
-            alter.setEnroll(Integer.parseInt(crn_tField.getText()));
-            alter.setAvail(Integer.parseInt(crn_tField.getText()));
-            alter.setWaitList(Integer.parseInt(crn_tField.getText()));
+            for(Course ele: c){
+                if(ele.getName().equals(list.getSelectionModel().getSelectedItem())){
+                    alter = ele;    
+                }
+            }
             
-            Teacher t = new Teacher();
-            //remove all instances of course from all entries in teacher table
-            //add reference 
-            //db.alterProfessor(t);
+            alter.setCrn            (Integer.parseInt(crn_tField.getText()));
+            alter.setDepartment     (dep_tField.getText());
+//            alter.setCourseNum      (num_tField.getText());
+            alter.setName           (name_tField.getText());
+//            alter.setM_enroll       (Integer.parseInt(me_tField.getText()));
+//            alter.setEnroll         (Integer.parseInt(e_tField.getText()));
+//            alter.setAvail          (Integer.parseInt(a_tField.getText()));
+//            alter.setWaitList       (Integer.parseInt(wl_tField.getText()));
+            alter.setProf(comboBox.getSelectionModel().getSelectedItem().toString());
+
             
             //shove in database
-            if(alter.getCrn() == 0){    
+            if(!(alter.getCrn() == 0)){    
                 db.alterCourse(alter);
-                Label success = new Label("Classroom Added"); 
+                Label success = new Label("Course Updated"); 
                 FadeTransition fader = createFader(success);
                 SequentialTransition fade = new SequentialTransition(success,fader);
                 gPane3.add(success,1,0);
                 fade.play();
+                
+                updateTable();
+                stage.close();
             }
             else{
-                Label success = new Label("Unable to add Classroom");
+                Label success = new Label("Unable to Update Course");
                 FadeTransition fader = createFader(success);
                 SequentialTransition fade = new SequentialTransition(success,fader);
                 gPane3.add(success,1,0);
@@ -697,38 +693,150 @@ public class Course_Scheduler_Beta extends Application {
         return bPane;
     }
     
-    private BorderPane editTeacherPane()
+    private BorderPane editTeacherPane(Stage stage)
     {
         BorderPane bPane = new BorderPane();
         bPane.setPadding(new Insets(10));
         
+        //TOP
         Label header = new Label("Select a Teacher to Edit");
         header.setFont(Font.font("Arial", FontWeight.BOLD, 20));
         bPane.setTop(header);
         
+        //RIGHT
+        GridPane gPane = new GridPane();
+        gPane.setHgap(10);
+        gPane.setVgap(10);
+        gPane.setPadding(new Insets(10));
+        
+        Label name_Label = new Label("Name");
+        gPane.add(name_Label, 0,  0);
+
+        TextField name_tField = new TextField();
+        gPane.add(name_tField, 1,    0);
+        
+        Label timePrefLabel = new Label("Time Preference:");
+        gPane.add(timePrefLabel, 0,1);
+
+        ObservableList<String> options = FXCollections.observableArrayList("None", "Morning", "Afternoon", "Evening", "MW", "TR");
+        ComboBox comboBox = new ComboBox(options);        
+        gPane.add(comboBox, 1, 1);
+
+        bPane.setRight(gPane);
+        
+        //LEFT
         ListView<String> list = new ListView<String>();
+        List<Teacher> t = db.getProfessors(null, null);
         List<String> teacherNames = getList("teacher");
         ObservableList<String> teachers = FXCollections.observableArrayList(teacherNames);
         list.setItems(teachers);
+        bPane.setLeft(list);    
         
-        bPane.setLeft(list);       
+        list.getSelectionModel().selectedItemProperty().addListener((observable) -> {
         
+            Teacher update = new Teacher();
+            for(Teacher ele: t){
+                if(ele.getName().equals(list.getSelectionModel().getSelectedItem()))
+                update = ele;    
+            }
+            
+            name_tField.setText(update.getName());
+            
+            comboBox.setValue(update.getTimePreference());
+        });
+        
+        //BOTTOM
+        GridPane gPane3 = new GridPane();
+        gPane3.setHgap(10);
+        gPane3.setVgap(10);
+        gPane3.setPadding(new Insets(10));
+        
+        Button updateBtn = new Button("Update"); 
+        gPane3.add(updateBtn, 0, 0);
+        
+        updateBtn.setOnAction((ActionEvent event) -> {
+            
+            Teacher alter = new Teacher();
+            for(Teacher ele: t){
+                if(ele.getName().equals(list.getSelectionModel().getSelectedItem()))
+                alter = ele;    
+            }
+            
+            String oldName = alter.getName();
+            alter.setName           (name_tField.getText());
+            alter.setTimePreference (comboBox.getSelectionModel().getSelectedItem().toString());
+
+            
+            //shove in database
+            if(!(alter.getAnum().isEmpty())){    
+                db.alterProfessor(alter, oldName);
+                Label success = new Label("Teacher Updated"); 
+                FadeTransition fader = createFader(success);
+                SequentialTransition fade = new SequentialTransition(success,fader);
+                gPane3.add(success,1,0);
+                fade.play();
+                
+                updateTable();
+                teachers.clear();
+                teachers.setAll(getList("teacher"));
+                list.setItems(teachers);
+                stage.close();
+            }
+            else{
+                Label success = new Label("Unable to Update Teacher");
+                FadeTransition fader = createFader(success);
+                SequentialTransition fade = new SequentialTransition(success,fader);
+                gPane3.add(success,1,0);
+                fade.play(); 
+            }
+        });
+        
+        bPane.setBottom(gPane3);           
         return bPane;
     }
         
-    private BorderPane editClassroomPane()
+    private BorderPane editClassroomPane(Stage stage)
     {
         BorderPane bPane = new BorderPane();
         bPane.setPadding(new Insets(10));
         
+        //RIGHT
+        GridPane gPane = new GridPane();
+        gPane.setHgap(10);
+        gPane.setVgap(10);
+        gPane.setPadding(new Insets(10));
+        
+        Label build_Label = new Label("Building");
+        gPane.add(build_Label, 0,  0);
+        Label me_Label = new Label("Max Enrollment");
+        gPane.add(me_Label, 0,  1);
+
+        TextField build_tField = new TextField();
+        gPane.add(build_tField, 1,    0);
+        TextField me_tField = new TextField();
+        gPane.add(me_tField, 1,    1);
+        
+        //LEFT
         Label header = new Label("Select a Classroom to Edit");
         header.setFont(Font.font("Arial", FontWeight.BOLD, 20));
         bPane.setTop(header);
         
         ListView<String> list = new ListView<String>();
-        List<String> roomNums = getList("classroom");
-        ObservableList<String> rooms = FXCollections.observableArrayList(roomNums);
+        List<Classroom> cl = db.getClassrooms(null, null);
+        ObservableList<String> rooms = FXCollections.observableArrayList(getList("classroom"));
         list.setItems(rooms);
+        
+        list.getSelectionModel().selectedItemProperty().addListener((observable) -> {
+        
+            Classroom update = new Classroom();
+            for(Classroom ele: cl){
+                if(ele.getRoomNum().equals(list.getSelectionModel().getSelectedItem()))
+                update = ele;    
+            }
+            
+            build_tField.setText(update.getBuildingName());
+            me_tField.setText(Integer.toString(update.getmEnroll()));
+        });
         
         bPane.setLeft(list);       
         
@@ -757,12 +865,18 @@ public class Course_Scheduler_Beta extends Application {
             case "course":
                 List<Course> c = db.getCourses(null, null);
                 for(Course ele: c){
-                    list.add(ele.getName());
+                    if(ele.getName().equals(null) || ele.getName().isEmpty())
+                        list.add("<Empty>");
+                    else
+                        list.add(ele.getName());
                 }   break;
             case "teacher":
                 List<Teacher> t = db.getProfessors(null, null);
-                for(Teacher ele: t){
-                    list.add(ele.getName());
+                for(Teacher ele: t){                    
+                    if(ele.getName().equals(null) || ele.getName().isEmpty())
+                        list.add("<Empty>");
+                    else
+                        list.add(ele.getName());
                 }   break;
             case "classroom":
                 List<Classroom> cl = db.getClassrooms(null, null);
@@ -775,24 +889,35 @@ public class Course_Scheduler_Beta extends Application {
     }   
 //AJ CODE///////////////////////////////////////////////
 
-    private void updateTable(TableView table) {
-        
+    private void updateTable() {
+        List<Course> tmp = db.getCourses(null, null);
+        data.clear();
+        data.addAll(db.getCourses(null, null));
+        /*for(Course x: data){
+            for(Course y: tmp){
+                if(x.getCrn() != y.getCrn()){}
+                    data.add(y);
+            }
+        }*/
+        //Parser.printList(data);
     }
     
     private VBox configureTable(TableView table, Parser parser) {
         Label label = new Label("Schedule");
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        //aj edit - sets the table to larger width
+        table.setMinWidth(1200);
         
         //ObservableList<Course> data = FXCollections.observableArrayList(db.getCourses(null, null));
         TableColumn semesterCol = new TableColumn("Semester");
         TableColumn crnCol =      new TableColumn("CRN");
         TableColumn depCol =      new TableColumn("Department");
         TableColumn numCol =      new TableColumn("#");
-        TableColumn nameCol =     new TableColumn("Name");
-        TableColumn m_EnrollCol = new TableColumn("Seats");
-        TableColumn enrollCol =   new TableColumn("Enrolled");
-        TableColumn availCol =    new TableColumn("Available");
-        TableColumn waitCol =     new TableColumn("Wait List");
+        //TableColumn nameCol =     new TableColumn("Name");
+        //TableColumn m_EnrollCol = new TableColumn("Seats");
+        //TableColumn enrollCol =   new TableColumn("Enrolled");
+        //TableColumn availCol =    new TableColumn("Available");
+        //TableColumn waitCol =     new TableColumn("Wait List");
         TableColumn daysCol =     new TableColumn("Days");
         TableColumn startCol =    new TableColumn("Start");
         TableColumn endCol =      new TableColumn("End");
@@ -803,12 +928,12 @@ public class Course_Scheduler_Beta extends Application {
         semesterCol.setCellValueFactory(new PropertyValueFactory<>("semester")); 
         crnCol.setCellValueFactory(     new PropertyValueFactory<>("crn"));
         depCol.setCellValueFactory(     new PropertyValueFactory<>("department"));
-        numCol.setCellValueFactory(     new PropertyValueFactory<>("courseNum"));
-        nameCol.setCellValueFactory(    new PropertyValueFactory<>("name"));
-        m_EnrollCol.setCellValueFactory(new PropertyValueFactory<>("m_enroll"));
-        enrollCol.setCellValueFactory(  new PropertyValueFactory<>("enroll"));
-        availCol.setCellValueFactory(   new PropertyValueFactory<>("avail"));
-        waitCol.setCellValueFactory(    new PropertyValueFactory<>("waitList"));
+        numCol.setCellValueFactory(     new PropertyValueFactory<>("name"));
+        //nameCol.setCellValueFactory(    new PropertyValueFactory<>("name"));
+        //m_EnrollCol.setCellValueFactory(new PropertyValueFactory<>("m_enroll"));
+        //enrollCol.setCellValueFactory(  new PropertyValueFactory<>("enroll"));
+        //availCol.setCellValueFactory(   new PropertyValueFactory<>("avail"));
+        //waitCol.setCellValueFactory(    new PropertyValueFactory<>("waitList"));
         daysCol.setCellValueFactory(    new PropertyValueFactory<>("days"));
         startCol.setCellValueFactory(   new PropertyValueFactory<>("sTime"));
         endCol.setCellValueFactory(     new PropertyValueFactory<>("eTime"));
@@ -819,8 +944,8 @@ public class Course_Scheduler_Beta extends Application {
         
         //teacherCol.widthProperty().set(125);
         table.getColumns().addAll(semesterCol, crnCol, depCol, 
-                numCol, nameCol, m_EnrollCol, enrollCol, waitCol, 
-                availCol, daysCol, startCol, endCol, buildingCol, 
+                numCol, /*nameCol, m_EnrollCol, enrollCol, waitCol, 
+                availCol,*/ daysCol, startCol, endCol, buildingCol, 
                 roomCol, teacherCol);
         
         System.out.println(table.getWidth());

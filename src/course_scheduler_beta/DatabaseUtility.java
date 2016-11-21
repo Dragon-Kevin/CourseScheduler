@@ -69,7 +69,7 @@ public class DatabaseUtility {
             con.close();
         }catch(SQLException err){
             System.out.println( "Error Storing Semester!");
-            err.printStackTrace();
+            //err.printStackTrace();
         }
     }
     
@@ -97,7 +97,7 @@ public class DatabaseUtility {
             con.close();
         }catch(SQLException err){
             System.out.println( "Error Getting Semesters!");
-            err.printStackTrace();
+            //err.printStackTrace();
         }
         return semesters;
     }
@@ -119,7 +119,7 @@ public class DatabaseUtility {
             ResultSet rs;
             
             if(value == null && constraint != null){
-                String sql = "Select * from PROFESSORS where SEMESTER = '"+ getCurrentSemester() +"' and "
+                String sql = "Select * from PROFESSORS where SEMESTER = '"+ currentSemester +"' and "
                         + constraint +" is null";
                 System.out.println(sql);
                 Statement st = con.createStatement();
@@ -127,14 +127,14 @@ public class DatabaseUtility {
             }
             else if(constraint != null){
                 //select professors based on current semester and constraint 
-                String sql = "Select * from PROFESSORS where SEMESTER = '"+ getCurrentSemester() +"' and "
+                String sql = "Select * from PROFESSORS where SEMESTER = '"+ currentSemester +"' and "
                         + constraint +" = '"+ value +"'";
                 Statement st = con.createStatement();
                 rs = st.executeQuery(sql);   
             }
             else{
                 //select professors based on current semester
-                String sql = "Select * from PROFESSORS where SEMESTER = '"+ getCurrentSemester() +"'";
+                String sql = "Select * from PROFESSORS where SEMESTER = '"+ currentSemester +"'";
                 Statement st = con.createStatement();
                 rs = st.executeQuery(sql);
             }
@@ -165,7 +165,7 @@ public class DatabaseUtility {
             con.close();
         }catch(SQLException err){
             System.out.println( "Error retrieving Professors!");
-            err.printStackTrace();
+            //err.printStackTrace();
         }
         return profs;
     }
@@ -226,7 +226,7 @@ public class DatabaseUtility {
         }
         catch(SQLException err){
             System.out.println( "Error inputing Professor! Professor may already exist!");
-            err.printStackTrace();
+            //err.printStackTrace();
         } 
     }
     
@@ -268,44 +268,31 @@ public class DatabaseUtility {
      * 
      * @param prof - the Teacher object, with new values, to overwrite old existing entry
      */
-    public void alterProfessor(Teacher prof)
+    public void alterProfessor(Teacher prof, String oldName)
     {
         //alter with update 
         try{
             Connection con = DriverManager.getConnection(host, username, password);
 
-            String sqlCheck = "select * from PROFESSORS where PROF_ID = '"+prof.getAnum()+"' and SEMESTER = '"+getCurrentSemester()+"'";
-            Statement st = con.createStatement();
-            ResultSet rs = st.executeQuery(sqlCheck);
-            
-            if(rs.next()){
-                
-            }
-            
             //alter PROFESSORS
-            String sql = "update PROFESSORS set values(?,?,?,?, ?,?,?,?, ?,?,?,?) "
+            String sql = "update PROFESSORS set "
+                    + "PROF_NAME = '"+prof.getName()+"',"
+                    + "TIME_PREF = '"+prof.getTimePreference()+"'"
                     + "where PROF_ID = '"+prof.getAnum()+"' and SEMESTER = '"+getCurrentSemester()+"'";      
             PreparedStatement ps = con.prepareStatement(sql);
-            List<Course> c = prof.getCourses();
-            ps.setString(1, getCurrentSemester());
-            ps.setString(2,  prof.getAnum());
-            ps.setString(3,  prof.getName());
-            ps.setString(4,  prof.getTimePreference());
-            ps.setInt   (5, c.get(0).getCrn());
-            ps.setInt   (6, c.get(1).getCrn());
-            ps.setInt   (7, c.get(2).getCrn());
-            ps.setInt   (8, c.get(3).getCrn());
-            ps.setInt   (9, c.get(4).getCrn());
-            ps.setInt   (10, c.get(5).getCrn());
-            ps.setInt   (11, c.get(6).getCrn());
-            ps.setInt   (12, c.get(7).getCrn());
             ps.executeUpdate();
             
+            List<Course> c = getCourses("PROFESSOR",oldName);
             
+            for(int i = 0; i < c.size(); i++){ 
+                String sql3 = "update COURSES set PROFESSOR = '"+ prof.getName() +"' where CRN = " + c.get(i).getCrn();
+                PreparedStatement ps3 = con.prepareStatement(sql3);
+                ps3.executeUpdate(); 
+            }    
             con.close();
         }catch(SQLException err){
             System.out.println( "Error altering Professor!");
-           //err.printStackTrace(); 
+           err.printStackTrace(); 
         }
                 
     }
@@ -389,7 +376,7 @@ public class DatabaseUtility {
             con.close();
         }catch(SQLException err){
             System.out.println( "Error retrieving Courses!");
-            err.printStackTrace();
+            //err.printStackTrace();
         }
 
         return courses;
@@ -427,7 +414,7 @@ public class DatabaseUtility {
             
         }catch(SQLException err){
             System.out.println( "Error");
-            err.printStackTrace();           
+            //err.printStackTrace();           
         }
         return course;
     }
@@ -476,7 +463,7 @@ public class DatabaseUtility {
         }
         catch(SQLException err){
             System.out.println( "Error inputing Course! Course may already exist!");
-            err.printStackTrace();           
+            //err.printStackTrace();           
         }
     }
     
@@ -508,7 +495,7 @@ public class DatabaseUtility {
         }
         catch(SQLException err){
             System.out.println( "Error removing Course!");
-            err.printStackTrace();           
+            //err.printStackTrace();           
         }
     }
     
@@ -524,26 +511,47 @@ public class DatabaseUtility {
         try{
             Connection con = DriverManager.getConnection(host, username, password);
             
-            String sql =  "update COURSES set values(?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?)"
-                        + "where CRN = " + course.getCrn() +" and SEMESTER = '"+getCurrentSemester()+"'";
-            PreparedStatement ps = con.prepareStatement(sql);
-            ps.setString(1, getCurrentSemester());
-            ps.setInt   (2, course.getCrn());
-            ps.setString(5, course.getDepartment());
-            ps.setString(3, course.getCourseNum());
-            ps.setString(4, course.getName());
-            ps.setInt   (6, course.getM_enroll());
-            ps.setInt   (7, course.getEnroll());
-            ps.setInt   (8, course.getAvail());
-            ps.setInt   (9, course.getWaitList());
-            ps.setString(10, course.getDays());
-            ps.setString(11, course.getSTime());
-            ps.setString(12, course.getETime());
-            ps.setString(13, course.getBuilding());
-            ps.setString(14, course.getClassroom());
-            ps.setString(15, course.getProf());
-            ps.executeUpdate();
+            Course c = getSingleCourse(course.getCrn());
+            String t = c.getProf();//old teacher for course
+            
+            //remove course from professor teaching it
+            for(int i = 1; i < 9; i++){
+                String sql2 = "update PROFESSORS set COURSE_"+ Integer.toString(i) +" = 0 "
+                        + "where COURSE_"+ Integer.toString(i) +" = "+ course.getCrn()
+                        + "and  SEMESTER = '"+ getCurrentSemester() +"'";
+                PreparedStatement ps = con.prepareStatement(sql2);
+                ps.executeUpdate();
+            }
+            
+            //add
+            for(int i = 1; i < 9; i++){
+                String sql2 = "update PROFESSORS set COURSE_"+ Integer.toString(i) +" = "+course.getCrn()+" "
+                        + "where COURSE_"+ i +" = 0 "
+                        + "and PROF_NAME = '"+ t +"'"
+                        + "and  SEMESTER = '"+getCurrentSemester()+"'";
+                PreparedStatement ps2 = con.prepareStatement(sql2);
+                ps2.executeUpdate();
+            }
+            
+            String sql =  "update COURSES set "
+                    + "DEPARTMENT= '"   +course.getDepartment() +"',"
+                    + "COURSE_NUM = '"   +course.getCourseNum()  +"',"
+                    + "COURSE_NAME = '" +course.getName()       +"',"
+                    + "M_ENROLL = "     +course.getM_enroll()   +","
+                    + "ENROLL = "       +course.getEnroll()     +","
+                    + "AVAIL = "        +course.getAvail()      +","
+                    + "WAIT_LIST = "    +course.getWaitList()   +","
+                    + "DAYS = '"        +course.getDays()       +"',"
+                    + "START_TIME = '"  +course.getSTime()      +"',"
+                    + "END_TIME = '"    +course.getETime()      +"',"
+                    + "BUILDING = '"    +course.getBuilding()   +"',"
+                    + "CLASSROOM = '"   +course.getClassroom()  +"',"
+                    + "PROFESSOR = '"   +course.getProf()       +"'"
+                    + "where CRN = " + course.getCrn() + " and SEMESTER = '"+getCurrentSemester()+"'";
+            PreparedStatement ps3 = con.prepareStatement(sql);
+            ps3.executeUpdate();
  
+            
             con.close(); 
         }
         catch(SQLException err){
@@ -600,7 +608,7 @@ public class DatabaseUtility {
             con.close();           
         }catch(SQLException err){
             System.out.println( "Error retrieving Classrooms!");
-            err.printStackTrace();           
+            //err.printStackTrace();           
         }
         return classrooms;
     }
@@ -638,7 +646,7 @@ public class DatabaseUtility {
             con.close();
         }catch(SQLException err){
             System.out.println( "Error inputing Classroom! Classroom may already exist!");
-            err.printStackTrace();           
+            //err.printStackTrace();           
         }
     }
     
@@ -667,7 +675,7 @@ public class DatabaseUtility {
             con.close();
         }catch(SQLException err){
             System.out.println( "Error deleting Classroom!");
-            err.printStackTrace();           
+            //err.printStackTrace();           
         }    
     }
     
@@ -696,7 +704,7 @@ public class DatabaseUtility {
 
             }catch(SQLException err){
                 System.out.println( "Error altering Classroom!");
-                err.printStackTrace();           
+                //err.printStackTrace();           
         }          
     }
     
@@ -751,7 +759,7 @@ public class DatabaseUtility {
             con.close();
         }catch(SQLException err){
             System.out.println("Error clearing Database");
-            err.printStackTrace();              
+            //err.printStackTrace();              
         }
     }
 }
