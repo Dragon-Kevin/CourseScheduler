@@ -27,7 +27,7 @@ public class DatabaseUtility {
     private String username;        //access un
     private String password;        //access pw
     private String currentSemester; //current semester is the current schedule being worked on
-    private int[] duration;         //added so that our program has access to durations from main
+    private int[] duration = new int[2];         //added so that our program has access to durations from main
     
     /**Constructor. Sets the private members to the the correct login info.
      * 
@@ -47,7 +47,9 @@ public class DatabaseUtility {
     public String getCurrentSemester() {
         return currentSemester;
     }
-
+    
+    
+    
     /**Changes the currently selected semester to a new one.
      * @param currentSemester the currentSemester to set
      */
@@ -58,15 +60,16 @@ public class DatabaseUtility {
     /** Adds a new semester name to semester table
      * @param newSemester - the new semester to set as currently selected
      */
-    public void addSemester(String newSemester, int classLength)
+    public void addSemester(String newSemester, int classLength, int gap)
     {
         try{
             Connection con = DriverManager.getConnection(host, username, password);
             
-            String sql = "insert into USER_SCHEDULES values(?,?)";
+            String sql = "insert into USER_SCHEDULES values(?,?,?)";
             PreparedStatement ps = con.prepareStatement(sql); 
             ps.setString(1, newSemester);
             ps.setInt   (2, classLength);
+            ps.setInt   (3, gap);
             ps.executeUpdate();
             
             con.close();
@@ -125,6 +128,28 @@ public class DatabaseUtility {
             //err.printStackTrace();
         }      
         return classLen;
+    }
+    
+    //gets gap based on current semester
+    public int getGap(){
+        int gap = -1;//-1 on return for bad retrun test
+        try{
+            Connection con = DriverManager.getConnection(host, username, password);
+            
+            String sql = "select * from USER_SCHEDULES where NAME = '"+ currentSemester +"'";
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+            
+            while(rs.next()){
+                gap = rs.getInt("GAP");
+            }
+            
+            con.close();
+        }catch(SQLException err){
+            System.out.println( "Error Getting Semesters!");
+            //err.printStackTrace();
+        }      
+        return gap;
     }
     
     /**Returns a list of Teacher objects constructed from the Database.
@@ -737,7 +762,11 @@ public class DatabaseUtility {
     /**
      * @param duration the duration to set
      */
-    public void setDuration(int[] duration) {
-        this.duration = duration;
+    public void setDuration() {
+        this.duration[0] = getClassLength();
+        this.duration[1] = getGap();
+    }
+    public void setDuration(int[] dur) {
+        this.duration = dur;
     }
 }

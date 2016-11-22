@@ -95,7 +95,7 @@ public class Course_Scheduler_Beta extends Application {
             if(file != null){
                 parser = new Parser(db, file);               //the user checks new if they want a new Schedule, so they want to load a new data file, with a new semester entry
                 System.out.println(db.getDuration()[1]);
-                db.addSemester(parser.getSemester());           //take the new semester entry and add it to the database
+                db.addSemester(parser.getSemester(), parser.getClassDuration()[0], parser.getClassDuration()[1]);           //take the new semester entry and add it to the database
                 db.setCurrentSemester(parser.getSemester());    //set it as the current semester 
                 scheduler = new CourseScheduler(db);        
                 mainWindow();
@@ -107,6 +107,8 @@ public class Course_Scheduler_Beta extends Application {
                 //String theSemester = semesterList.getSelectionModel().getSelectedItem().toString();     //setting for code simplicity
                 if(semesterList.getSelectionModel().getSelectedItem() != null && !semesterList.getSelectionModel().getSelectedItem().toString().isEmpty()){                                      //if the user acutally selected something
                     db.setCurrentSemester(semesterList.getSelectionModel().getSelectedItem().toString());                                                 //set the semester from user choice
+                    db.setDuration();
+                    scheduler = new CourseScheduler(db);
                     mainWindow();                                                                       //start the stuff
                     stage.close();
                 }//else do nothing, probably need a label to appear to tell user they messed up
