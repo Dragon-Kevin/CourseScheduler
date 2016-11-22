@@ -186,7 +186,7 @@ public class Parser {
     }
     
     private void storeData(){
-        db.clearDatabase(semester);
+        //db.clearDatabase(semester);
         db.setDuration(classDuration);
         //System.out.println(db.getDuration()[0]);
         teachers.stream().forEach((t) -> {
