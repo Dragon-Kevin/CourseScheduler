@@ -23,157 +23,140 @@ public class CourseScheduler {
     List<String> timeSlots = new ArrayList();
     String[] courseMeetingTimes;
     int duration, gap;
-
+    DatabaseUtility db = new DatabaseUtility();
     
-    public CourseScheduler(int dur, int gap){
-        this.duration = dur;
-        this.gap = gap;
+    public CourseScheduler(DatabaseUtility db){
+        this.duration = db.getDuration()[0];
+        this.gap = db.getDuration()[1];
+        this.db = db;
+        //System.out.println(db.getCurrentSemester().equalsIgnoreCase("Fall 2016"));
+        scheduleCourses();
     }
     
     public CourseScheduler(){
         this.duration = 60;
         this.gap = 15;
+        db.setCurrentSemester("Fall 2016");
     }
     
-    public void scheduleCourses(){
-        
-//        Parser p = new Parser(new File(""));      
-//        List preferences = p.getPreferences();
-        
-        DatabaseUtility db = new DatabaseUtility();
-      
+    public void scheduleCourses(){  
         /* Get all courses, teachers and classrooms from database */
-        List<Course> courses = db.getCourses(null, null);
-        List<Teacher> teachers = db.getProfessors(null, null);
         List<Classroom> classrooms = db.getClassrooms(null, null);
         
         // Make the time slots for assigning classes
         makeTimeSlots(classrooms);
-        teacherPrefs(db, classrooms);
-        /* Handle the classroom preferences first */
-//        assignClassroomPreferences(courses, preferences, teachers, courseMeetingTimes, classrooms);
+        // Try to assign teachers with time preferences first
+        teacherPrefs(classrooms);
+        // Assign teachers without preferences next
+        nonPrefs(classrooms); 
+    }
+    
+    private void nonPrefs(List<Classroom> rooms) {
+        List<Teacher> teachers = new ArrayList();
+        teachers.addAll(db.getProfessors("TIME_PREF", "None"));
+        //System.out.println("Teachers");
+        //Parser.printList(teachers);
         
-        /* Handle faculty preferences second */
-        //assignFacultyPreferences();
-        
-        /* Handle remaining by course size / room size / course time */
-        for (Course iCourse : courses) {
-            
-            if (!iCourse.assigned){
-
-                /* Set the course professor */
-                /*
-                for (Teacher iTeacher : teachers){
-                    for (String teacherCourse : iTeacher.teachableCourses){
-                        if (iCourse.name.equalsIgnoreCase(teacherCourse)) {
-                            iCourse.setProf(iTeacher.name);
-                        }                
+        for(Teacher t: teachers){
+            List<Course> courses = db.getCourses("PROFESSOR", t.getName());
+            //Parser.printList(courses);
+            t.setTimeSlots(timeSlots.toArray(new String[0]));
+            for(int i=0;i<timeSlots.size();i++){
+                //System.out.println(t.getEmptySlots()[i]);
+            }
+            for(Course c: courses){
+                if(c.getClassroom() != null && !c.getClassroom().equalsIgnoreCase("null")){
+                    Classroom r = new Classroom();
+                    for(Classroom i: rooms){
+                        if(i.getRoomNum().equalsIgnoreCase(c.getClassroom())){
+                            r = i;
+                        }   
                     }
-                }*/
-
-                /* Set the building for the course */
-               // if (iCourse.department.equalsIgnoreCase("CS")){
-               //     iCourse.building = "Technology Hall";
-                //}
-
-                /* Set the room for the course */
-                /*for (Classroom iRoom : classrooms){
-                    if (iRoom.numberOfSeats >= iCourse.getEnroll()){
-                        for (int iTimeSlot=0; iTimeSlot<16; iTimeSlot++){                        
-                            if (!iCourse.assigned && iRoom.timeSlot[iTimeSlot]){
-                                iCourse.setClassroom(iRoom.name);
-                                iCourse.time = courseMeetingTimes[iTimeSlot];
-                                iRoom.timeSlot[iTimeSlot] = false;
-                                iCourse.assigned = true;
-                            }
+                    int done = 0;
+                    for(int i = 0; done == 0 && i < timeSlots.size(); i++){
+                        if(r.isSlotEmpty(timeSlots.get(i)) && t.isSlotEmpty(timeSlots.get(i))){
+                            done++;
+                            r.useSlot(timeSlots.get(i));
+                            t.useSlot(timeSlots.get(i));
+                            c.setTime(timeSlots.get(i));
                         }
                     }
-                }*/
+                    //System.out.println(c.getClassroom_());
+                }
+                else {
+                    int done = 0;
+                    for(int i = 0; done == 0 && i < rooms.size(); i++){
+                        for(int j = 0; done == 0 && j < timeSlots.size(); j++){
+                            //System.out.println("room " + i + "slot " + j);
+                            if(rooms.get(i).isSlotEmpty(timeSlots.get(j)) && t.isSlotEmpty(timeSlots.get(j))){
+                                done++;
+                                rooms.get(i).useSlot(timeSlots.get(j));
+                                t.useSlot(timeSlots.get(j));
+                                c.setClassroom(rooms.get(i).getRoomNum());
+                                c.setTime(timeSlots.get(j));
+                            }    
+                        }
+                    }
+                }
+                db.alterCourse(c);
             }
-        }
-        
-        
-        /* TEST:  Display the results of the assignments */
-        
-        
-        /* Write the assignments to a file */
-        String fileName = "CourseAssignments.csv";
-        BufferedWriter writer = null;
-        try {
-            writer = new BufferedWriter(new FileWriter(fileName));
-        } catch (IOException ex) {
-            Logger.getLogger(CourseScheduler.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        for (Course iCourse : courses) {
-            
-            /* Write to screen for viewing */
-            //System.out.println(iCourse.toString());
-            
-            try {
-                writer.write(iCourse.toString() + "\n");
-            }
-            catch (IOException e){
-                System.out.println(e);
-            }
-            
-        }
-        
-        try{
-           if (writer != null){
-               writer.close( );
-           }
-        }
-        catch ( IOException e){
-            System.out.println(e);
+            //System.out.println("Courses");
+            //Parser.printList(courses);
         }
     }
     
-    private void teacherPrefs(DatabaseUtility db, List<Classroom> rooms) {
-        List<Teacher> t = new ArrayList();
-        t.addAll(db.getProfessors("TIME_PREF","Evening"));
-        t.addAll(db.getProfessors("TIME_PREF","Morning"));
-        t.addAll(db.getProfessors("TIME_PREF","Afternoon"));
-        t.addAll(db.getProfessors("TIME_PREF","MW"));
-        t.addAll(db.getProfessors("TIME_PREF","TR"));
+    private void teacherPrefs(List<Classroom> rooms) {
+        List<Teacher> teachers = new ArrayList();
+        teachers.addAll(db.getProfessors("TIME_PREF","Evening"));
+        teachers.addAll(db.getProfessors("TIME_PREF","Morning"));
+        teachers.addAll(db.getProfessors("TIME_PREF","Afternoon"));
+        teachers.addAll(db.getProfessors("TIME_PREF","MW"));
+        teachers.addAll(db.getProfessors("TIME_PREF","TR"));
+        //System.out.println("Teachers");
+        //Parser.printList(teachers);
         
-        Parser.printList(t);
-        
-        for(Teacher i: t){
-            List<Course> c = db.getCourses("PROFESSOR", i.getName());
-            //if(checkTime(i.getTimePreference()))
-            List<String> possibleTimes = matchPref(i.getTimePreference());
-            Parser.printList(possibleTimes);
-            for(Course y:c){
-                //if(y.getClassroom().length() > 0){
-                    /*for(String p: possibleTimes){
-                        if(y.getClassroom_().isSlotEmpty(p)){
-                            System.out.println();
-                        }
-                    }*/
-                    
-                //}
-               // else {
+        for(Teacher t: teachers){
+            List<Course> courses = db.getCourses("PROFESSOR", t.getName());
+            List<String> possibleTimes = matchPref(t.getTimePreference());
+            t.setTimeSlots(possibleTimes.toArray(new String[0]));
+            //Parser.printList(possibleTimes);
+            for(Course c:courses){
+                if(c.getClassroom() != null && c.getClassroom().length() > 0){
+                    Classroom r = new Classroom();
+                    for(Classroom i: rooms){
+                        if(i.getRoomNum().equalsIgnoreCase(c.getClassroom())){
+                            r = i;
+                        }   
+                    }
                     int done = 0;
-                    //while(done == 0){
-                        for(int j = 0; done == 0 && j < rooms.size(); j++){
-                            //System.out.println(rooms.get(j));
-                            for(int jj = 0; done == 0 && jj < possibleTimes.size(); jj++){
-                                //System.out.println(possibleTimes.get(jj));
-                                if(rooms.get(j).isSlotEmpty(possibleTimes.get(jj))){
-                                   // System.out.println("got a match");
-                                    done++;
-                                    rooms.get(j).useSlot(possibleTimes.get(jj));
-                                    y.setClassroom(rooms.get(j).getRoomNum());
-                                    y.setTime(possibleTimes.get(jj));
-                                }    
-                            }
+                    for(int i = 0; done == 0 && i < possibleTimes.size(); i++){
+                        if(r.isSlotEmpty(possibleTimes.get(i)) && t.isSlotEmpty(possibleTimes.get(i))){
+                            done++;
+                            r.useSlot(possibleTimes.get(i));
+                            t.useSlot(possibleTimes.get(i));
+                            c.setTime(possibleTimes.get(i));
                         }
-                        //done++;
-                   // }
-               // }
+                    }
+                    
+                }
+                else {
+                    int done = 0;
+                    for(int i = 0; done == 0 && i < rooms.size(); i++){
+                        for(int j = 0; done == 0 && j < possibleTimes.size(); j++){
+                            if(rooms.get(i).isSlotEmpty(possibleTimes.get(j)) && t.isSlotEmpty(possibleTimes.get(j))){
+                                done++;
+                                rooms.get(i).useSlot(possibleTimes.get(j));
+                                t.useSlot(possibleTimes.get(j));
+                                c.setClassroom(rooms.get(i).getRoomNum());
+                                c.setTime(possibleTimes.get(j));
+                            }    
+                        }
+                    }
+                }
+                db.alterCourse(c);
             } 
-            Parser.printList(c);
+            //System.out.println("Courses");
+            //Parser.printList(courses);
         }
         
         //Parser.printList(t);
@@ -181,18 +164,17 @@ public class CourseScheduler {
     
     private List matchPref(String time){
         List<String> s = new ArrayList();
-        System.out.println(time);
+        //System.out.println("t = " + timeSlots[0]);
         for(String i:timeSlots){
             String[] tmp = i.split(":| ");
-            //for(String x:tmp)
-                //System.out.print(x + "; ");
-            if(tmp[6].equalsIgnoreCase("am") && time.equalsIgnoreCase("Morning")){
+            
+            if(tmp[6].equalsIgnoreCase("pm") && time.equalsIgnoreCase("Evening") && Integer.parseInt(tmp[4])>6){
                 s.add(i);
             }
             else if(tmp[6].equalsIgnoreCase("pm") && time.equalsIgnoreCase("Afternoon") && Integer.parseInt(tmp[4])<6){
                 s.add(i);
             }
-            else if(tmp[6].equalsIgnoreCase("pm") && time.equalsIgnoreCase("Evening") && Integer.parseInt(tmp[4])>6){
+            else if(tmp[6].equalsIgnoreCase("am") && time.equalsIgnoreCase("Morning") && Integer.parseInt(tmp[4])<12){
                 s.add(i);
             }
             else if(tmp[7].equalsIgnoreCase("MW") && time.equalsIgnoreCase("MW")){
@@ -200,6 +182,9 @@ public class CourseScheduler {
             }
             else if(tmp[7].equalsIgnoreCase("TR") && time.equalsIgnoreCase("TR")){
                 s.add(i);
+            }
+            else{
+                //System.out.println(tmp[4]);
             }
         }
         return s; 
@@ -212,20 +197,19 @@ public class CourseScheduler {
         int totalDayTime = 720; // Because there are MW and TR classes
         int numberOfTimeSlots = totalDayTime/totalClassTime;
         courseMeetingTimes = new String[2*numberOfTimeSlots];
-        
-        
+ 
         // Find time slots
         for(int i = 0; i < numberOfTimeSlots; i++){
             String amORpm1 = "am";
             String amORpm2 = "am";
             int slot1 = startOfDay + ((int)((totalClassTime * i)/60))*(100) + (totalClassTime * i)%60;;
             if(slot1%100 >= 60) slot1+=40;
-            if(slot1 >= 1200) { amORpm1 = "pm"; amORpm2 = "pm"; slot1-=1200;}
+            if(slot1 >= 1300) { amORpm1 = "pm"; amORpm2 = "pm"; slot1-=1200;}
             
             
-            int slot2 = slot1 + ((int)((totalClassTime)/60))*(100) + ((totalClassTime)%60);
+            int slot2 = slot1 + ((int)((duration)/60))*(100) + ((duration)%60);
             if(slot2%100 >= 60) slot2+=40;
-            if(slot2 >= 1200) {amORpm2 = " pm"; slot2-=1200; }
+            if(slot2 >= 1300) {amORpm2 = " pm"; slot2-=1200; }
             
             // the top one is for monday/wednesday classes, bottom is for tuesday/thursday classes.
             courseMeetingTimes[i] = String.format("%d:%02d %s - %d:%02d %s MW",(int)(slot1/100),slot1%100, amORpm1, (int)(slot2/100),slot2%100, amORpm2);
@@ -238,48 +222,8 @@ public class CourseScheduler {
             //System.out.println(ele);
         }
         for(Classroom c: rooms){
-            //System.out.println("*********************");
             c.setTimeSlots(courseMeetingTimes);
         }
-        System.out.println("Available Times");
-        Parser.printList(timeSlots);
-        //return rooms;
-    }
-    
-    /* Modified by Victoria Mitchell */
-    public static void assignClassroomPreferences(List<Course> courses, List<String> prefs, List<Teacher> teachers, String[] courseMeetingTimes, 
-            List<Classroom> classrooms) {
-        for(int i = 0; i < prefs.size(); i++) {
-            //System.out.println(prefs.get(i));
-            for(Course ele: courses) {
-                if (prefs.get(i).equals(ele.name)) {
-                    ele.setBuilding(prefs.get(++i));
-                    ele.setClassroom(prefs.get(++i));
-                    ele.assigned = true;
-                    
-                    /* Set the course professor */
-                    /*
-                    for (Teacher iTeacher : teachers){
-                        for (String teacherCourse : iTeacher.teachableCourses){
-                            if (ele.name.equalsIgnoreCase(teacherCourse)) {
-                                ele.setProf(iTeacher.name);
-                            }                
-                        }
-                    }*/
-                                        
-                    for (int iTimeSlot=0; iTimeSlot<courseMeetingTimes.length; iTimeSlot++){    
-                            ele.time = courseMeetingTimes[iTimeSlot];
-                            for (Classroom thisRoom : classrooms){
-                                if (thisRoom.name.equals(ele.getClassroom())){
-                                   // thisRoom.timeSlot[iTimeSlot] = false;
-                                }
-                            }                            
-                            ele.assigned = true;
-                        }
-                    
-                }
-            }
-        }       
     }
     
     // Using main as a unit test for the scheduler

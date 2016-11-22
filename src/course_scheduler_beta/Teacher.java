@@ -13,6 +13,8 @@ public class Teacher {
     private String name;
     private List<Course> courses = new ArrayList();
     String[] teachableCourses = new String[3];
+    private String[] timeSlots;
+    private boolean[] emptySlots;
     private String timePreference;
     private String Anum;
     
@@ -49,11 +51,45 @@ public class Teacher {
         System.out.println("test");
     }
     
+    public boolean isSlotEmpty(String slot){
+        for(int i = 0; i < timeSlots.length; i++){
+            if(slot.equalsIgnoreCase(timeSlots[i])){
+                //System.out.println("empty slot " + slot);
+                //System.out.println(emptySlots[i]);
+                return emptySlots[i];
+            }
+        }
+        //System.out.println("nop");
+        return false;
+    }
+    
+    public void useSlot(String slot){
+        for(int i=0;i<timeSlots.length; i++){
+            if(timeSlots[i].equalsIgnoreCase(slot))
+                emptySlots[i] = false;
+        }
+        
+    }
+    
+    public void setTimeSlots(String[] timeSlots) {
+        this.timeSlots = timeSlots;
+        emptySlots = new boolean[timeSlots.length];
+        for(int i = 0; i<timeSlots.length; i++){
+            emptySlots[i] = true;
+            //System.out.println(b);
+        }
+        //System.out.println(emptySlots[1]);
+    }  
+    
+    public boolean[] getEmptySlots(){
+        return emptySlots;
+    }
+    
     @Override
     public String toString () {
         return "A# = " + Anum + "Name = " + getName() + "; Course 1 = " + getTeachableCourses()[0] + "; Course 2 = " + getTeachableCourses()[1] + "; Course 3 = " + getTeachableCourses()[2] + "; Preferred Time = " + getTimePreference();
     }
-
+    
     /**
      * @return the name
      */

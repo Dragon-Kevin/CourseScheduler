@@ -41,6 +41,8 @@ import javafx.util.Duration;
  */
 public class Course_Scheduler_Beta extends Application {
     private static DatabaseUtility db = new DatabaseUtility();
+    private static Parser parser;
+    private static CourseScheduler scheduler;
     
     ObservableList<Course> data = FXCollections.observableArrayList(db.getCourses(null, null));
     
@@ -86,9 +88,11 @@ public class Course_Scheduler_Beta extends Application {
             File file = fileChooser.showOpenDialog(stage);
             
             if(file != null){
-                Parser parser = new Parser(file);               //the user checks new if they want a new Schedule, so they want to load a new data file, with a new semester entry
-                db.addSemester(parser.getSemester());           //take the new semester entry aand add it to the database
-                db.setCurrentSemester(parser.getSemester());    //set it as the current semester        
+                parser = new Parser(db, file);               //the user checks new if they want a new Schedule, so they want to load a new data file, with a new semester entry
+                System.out.println(db.getDuration()[1]);
+                db.addSemester(parser.getSemester());           //take the new semester entry and add it to the database
+                db.setCurrentSemester(parser.getSemester());    //set it as the current semester 
+                scheduler = new CourseScheduler(db);        
                 mainWindow();
                 stage.close();
             }
@@ -1058,6 +1062,7 @@ public class Course_Scheduler_Beta extends Application {
                 gPane3.add(success,1,0);
                 fade.play();
                 
+                scheduler.scheduleCourses();
                 updateTable();
                 teachers.clear();
                 teachers.setAll(getList("teacher"));
@@ -1071,9 +1076,10 @@ public class Course_Scheduler_Beta extends Application {
                 gPane3.add(success,1,0);
                 fade.play(); 
             }
+            
         });
         
-        bPane.setBottom(gPane3);           
+        bPane.setBottom(gPane3); 
         return bPane;
     }
         
@@ -1225,6 +1231,7 @@ public class Course_Scheduler_Beta extends Application {
 
     private void updateTable() {
         //List<Course> tmp = db.getCourses(null, null);
+        //System.out.println("************************************");
         data.clear();
         data.addAll(db.getCourses(null, null));
         /*for(Course x: data){

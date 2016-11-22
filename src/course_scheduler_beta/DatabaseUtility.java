@@ -27,6 +27,7 @@ public class DatabaseUtility {
     private String username;        //access un
     private String password;        //access pw
     private String currentSemester; //current semester is the current schedule being worked on
+    private int[] duration;         //added so that our program has access to durations from main
     
     /**Constructor. Sets the private members to the the correct login info.
      * 
@@ -122,22 +123,22 @@ public class DatabaseUtility {
             ResultSet rs;
             
             if(value == null && constraint != null){
-                String sql = "Select * from PROFESSORS where SEMESTER = '"+ currentSemester +"' and "
+                String sql = "Select * from PROFESSORS where SEMESTER = '"+ getCurrentSemester() +"' and "
                         + constraint +" is null";
-                System.out.println(sql);
+                //System.out.println(sql);
                 Statement st = con.createStatement();
                 rs = st.executeQuery(sql);                   
             }
             else if(constraint != null){
                 //select professors based on current semester and constraint 
-                String sql = "Select * from PROFESSORS where SEMESTER = '"+ currentSemester +"' and "
+                String sql = "Select * from PROFESSORS where SEMESTER = '"+ getCurrentSemester() +"' and "
                         + constraint +" = '"+ value +"'";
                 Statement st = con.createStatement();
                 rs = st.executeQuery(sql);   
             }
             else{
                 //select professors based on current semester
-                String sql = "Select * from PROFESSORS where SEMESTER = '"+ currentSemester +"'";
+                String sql = "Select * from PROFESSORS where SEMESTER = '"+ getCurrentSemester() +"'";
                 Statement st = con.createStatement();
                 rs = st.executeQuery(sql);
             }
@@ -285,7 +286,7 @@ public class DatabaseUtility {
     public List getCourses(String constraint, String value)
     {
         List<Course> courses = new ArrayList();
-        System.out.println(currentSemester);
+        //System.out.println(currentSemester);
         try{
             Connection con = DriverManager.getConnection(host, username, password);
             ResultSet rs;
@@ -337,7 +338,7 @@ public class DatabaseUtility {
                 course.setBuilding(rs.getString  ("BUILDING"));
                 course.setClassroom(rs.getString ("CLASSROOM"));
                 course.setProf(rs.getString      ("PROFESSOR"));
-                System.out.println(course);
+                //System.out.println(course);
                 courses.add(course);
             }
             
@@ -703,5 +704,19 @@ public class DatabaseUtility {
             System.out.println("Error clearing Database");
             //err.printStackTrace();              
         }
+    }
+
+    /**
+     * @return the duration
+     */
+    public int[] getDuration() {
+        return duration;
+    }
+
+    /**
+     * @param duration the duration to set
+     */
+    public void setDuration(int[] duration) {
+        this.duration = duration;
     }
 }

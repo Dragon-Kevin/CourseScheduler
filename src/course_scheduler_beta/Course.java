@@ -101,8 +101,9 @@ public class Course {
         //System.out.println("Set Time");
         //System.out.println(time);
         this.time = time;
-        sTime = time.split(" ")[0];
-        eTime = time.split(" ")[3];
+        sTime = time.split(" ")[0] + time.split(" ")[1];
+        eTime = time.split(" ")[3] + time.split(" ")[4];
+        days = time.split(" ")[5];
     }
 
     /**

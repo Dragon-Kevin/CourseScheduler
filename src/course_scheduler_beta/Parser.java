@@ -27,10 +27,11 @@ public class Parser {
     private String department;
     private String semester;
     private String building;
-    private int[] classDuration = new int[2];
-    private static DatabaseUtility db = new DatabaseUtility();
+    private int[] classDuration = new int[2];  // {dur;gap}
+    private DatabaseUtility db;
     
-    public Parser(File file){
+    public Parser(DatabaseUtility db, File file){
+        this.db = db;
         LinesOfFile = readFile(file);
         initialData(LinesOfFile);
         findCourses(LinesOfFile);
@@ -183,6 +184,9 @@ public class Parser {
     }
     
     private void storeData(){
+        db.clearDatabase(semester);
+        db.setDuration(classDuration);
+        //System.out.println(db.getDuration()[0]);
         teachers.stream().forEach((t) -> {
             //System.out.println(t);
             db.addNewProfessor(t);

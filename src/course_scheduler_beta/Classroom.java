@@ -34,13 +34,16 @@ public class Classroom {
     }
     
     public boolean isSlotEmpty(String slot){
-        for(int i = 0; i < timeSlots.length; i++){
-            if(slot.equalsIgnoreCase(timeSlots[i])){
-                //System.out.println("empty slot " + slot);
-                //System.out.println(emptySlots[i]);
-                return emptySlots[i];
+        if(timeSlots != null){
+            for(int i = 0; i < timeSlots.length; i++){
+                if(slot.equalsIgnoreCase(timeSlots[i])){
+                    //System.out.println("empty slot " + slot);
+                    //System.out.println(emptySlots[i]);
+                    return emptySlots[i];
+                }
             }
         }
+        
         //System.out.println("nop");
         return false;
     }
