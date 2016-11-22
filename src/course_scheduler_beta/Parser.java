@@ -41,8 +41,8 @@ public class Parser {
         assignDuration(LinesOfFile);
         findAvailableRooms(LinesOfFile);
         assignTeacherToCourse();
-        System.out.println("YOOOOOOOOOOOOOOOOOOOOOOOOOO");
-        printList(courses);
+        //System.out.println("YOOOOOOOOOOOOOOOOOOOOOOOOOO");
+        //printList(courses);
         storeData();
         
     }    

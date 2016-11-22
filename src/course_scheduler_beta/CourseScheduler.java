@@ -212,7 +212,7 @@ public class CourseScheduler {
         int totalClassTime = duration + gap;
         int totalDayTime = 720; // Because there are MW and TR classes
         int numberOfTimeSlots = totalDayTime/totalClassTime;
-        System.out.println("***" + duration);
+        //System.out.println("***" + duration);
         courseMeetingTimes = new String[2*numberOfTimeSlots];
  
         // Find time slots
