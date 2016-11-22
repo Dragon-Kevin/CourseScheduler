@@ -148,7 +148,7 @@ public class Course {
      */
     public void setClassroom(String classroom) {
         this.classroom = classroom;
-        classroom_ = new Classroom(classroom);
+        classroom_ = new Classroom(classroom, building);
     }
 
     /**
@@ -281,6 +281,8 @@ public class Course {
      * @return the prof
      */
     public String getProf() {
+        if(prof == null)
+            return "TBA";
         return prof;
     }
 

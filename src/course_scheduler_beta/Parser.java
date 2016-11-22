@@ -165,7 +165,7 @@ public class Parser {
         
         String[] tokens = list.get(index).toString().split(", ");
         for(String subtok: tokens){
-            availableRooms.add(new Classroom(subtok));
+            availableRooms.add(new Classroom(subtok, building));
         }
         //getAvailableRooms().addAll(Arrays.asList(tokens));
     }

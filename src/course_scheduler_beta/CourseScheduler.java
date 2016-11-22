@@ -61,24 +61,30 @@ public class CourseScheduler {
             List<Course> courses = db.getCourses("PROFESSOR", t.getName());
             //Parser.printList(courses);
             t.setTimeSlots(timeSlots.toArray(new String[0]));
-            for(int i=0;i<timeSlots.size();i++){
+            //for(int i=0;i<timeSlots.size();i++){
                 //System.out.println(t.getEmptySlots()[i]);
-            }
+            //}
             for(Course c: courses){
-                if(c.getClassroom() != null && !c.getClassroom().equalsIgnoreCase("null")){
+                
+                if(c.getClassroom() != null && !c.getClassroom().equalsIgnoreCase("null") && c.getClassroom().length() > 0){
                     Classroom r = new Classroom();
                     for(Classroom i: rooms){
                         if(i.getRoomNum().equalsIgnoreCase(c.getClassroom())){
                             r = i;
                         }   
                     }
+                    
                     int done = 0;
                     for(int i = 0; done == 0 && i < timeSlots.size(); i++){
+                        //System.out.println(c);
                         if(r.isSlotEmpty(timeSlots.get(i)) && t.isSlotEmpty(timeSlots.get(i))){
+                            //System.out.println("choop");
                             done++;
                             r.useSlot(timeSlots.get(i));
                             t.useSlot(timeSlots.get(i));
                             c.setTime(timeSlots.get(i));
+                            //if(r.getBuildingName()!=null)
+                            c.setBuilding(r.getBuildingName());
                         }
                     }
                     //System.out.println(c.getClassroom_());
@@ -89,13 +95,18 @@ public class CourseScheduler {
                         for(int j = 0; done == 0 && j < timeSlots.size(); j++){
                             //System.out.println("room " + i + "slot " + j);
                             if(rooms.get(i).isSlotEmpty(timeSlots.get(j)) && t.isSlotEmpty(timeSlots.get(j))){
+                                
                                 done++;
                                 rooms.get(i).useSlot(timeSlots.get(j));
                                 t.useSlot(timeSlots.get(j));
                                 c.setClassroom(rooms.get(i).getRoomNum());
                                 c.setTime(timeSlots.get(j));
+                                c.setBuilding(rooms.get(i).getBuildingName());
                             }    
                         }
+                    }
+                    if(done == 0){
+                        c.setBuilding("null");
                     }
                 }
                 db.alterCourse(c);
@@ -135,6 +146,7 @@ public class CourseScheduler {
                             r.useSlot(possibleTimes.get(i));
                             t.useSlot(possibleTimes.get(i));
                             c.setTime(possibleTimes.get(i));
+                            c.setBuilding(r.getBuildingName());
                         }
                     }
                     
@@ -149,8 +161,12 @@ public class CourseScheduler {
                                 t.useSlot(possibleTimes.get(j));
                                 c.setClassroom(rooms.get(i).getRoomNum());
                                 c.setTime(possibleTimes.get(j));
+                                c.setBuilding(rooms.get(i).getBuildingName());
                             }    
                         }
+                    }
+                    if(done == 0){
+                        c.setBuilding("null");
                     }
                 }
                 db.alterCourse(c);

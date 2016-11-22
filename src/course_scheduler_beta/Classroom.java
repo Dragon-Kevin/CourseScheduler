@@ -24,8 +24,9 @@ public class Classroom {
         this.buildingName = "";
     }
     
-    public Classroom(String roomNum){
+    public Classroom(String roomNum, String building){
         this.roomNum  = roomNum;
+        this.buildingName = building;
     }
     
     @Override

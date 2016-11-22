@@ -1067,7 +1067,7 @@ public class Course_Scheduler_Beta extends Application {
                 gPane3.add(success,1,0);
                 fade.play();
                 
-                scheduler.scheduleCourses();
+                //scheduler.scheduleCourses();
                 updateTable();
                 teachers.clear();
                 teachers.setAll(getList("teacher"));
@@ -1161,16 +1161,16 @@ public class Course_Scheduler_Beta extends Application {
             //shove in database
             if(!(alter.getRoomNum().isEmpty())){    
                 db.alterClassroom(alter);
-                Label success = new Label("Teacher Updated"); 
+                Label success = new Label("Classroom Updated"); 
                 FadeTransition fader = createFader(success);
                 SequentialTransition fade = new SequentialTransition(success,fader);
                 gPane3.add(success,1,0);
                 fade.play();
                 
                 updateTable();
-                //teachers.clear();
-                //teachers.setAll(getList("teacher"));
-                //list.setItems(teachers);
+                //rooms.clear();
+                //rooms.setAll(getList("classroom"));
+                //list.setItems(rooms);
                 stage.close();
             }
             else{
@@ -1236,10 +1236,10 @@ public class Course_Scheduler_Beta extends Application {
 
     private void updateTable() {
         //System.out.println("************************************");
-        
+        scheduler.scheduleCourses();
         data.clear();
         data.addAll(db.getCourses(null, null));
-        writeToCSV();
+        //writeToCSV();
     }
     
     private VBox configureTable(TableView table) {
@@ -1312,15 +1312,17 @@ public class Course_Scheduler_Beta extends Application {
         Button btnAdd = new Button("Add");
         Button btnDelete = new Button("Delete");
         Button btnEdit = new Button("Edit");
+        Button btnPrint = new Button("Print");
 
         btnAdd.setMinWidth(100.0);
         btnDelete.setMaxWidth(100.0);
         btnEdit.setMaxWidth(100.0);
+        btnPrint.setMaxWidth(100.0);
         
         VBox vbox = new VBox();
         vbox.setSpacing(10);
         vbox.setPadding(new Insets(20, 20, 10, 20)); 
-        vbox.getChildren().addAll(btnAdd, btnDelete, btnEdit);
+        vbox.getChildren().addAll(btnAdd, btnDelete, btnEdit, btnPrint);
         
         btnAdd.setOnAction((ActionEvent event) -> {
             addWindow();
@@ -1330,6 +1332,9 @@ public class Course_Scheduler_Beta extends Application {
         });
         btnEdit.setOnAction((ActionEvent event) -> {
             editWindow();
+        });
+        btnPrint.setOnAction((ActionEvent event) -> {
+            writeToCSV();
         });
         
         return vbox;
@@ -1363,7 +1368,8 @@ public class Course_Scheduler_Beta extends Application {
                 /* Write to screen for viewing */
                 String text = "";
                 if(i == 0){
-                    text = "Semester,CRN,Department,Room#,Days,Start,End,Building,Classroom,Teacher\n";
+                    text = "Semester,CRN,Department,Name,Days,Start,End,Building,Room#,Teacher\n";
+                    i++;
                 }
                 else {
                     text = c.getSemester() + "," + c.getCrn() + "," + c.getDepartment() + "," + c.getName() + "," + c.getDays() + ","
