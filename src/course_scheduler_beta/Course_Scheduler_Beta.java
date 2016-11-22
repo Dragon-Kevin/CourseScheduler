@@ -5,9 +5,14 @@
  */
 package course_scheduler_beta;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.animation.FadeTransition;
 import javafx.animation.SequentialTransition;
 import javafx.application.Application;
@@ -1230,17 +1235,11 @@ public class Course_Scheduler_Beta extends Application {
 //AJ CODE///////////////////////////////////////////////
 
     private void updateTable() {
-        //List<Course> tmp = db.getCourses(null, null);
         //System.out.println("************************************");
+        
         data.clear();
         data.addAll(db.getCourses(null, null));
-        /*for(Course x: data){
-            for(Course y: tmp){
-                if(x.getCrn() != y.getCrn()){}
-                    data.add(y);
-            }
-        }*/
-        //Parser.printList(data);
+        writeToCSV();
     }
     
     private VBox configureTable(TableView table) {
@@ -1346,6 +1345,47 @@ public class Course_Scheduler_Beta extends Application {
         fileChooser.getExtensionFilters().addAll(
             new FileChooser.ExtensionFilter("CSV", "*.csv")
         );
+    }
+    
+    private void writeToCSV(){
+        /* Write the assignments to a file */
+        System.out.println(data);
+        String fileName = "CourseAssignments.csv";
+        BufferedWriter writer = null;
+        try {
+            writer = new BufferedWriter(new FileWriter(fileName));
+        } catch (IOException ex) {
+            Logger.getLogger(CourseScheduler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        int i = 0;
+        for (Course c : data) {
+            if(c != null){
+                /* Write to screen for viewing */
+                String text = "";
+                if(i == 0){
+                    text = "Semester,CRN,Department,Room#,Days,Start,End,Building,Classroom,Teacher\n";
+                }
+                else {
+                    text = c.getSemester() + "," + c.getCrn() + "," + c.getDepartment() + "," + c.getName() + "," + c.getDays() + ","
+                            + c.getSTime() + "," + c.getETime() + "," + c.getBuilding() + "," + c.getClassroom() + "," + c.getProf() + "\n";
+                }
+               try {
+                    writer.write(text);
+                }
+                catch (IOException e){
+                    System.out.println(e);
+                }
+            }
+       }
+        
+        try{
+           if (writer != null){
+               writer.close( );
+           }
+        }
+        catch ( IOException e){
+            System.out.println(e);
+        }
     }
     
     /**
