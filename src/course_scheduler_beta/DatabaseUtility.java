@@ -58,16 +58,15 @@ public class DatabaseUtility {
     /** Adds a new semester name to semester table
      * @param newSemester - the new semester to set as currently selected
      */
-    public void addSemester(String newSemester)
+    public void addSemester(String newSemester, int classLength)
     {
         try{
             Connection con = DriverManager.getConnection(host, username, password);
             
-            System.out.println("HITTING "+newSemester);
-            
-            String sql = "insert into USER_SCHEDULES values(?)";
+            String sql = "insert into USER_SCHEDULES values(?,?)";
             PreparedStatement ps = con.prepareStatement(sql); 
             ps.setString(1, newSemester);
+            ps.setInt   (2, classLength);
             ps.executeUpdate();
             
             con.close();
@@ -104,6 +103,28 @@ public class DatabaseUtility {
             //err.printStackTrace();
         }
         return semesters;
+    }
+    
+    //gets class length based on current semester
+    public int getClassLength(){
+        int classLen = -1;//-1 on return for bad retrun test
+        try{
+            Connection con = DriverManager.getConnection(host, username, password);
+            
+            String sql = "select * from USER_SCHEDULES where NAME = '"+ currentSemester +"'";
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+            
+            while(rs.next()){
+                classLen = rs.getInt("LENGTH");
+            }
+            
+            con.close();
+        }catch(SQLException err){
+            System.out.println( "Error Getting Semesters!");
+            //err.printStackTrace();
+        }      
+        return classLen;
     }
     
     /**Returns a list of Teacher objects constructed from the Database.
