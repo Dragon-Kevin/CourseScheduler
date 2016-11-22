@@ -1,8 +1,8 @@
-Department: Electrical and Computer Engineering
+Department: ECE
 Location: Engineering Building
 Semester: Fall 2016
 
-Courses Offered:
+Courses Offered: 
 
 	99999, ECE 101
 	99991, ECE 133
@@ -62,21 +62,21 @@ Classroom Preferences:
 
 
 Faculty Assignments:
-A90000000, Dr. Alpha, ECE 332, ECE 431, ECE 589 - Preference: None
-A10000001, Dr. Beta, ECE 133, ECE 283, ECE 371 - Preference: All Mon-Wed classes
-A10000002, Dr. Gamma, ECE 311, ECE 402, ECE 555 - Preference: None
-A90000003, Dr. Delta, ECE 150, ECE 222, ECE 353 - Preference: All Mon-Wed classes
-A90000004, Dr. Epsilon, ECE 391, ECE 478, ECE 520 - Preference: None
-A90000005, Dr. Zeta, ECE 101, ECE 203, ECE 379 - Preference: None
-A90000006, Dr. Eta, ECE 365, ECE 445, ECE 509 - Preference: None
-A90000007, Dr. Theta, ECE 190, ECE 228, ECE 347 - Preference: None
-A90000008, Dr. Iota, ECE 310, ECE 462, ECE 528 - Preference: Evening classes only
-A90000009, Dr. Kappa, ECE 165, ECE 241, ECE 354 - Preference: None
-A90000010, Dr. Lamda, ECE 326, ECE 497, ECE 534 - Preference: None
-A90000020, Dr. Mu, ECE 140, ECE 262, ECE 381 - Preference: Afternoon classes only
-A90000030, Dr. Nu, ECE 329, ECE 485, ECE 576 - Preference: None
-A90000040, Dr. Xi, ECE 146, ECE 264, ECE 309 - Preference: None
-A90000050, Dr. Omicron, ECE 308, ECE 405, ECE 517 - Preference: None
+	A90000000, Dr. Alpha, ECE 332, ECE 431, ECE 589 - Preference: None
+	A10000001, Dr. Beta, ECE 133, ECE 283, ECE 371 - Preference: All Mon-Wed classes
+	A10000002, Dr. Gamma, ECE 311, ECE 402, ECE 555 - Preference: None
+	A90000003, Dr. Delta, ECE 150, ECE 222, ECE 353 - Preference: All Mon-Wed classes
+	A90000004, Dr. Epsilon, ECE 391, ECE 478, ECE 520 - Preference: None
+	A90000005, Dr. Zeta, ECE 101, ECE 203, ECE 379 - Preference: None
+	A90000006, Dr. Eta, ECE 365, ECE 445, ECE 509 - Preference: None
+	A90000007, Dr. Theta, ECE 190, ECE 228, ECE 347 - Preference: None
+	A90000008, Dr. Iota, ECE 310, ECE 462, ECE 528 - Preference: Evening classes only
+	A90000009, Dr. Kappa, ECE 165, ECE 241, ECE 354 - Preference: None
+	A90000010, Dr. Lamda, ECE 326, ECE 497, ECE 534 - Preference: None
+	A90000020, Dr. Mu, ECE 140, ECE 262, ECE 381 - Preference: Afternoon classes only
+	A90000030, Dr. Nu, ECE 329, ECE 485, ECE 576 - Preference: None
+	A90000040, Dr. Xi, ECE 146, ECE 264, ECE 309 - Preference: None
+	A90000050, Dr. Omicron, ECE 308, ECE 405, ECE 517 - Preference: None
 
 Class Length: 
 	Duration: 60 minutes
