@@ -41,8 +41,10 @@ public class Parser {
         assignDuration(LinesOfFile);
         findAvailableRooms(LinesOfFile);
         assignTeacherToCourse();
+        System.out.println("YOOOOOOOOOOOOOOOOOOOOOOOOOO");
+        printList(courses);
         storeData();
-        //printList(availableRooms);
+        
     }    
     
     // Takes file path as an argument then tries to read the file. Returns the file as list with each line as an individual element
@@ -185,14 +187,14 @@ public class Parser {
     
     private void storeData(){
         db.clearDatabase(semester);
-        db.setDuration();
+        db.setDuration(classDuration);
         //System.out.println(db.getDuration()[0]);
         teachers.stream().forEach((t) -> {
             //System.out.println(t);
             db.addNewProfessor(t);
         });
         courses.stream().forEach((c) -> {
-            db.addNewCourse(c);
+           db.addNewCourse(c);
            //System.out.println(c);
         });
         availableRooms.stream().forEach((r) -> {

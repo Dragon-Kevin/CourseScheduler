@@ -29,7 +29,7 @@ public class CourseScheduler {
         this.duration = db.getDuration()[0];
         this.gap = db.getDuration()[1];
         this.db = db;
-        //System.out.println(db.getCurrentSemester().equalsIgnoreCase("Fall 2016"));
+        System.out.println(db.getDuration()[0]);
         scheduleCourses();
     }
     
@@ -212,6 +212,7 @@ public class CourseScheduler {
         int totalClassTime = duration + gap;
         int totalDayTime = 720; // Because there are MW and TR classes
         int numberOfTimeSlots = totalDayTime/totalClassTime;
+        System.out.println("***" + duration);
         courseMeetingTimes = new String[2*numberOfTimeSlots];
  
         // Find time slots
