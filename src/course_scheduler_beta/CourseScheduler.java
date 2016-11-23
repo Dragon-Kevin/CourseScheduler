@@ -29,7 +29,7 @@ public class CourseScheduler {
         this.duration = db.getDuration()[0];
         this.gap = db.getDuration()[1];
         this.db = db;
-        System.out.println(db.getDuration()[0]);
+        //System.out.println(db.getDuration()[0]);
         scheduleCourses();
     }
     

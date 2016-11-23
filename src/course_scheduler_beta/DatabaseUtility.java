@@ -281,7 +281,7 @@ public class DatabaseUtility {
         }
         catch(SQLException err){
             System.out.println( "Error deleting Professor!");
-            err.printStackTrace(); 
+            //err.printStackTrace(); 
         }
     }
     
@@ -316,7 +316,7 @@ public class DatabaseUtility {
             con.close();
         }catch(SQLException err){
             System.out.println( "Error altering Professor!");
-           err.printStackTrace(); 
+           //err.printStackTrace(); 
         }
                 
     }
@@ -545,7 +545,7 @@ public class DatabaseUtility {
         }
         catch(SQLException err){
             System.out.println( "Error altering Course!");
-            err.printStackTrace();           
+            //err.printStackTrace();           
         }    
     }
     
@@ -679,13 +679,13 @@ public class DatabaseUtility {
         try{
             Connection con = DriverManager.getConnection(host, username, password);
 
-            System.out.println(classroom);
+            //System.out.println(classroom);
             
             String sql = "update CLASSROOMS set "
                     + "BUILDING = '"+ classroom.getBuildingName() +"', "
                     + "M_ENROLL = "+ classroom.getmEnroll()
                     + " where ROOM_NUM = '" + classroom.getRoomNum() + "' and SEMESTER = '"+getCurrentSemester()+"'";
-            System.out.println(sql);
+            //System.out.println(sql);
             PreparedStatement ps = con.prepareStatement(sql);
             ps.executeUpdate();
 
@@ -693,7 +693,7 @@ public class DatabaseUtility {
 
             }catch(SQLException err){
                 System.out.println( "Error altering Classroom!");
-                err.printStackTrace();           
+                //err.printStackTrace();           
         }          
     }
     

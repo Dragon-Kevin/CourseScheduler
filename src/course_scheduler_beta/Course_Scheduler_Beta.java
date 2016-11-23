@@ -53,10 +53,6 @@ public class Course_Scheduler_Beta extends Application {
     
     @Override
     public void start(Stage stage) {
-        //set semseter to default
-        //db.clearDatabase("Fall 2016"); // Since the database can't handle duplicate submissions yet, we need to clear every time we run
-        //db.setCurrentSemester("Fall 2016");
-        
         stage.setResizable(false);
         FileChooser fileChooser = new FileChooser();
         
@@ -94,7 +90,7 @@ public class Course_Scheduler_Beta extends Application {
             
             if(file != null){
                 parser = new Parser(db, file);               //the user checks new if they want a new Schedule, so they want to load a new data file, with a new semester entry
-                System.out.println(db.getDuration()[1]);
+                //System.out.println(db.getDuration()[1]);
                 db.addSemester(parser.getSemester(), parser.getClassDuration()[0], parser.getClassDuration()[1]);           //take the new semester entry and add it to the database
                 db.setCurrentSemester(parser.getSemester());    //set it as the current semester 
                 scheduler = new CourseScheduler(db);        
@@ -119,26 +115,6 @@ public class Course_Scheduler_Beta extends Application {
         stage.setScene(scene);
         stage.show();
     }
-    
-
-//    public void mainWindow(Parser data){            //I've noticed that this Parser param does nothing. 
-                                                      //I left this here in case there are plans for that Parser Param, 
-                                                      //git though I think the data course list replaced whatever this was doing
-//        Stage stage = new Stage();
-//        //stage.setResizable(false);
-//        BorderPane border = new BorderPane();
-//        border.setPadding(new Insets(20, 20, 20, 20));    // top, right, bottom, left
-//        TableView table = new TableView();
-//        
-//        border.setLeft(configureButtons());
-//        //border.setRight(configureTable(table, data));        //so I took it out of this constructor
-//        border.setRight(configureTable(table));
-//        Scene scene = new Scene(border, 1400, 500);
-//        stage.setTitle("Course Scheduler");
-//        stage.setScene(scene);
-//        stage.show();
-//    }
-//    
 
     public void mainWindow(){
         Stage stage = new Stage();
@@ -205,8 +181,8 @@ public class Course_Scheduler_Beta extends Application {
         gPane.add(crnLabel, 0,  0);
         Label depLabel = new Label("Department");
         gPane.add(depLabel, 0,  1);
-        Label numLabel = new Label("Course Number");
-        gPane.add(numLabel, 0,  2);
+//        Label numLabel = new Label("Course Number");
+//        gPane.add(numLabel, 0,  2);
         Label nameLabel = new Label("Course Name");
         gPane.add(nameLabel, 0, 3);
 //        Label m_eLabel = new Label("Max Enrollment");
@@ -222,8 +198,8 @@ public class Course_Scheduler_Beta extends Application {
         gPane.add(crn_tField, 1,    0);
         TextField dep_tField = new TextField();
         gPane.add(dep_tField, 1,    1);
-        TextField num_tField = new TextField();
-        gPane.add(num_tField, 1,    2);
+//        TextField num_tField = new TextField();
+//        gPane.add(num_tField, 1,    2);
         TextField name_tField = new TextField();
         gPane.add(name_tField, 1,   3);
 //        TextField me_tField = new TextField();
@@ -281,8 +257,8 @@ public class Course_Scheduler_Beta extends Application {
                 c.setCrn(Integer.parseInt(crn_tField.getText()));
             if((dep_tField.getText() != null && !dep_tField.getText().isEmpty()))   //department
                 c.setDepartment(dep_tField.getText());
-            if((num_tField.getText() != null && !num_tField.getText().isEmpty()))   //Course Number
-                c.setCourseNum(num_tField.getText());
+//            if((num_tField.getText() != null && !num_tField.getText().isEmpty()))   //Course Number
+//                c.setCourseNum(num_tField.getText());
             if((name_tField.getText() != null && !name_tField.getText().isEmpty()))   //course name
                 c.setName(name_tField.getText());
 //            if((me_tField.getText() != null && !me_tField.getText().isEmpty()))   //max enrollment
@@ -308,7 +284,7 @@ public class Course_Scheduler_Beta extends Application {
                 fade.play();
                 // edit by myk
                 updateTable();
-                System.out.println(db.getCurrentSemester());
+                //System.out.println(db.getCurrentSemester());
                 stage.close();
             }
             else{
@@ -722,8 +698,6 @@ public class Course_Scheduler_Beta extends Application {
         //LEFT
         ListView<String> list = new ListView<String>();     //listview of strings
         List<Classroom> cl = db.getClassrooms(null, null);         //get list of course objects from database
-        
-                System.out.println("HELLOooo");
         ObservableList<String> classrooms = FXCollections.observableArrayList(getList("classroom")); //get a list of strings
         list.setItems(classrooms);     //use courses to populate listview
         
@@ -791,7 +765,7 @@ public class Course_Scheduler_Beta extends Application {
         
         updateBtn.setOnAction((ActionEvent event) -> {
             String delete = list.getSelectionModel().getSelectedItem();
-            System.out.println(delete);
+            //System.out.println(delete);
             db.clearDatabase(delete);
             
             Label success = new Label("Semester Deleted"); 
@@ -1224,7 +1198,6 @@ public class Course_Scheduler_Beta extends Application {
                         list.add(ele.getName());
                 }   break;
             case "classroom":
-                System.out.println("HELLO");
                 List<Classroom> cl = db.getClassrooms(null, null);
                 for(Classroom ele: cl){
                     //list.add(ele.getBuildingName() +" "+ ele.getRoomNum());
@@ -1248,7 +1221,7 @@ public class Course_Scheduler_Beta extends Application {
         Label label = new Label("Schedule");
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         //aj edit - sets the table to larger width
-        table.setMinWidth(1200);
+        table.setMinWidth(1100);
         
         updateTable();
         
@@ -1315,7 +1288,8 @@ public class Course_Scheduler_Beta extends Application {
         Button btnDelete = new Button("Delete");
         Button btnEdit = new Button("Edit");
         Button btnPrint = new Button("Print");
-
+        Label placeholder = new Label("");
+            
         btnAdd.setMinWidth(100.0);
         btnDelete.setMaxWidth(100.0);
         btnEdit.setMaxWidth(100.0);
@@ -1324,7 +1298,7 @@ public class Course_Scheduler_Beta extends Application {
         VBox vbox = new VBox();
         vbox.setSpacing(10);
         vbox.setPadding(new Insets(20, 20, 10, 20)); 
-        vbox.getChildren().addAll(btnAdd, btnDelete, btnEdit, btnPrint);
+        vbox.getChildren().addAll(btnAdd, btnDelete, btnEdit, btnPrint, placeholder);
         
         btnAdd.setOnAction((ActionEvent event) -> {
             addWindow();
@@ -1337,6 +1311,13 @@ public class Course_Scheduler_Beta extends Application {
         });
         btnPrint.setOnAction((ActionEvent event) -> {
             writeToCSV();
+            Label success = new Label("Course Updated"); 
+            FadeTransition fader = createFader(success);
+            SequentialTransition fade = new SequentialTransition(success,fader);
+            vbox.getChildren().remove(4);
+            vbox.getChildren().add(success);
+            fade.play();           
+            
         });
         
         return vbox;
@@ -1356,7 +1337,6 @@ public class Course_Scheduler_Beta extends Application {
     
     private void writeToCSV(){
         /* Write the assignments to a file */
-        System.out.println(data);
         String fileName = "CourseAssignments.csv";
         BufferedWriter writer = null;
         try {
@@ -1365,18 +1345,27 @@ public class Course_Scheduler_Beta extends Application {
             Logger.getLogger(CourseScheduler.class.getName()).log(Level.SEVERE, null, ex);
         }
         int i = 0;
+ 
+       String head = "Semester,CRN,Department,Name,Days,Start,End,Building,Room#,Teacher\n"; 
+       try {
+            writer.write(head);
+        }
+        catch (IOException e){
+            System.out.println(e);
+        } 
+        
         for (Course c : data) {
             if(c != null){
                 /* Write to screen for viewing */
                 String text = "";
-                if(i == 0){
-                    text = "Semester,CRN,Department,Name,Days,Start,End,Building,Room#,Teacher\n";
-                    i++;
-                }
-                else {
+//                if(i == 0)/*{
+//                    text = "Semester,CRN,Department,Name,Days,Start,End,Building,Room#,Teacher\n";
+//                    i++;
+//                }
+//                else*/ {
                     text = c.getSemester() + "," + c.getCrn() + "," + c.getDepartment() + "," + c.getName() + "," + c.getDays() + ","
                             + c.getSTime() + "," + c.getETime() + "," + c.getBuilding() + "," + c.getClassroom() + "," + c.getProf() + "\n";
-                }
+//                }
                try {
                     writer.write(text);
                 }
