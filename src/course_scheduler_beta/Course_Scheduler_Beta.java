@@ -31,7 +31,6 @@ import javafx.scene.control.*;
 //import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
 //import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -73,6 +72,12 @@ public class Course_Scheduler_Beta extends Application {
         btnOpenCSV.setMinWidth(100);
         gPane.add(btnOpenCSV, 1, 0);
         
+        /* Added by Victoria 11/27/16 */
+        Button btnHelpCSV = new Button("Help"); 
+        btnHelpCSV.setMinWidth(100);
+        gPane.add(btnHelpCSV, 2, 0);
+        /* Added by Victoria 11/27/16 */
+        
         gPane.setAlignment(Pos.CENTER);
         bPane.setTop(gPane);       
         
@@ -87,7 +92,7 @@ public class Course_Scheduler_Beta extends Application {
         btnOpenCSV.setOnAction((ActionEvent event) -> {
             configureFileChooser(fileChooser);
             File file = fileChooser.showOpenDialog(stage);
-            
+                      
             if(file != null){
                 parser = new Parser(db, file);               //the user checks new if they want a new Schedule, so they want to load a new data file, with a new semester entry
                 //System.out.println(db.getDuration()[1]);
@@ -108,7 +113,13 @@ public class Course_Scheduler_Beta extends Application {
                     mainWindow();                                                                       //start the stuff
                     stage.close();
                 }//else do nothing, probably need a label to appear to tell user they messed up
-        });        
+        });     
+        
+        /* Added by Victoria 11/27/16 */
+        btnHelpCSV.setOnAction((ActionEvent event) -> {       
+            mainHelp();
+        });
+        /* Added by Victoria 11/27/16 */
         
         Scene scene = new Scene(bPane, 400, 250);
         stage.setTitle("Welcome!");
@@ -159,6 +170,39 @@ public class Course_Scheduler_Beta extends Application {
         stage.setScene(scene);
         stage.show();
     }
+    
+    /* Added by Victoria 11/27/16 */
+    public void mainHelp(){
+        Stage stage = new Stage();
+        stage.setResizable(false);
+        
+        BorderPane bPane = new BorderPane();
+        
+        Label inst = new Label("  Course Scheduler Help\n\n  To load a previously generated schedule, select one from the box at the bottom of the main screen and click 'LOAD'. \n\n  To create a new schedule from a data file, select 'NEW' and upload the desired file. ");
+
+        bPane.setTop(inst);
+
+        Scene scene = new Scene(bPane, 750, 200);
+        stage.setTitle("Help");
+        stage.setScene(scene);
+        stage.show();
+    }
+    
+    public void editHelp(){
+        Stage stage = new Stage();
+        stage.setResizable(false);
+        
+        BorderPane bPane = new BorderPane();
+        
+        Label inst = new Label("  Course Scheduler Help Screen\t\n\n  Buttons\n  Add: Click to add a professor or course offering to the list of available courses and professors.  \n\n  Delete: Click to remove a course offering or a professor from the list of available courses and professors. \n\n  Edit: Click to edit a course's name, meeting time, or classroom preferences. \n\n  Print: Click to send the scheduled course to a printable file. \n\n  Help: Click to return to this menu. ");
+        bPane.setTop(inst);
+
+        Scene scene = new Scene(bPane, 650, 300);
+        stage.setTitle("Help");
+        stage.setScene(scene);
+        stage.show();
+    }
+    /* Added by Victoria 11/27/16 */
     
     //used by  Add Window
     private BorderPane addCoursePane(Stage stage)
@@ -1288,17 +1332,25 @@ public class Course_Scheduler_Beta extends Application {
         Button btnDelete = new Button("Delete");
         Button btnEdit = new Button("Edit");
         Button btnPrint = new Button("Print");
+        Button btnHelp = new Button("Help");  /* Added by Victoria 11/27/16 */
         Label placeholder = new Label("");
             
         btnAdd.setMinWidth(100.0);
         btnDelete.setMaxWidth(100.0);
         btnEdit.setMaxWidth(100.0);
         btnPrint.setMaxWidth(100.0);
+        btnHelp.setMaxWidth(100.0);  /* Added by Victoria 11/27/16 */
         
         VBox vbox = new VBox();
         vbox.setSpacing(10);
         vbox.setPadding(new Insets(20, 20, 10, 20)); 
-        vbox.getChildren().addAll(btnAdd, btnDelete, btnEdit, btnPrint, placeholder);
+        vbox.getChildren().addAll(btnAdd, btnDelete, btnEdit, btnPrint, btnHelp);  /* Modified by Victoria 11/27/16 */    
+        
+        /* Added by Victoria 11/27/16 */
+        btnHelp.setOnAction((ActionEvent event) -> { 
+            editHelp();
+        });
+        /* Added by Victoria 11/27/16 */
         
         btnAdd.setOnAction((ActionEvent event) -> {
             addWindow();
