@@ -1,0 +1,86 @@
+Department: ECE
+Location: Engineering Building
+Semester: Fall 2016
+
+Courses Offered: 
+
+	99999, ECE 101
+	99991, ECE 133
+	99919, ECE 140
+	99199, ECE 146 
+	91999, ECE 150
+	99299, ECE 165
+	99929, ECE 190 
+	99992, ECE 203 
+	99939, ECE 222 
+	99399, ECE 228
+	93999, ECE 241
+	99499, ECE 262
+	99949, ECE 264 
+	99994, ECE 283 
+	99959, ECE 308
+	99599, ECE 309 
+	95999, ECE 310
+	96999, ECE 311
+	99669, ECE 326
+	99996, ECE 329
+	99969, ECE 332 
+	99979, ECE 347 
+	99977, ECE 353 
+	99989, ECE 354 
+	99899, ECE 365
+	99909, ECE 371 
+	99009, ECE 379 
+	98099, ECE 381 
+	99679, ECE 391 
+	99349, ECE 402
+	90909, ECE 405 
+	91239, ECE 431 
+	99123, ECE 445 
+	91259, ECE 462 
+	99539, ECE 478
+	99127, ECE 485 
+	94569, ECE 497 
+	91009, ECE 509 
+	99098, ECE 517 
+	90090, ECE 520
+	99000, ECE 528 
+	90088, ECE 534 
+	90109, ECE 555 
+	90979, ECE 576 
+	99690, ECE 589
+
+Classroom Preferences:
+	ECE 150 must be taught in Engineering Building, room T125
+	ECE 228 must be taught in Engineering Building, room T125
+	ECE 262 must be taught in Engineering Building, room T125
+	ECE 329 must be taught in Engineering Building, room T125
+	ECE 365 must be taught in Engineering Building, room T125
+	ECE 405 must be taught in Engineering Building, room T125
+	ECE 509 must be taught in Engineering Building, room T125
+	ECE 517 must be taught in Engineering Building, room T125
+
+
+Faculty Assignments:
+	A90000000, Dr. Alpha, ECE 332, ECE 431, ECE 589 - Preference: None
+	A10000001, Dr. Beta, ECE 133, ECE 283, ECE 371 - Preference: All Mon-Wed classes
+	A10000002, Dr. Gamma, ECE 311, ECE 402, ECE 555 - Preference: None
+	A90000003, Dr. Delta, ECE 150, ECE 222, ECE 353 - Preference: All Mon-Wed classes
+	A90000004, Dr. Epsilon, ECE 391, ECE 478, ECE 520 - Preference: None
+	A90000005, Dr. Zeta, ECE 101, ECE 203, ECE 379 - Preference: None
+	A90000006, Dr. Eta, ECE 365, ECE 445, ECE 509 - Preference: None
+	A90000007, Dr. Theta, ECE 190, ECE 228, ECE 347 - Preference: None
+	A90000008, Dr. Iota, ECE 310, ECE 462, ECE 528 - Preference: Evening classes only
+	A90000009, Dr. Kappa, ECE 165, ECE 241, ECE 354 - Preference: None
+	A90000010, Dr. Lamda, ECE 326, ECE 497, ECE 534 - Preference: None
+	A90000020, Dr. Mu, ECE 140, ECE 262, ECE 381 - Preference: Afternoon classes only
+	A90000030, Dr. Nu, ECE 329, ECE 485, ECE 576 - Preference: None
+	A90000040, Dr. Xi, ECE 146, ECE 264, ECE 309 - Preference: None
+	A90000050, Dr. Omicron, ECE 308, ECE 405, ECE 517 - Preference: None
+
+Class Length: 
+	Duration: 60 minutes
+	intermission: 15 minutes
+
+Classrooms Available: 
+	A304, A306, A308, A327, A324, A326, A329, A328, T104, T125
