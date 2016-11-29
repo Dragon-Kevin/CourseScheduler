@@ -48,6 +48,8 @@ public class Course_Scheduler_Beta extends Application {
     private static Parser parser;
     private static CourseScheduler scheduler;
     
+    TextArea textArea = new TextArea();
+    
     ObservableList<Course> data = FXCollections.observableArrayList(db.getCourses(null, null));
     
     @Override
@@ -98,7 +100,7 @@ public class Course_Scheduler_Beta extends Application {
                 //System.out.println(db.getDuration()[1]);
                 db.addSemester(parser.getSemester(), parser.getClassDuration()[0], parser.getClassDuration()[1]);           //take the new semester entry and add it to the database
                 db.setCurrentSemester(parser.getSemester());    //set it as the current semester 
-                scheduler = new CourseScheduler(db);        
+                scheduler = new CourseScheduler(db, textArea);        
                 mainWindow();
                 stage.close();
             }
@@ -109,7 +111,7 @@ public class Course_Scheduler_Beta extends Application {
                 if(semesterList.getSelectionModel().getSelectedItem() != null && !semesterList.getSelectionModel().getSelectedItem().toString().isEmpty()){                                      //if the user acutally selected something
                     db.setCurrentSemester(semesterList.getSelectionModel().getSelectedItem().toString());                                                 //set the semester from user choice
                     db.setDuration();
-                    scheduler = new CourseScheduler(db);
+                    scheduler = new CourseScheduler(db, textArea);
                     mainWindow();                                                                       //start the stuff
                     stage.close();
                 }//else do nothing, probably need a label to appear to tell user they messed up
@@ -134,9 +136,17 @@ public class Course_Scheduler_Beta extends Application {
         border.setPadding(new Insets(20, 20, 20, 20));    // top, right, bottom, left
         TableView table = new TableView();
         
+        textArea.setEditable(false);
+        textArea.setMaxHeight(100);
+        textArea.setMaxWidth(1100);
+        textArea.setTranslateX(160);
+        
+        textArea.appendText("");
+        
+        border.setBottom(textArea);
         border.setLeft(configureButtons());
         border.setRight(configureTable(table));
-        Scene scene = new Scene(border, 1400, 500);
+        Scene scene = new Scene(border, 1300, 600);
         stage.setTitle("Course Scheduler");
         stage.setScene(scene);
         stage.show();
@@ -406,7 +416,7 @@ public class Course_Scheduler_Beta extends Application {
         
         ListView<String> list2 = new ListView();
         
-        List<Course> c = db.getCourses("PROFESSOR", null);      //list of courses without teachers
+        List<Course> c = db.getCourses("PROFESSOR", "TBA");      //list of courses without teachers
         
         List<String> c_names = new ArrayList();
         for(Course ele: c){
@@ -533,15 +543,15 @@ public class Course_Scheduler_Beta extends Application {
         gPane.add(num_Label, 0,  0);
         Label build_Label = new Label("Building");
         gPane.add(build_Label, 0,  1);
-        Label me_Label = new Label("Max Enrollment");
-        gPane.add(me_Label, 0,  2);
+//        Label me_Label = new Label("Max Enrollment");
+//        gPane.add(me_Label, 0,  2);
 
         TextField num_tField = new TextField();
         gPane.add(num_tField, 1,    0);
         TextField build_tField = new TextField();
         gPane.add(build_tField, 1,    1);
-        TextField me_tField = new TextField();
-        gPane.add(me_tField, 1,    2);
+//        TextField me_tField = new TextField();
+//        gPane.add(me_tField, 1,    2);
         
         bPane.setLeft(gPane);
         
@@ -562,8 +572,8 @@ public class Course_Scheduler_Beta extends Application {
                 c.setRoomNum(num_tField.getText());
             if((build_tField.getText() != null && !build_tField.getText().isEmpty()))   //building
                 c.setBuildingName(build_tField.getText());            
-            if((me_tField.getText() != null && !me_tField.getText().isEmpty()))         //room size
-                c.setmEnroll(Integer.parseInt(me_tField.getText()));
+//            if((me_tField.getText() != null && !me_tField.getText().isEmpty()))         //room size
+//                c.setmEnroll(Integer.parseInt(me_tField.getText()));
             
             
             //shove in database
@@ -975,27 +985,28 @@ public class Course_Scheduler_Beta extends Application {
 //            alter.setEnroll         (Integer.parseInt(e_tField.getText()));
 //            alter.setAvail          (Integer.parseInt(a_tField.getText()));
 //            alter.setWaitList       (Integer.parseInt(wl_tField.getText()));
-            alter.setProf(comboBox.getSelectionModel().getSelectedItem().toString());
-
+            if(comboBox.getSelectionModel().getSelectedItem() != null && !comboBox.getSelectionModel().getSelectedItem().toString().isEmpty()){
+                alter.setProf(comboBox.getSelectionModel().getSelectedItem().toString());
             
-            //shove in database
-            if(!(alter.getCrn() == 0)){    
-                db.alterCourse(alter);
-                Label success = new Label("Course Updated"); 
-                FadeTransition fader = createFader(success);
-                SequentialTransition fade = new SequentialTransition(success,fader);
-                gPane3.add(success,1,0);
-                fade.play();
-                
-                updateTable();
-                stage.close();
-            }
-            else{
-                Label success = new Label("Unable to Update Course");
-                FadeTransition fader = createFader(success);
-                SequentialTransition fade = new SequentialTransition(success,fader);
-                gPane3.add(success,1,0);
-                fade.play(); 
+                //shove in database
+                if(!(alter.getCrn() == 0)){    
+                    db.alterCourse(alter);
+                    Label success = new Label("Course Updated"); 
+                    FadeTransition fader = createFader(success);
+                    SequentialTransition fade = new SequentialTransition(success,fader);
+                    gPane3.add(success,1,0);
+                    fade.play();
+
+                    updateTable();
+                    stage.close();
+                }
+                else{
+                    Label success = new Label("Unable to Update Course");
+                    FadeTransition fader = createFader(success);
+                    SequentialTransition fade = new SequentialTransition(success,fader);
+                    gPane3.add(success,1,0);
+                    fade.play(); 
+                }
             }
         });
         
@@ -1075,33 +1086,33 @@ public class Course_Scheduler_Beta extends Application {
             
             String oldName = alter.getName();
             alter.setName           (name_tField.getText());
-            alter.setTimePreference (comboBox.getSelectionModel().getSelectedItem().toString());
+            if(comboBox.getSelectionModel().getSelectedItem() != null && !comboBox.getSelectionModel().getSelectedItem().toString().isEmpty()){
+                alter.setTimePreference (comboBox.getSelectionModel().getSelectedItem().toString());
 
-            
-            //shove in database
-            if(!(alter.getAnum().isEmpty())){    
-                db.alterProfessor(alter, oldName);
-                Label success = new Label("Teacher Updated"); 
-                FadeTransition fader = createFader(success);
-                SequentialTransition fade = new SequentialTransition(success,fader);
-                gPane3.add(success,1,0);
-                fade.play();
-                
-                //scheduler.scheduleCourses();
-                updateTable();
-                teachers.clear();
-                teachers.setAll(getList("teacher"));
-                list.setItems(teachers);
-                stage.close();
+                //shove in database
+                if(!(alter.getAnum().isEmpty())){    
+                    db.alterProfessor(alter, oldName);
+                    Label success = new Label("Teacher Updated"); 
+                    FadeTransition fader = createFader(success);
+                    SequentialTransition fade = new SequentialTransition(success,fader);
+                    gPane3.add(success,1,0);
+                    fade.play();
+
+                    //scheduler.scheduleCourses();
+                    updateTable();
+                    teachers.clear();
+                    teachers.setAll(getList("teacher"));
+                    list.setItems(teachers);
+                    stage.close();
+                }
+                else{
+                    Label success = new Label("Unable to Update Teacher");
+                    FadeTransition fader = createFader(success);
+                    SequentialTransition fade = new SequentialTransition(success,fader);
+                    gPane3.add(success,1,0);
+                    fade.play(); 
+                }
             }
-            else{
-                Label success = new Label("Unable to Update Teacher");
-                FadeTransition fader = createFader(success);
-                SequentialTransition fade = new SequentialTransition(success,fader);
-                gPane3.add(success,1,0);
-                fade.play(); 
-            }
-            
         });
         
         bPane.setBottom(gPane3); 
@@ -1121,13 +1132,13 @@ public class Course_Scheduler_Beta extends Application {
         
         Label build_Label = new Label("Building");
         gPane.add(build_Label, 0,  0);
-        Label me_Label = new Label("Max Enrollment");
-        gPane.add(me_Label, 0,  1);
+//        Label me_Label = new Label("Max Enrollment");
+//        gPane.add(me_Label, 0,  1);
 
         TextField build_tField = new TextField();
         gPane.add(build_tField, 1,    0);
-        TextField me_tField = new TextField();
-        gPane.add(me_tField, 1,    1);
+//        TextField me_tField = new TextField();
+//        gPane.add(me_tField, 1,    1);
         
         bPane.setRight(gPane);
         
@@ -1153,7 +1164,7 @@ public class Course_Scheduler_Beta extends Application {
             }
             
             build_tField.setText(update.getBuildingName());
-            me_tField.setText(Integer.toString(update.getmEnroll()));
+//            me_tField.setText(Integer.toString(update.getmEnroll()));
         });
         
         bPane.setLeft(list); 
@@ -1176,7 +1187,7 @@ public class Course_Scheduler_Beta extends Application {
             }
              
             alter.setBuildingName(build_tField.getText());
-            alter.setmEnroll(Integer.parseInt(me_tField.getText()));
+//            alter.setmEnroll(Integer.parseInt(me_tField.getText()));
             
             //shove in database
             if(!(alter.getRoomNum().isEmpty())){    

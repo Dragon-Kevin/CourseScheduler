@@ -5,13 +5,9 @@
  */
 package course_scheduler_beta;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javafx.scene.control.TextArea;
 
 /**
  *
@@ -25,12 +21,15 @@ public class CourseScheduler {
     int duration, gap;
     DatabaseUtility db = new DatabaseUtility();
     
-    public CourseScheduler(DatabaseUtility db){
+    TextArea textArea;
+    
+    public CourseScheduler(DatabaseUtility db, TextArea errorTextArea){
         this.duration = db.getDuration()[0];
         this.gap = db.getDuration()[1];
         this.db = db;
         //System.out.println(db.getDuration()[0]);
-        scheduleCourses();
+        textArea = errorTextArea;
+        //scheduleCourses();        //since updateTable already calls this, and configureTable calls updateTable, this was unecesscary
     }
     
     public CourseScheduler(){
@@ -42,6 +41,17 @@ public class CourseScheduler {
     public void scheduleCourses(){  
         /* Get all courses, teachers and classrooms from database */
         List<Classroom> classrooms = db.getClassrooms(null, null);
+        textArea.clear();  //this needs to be called to clear out error messages, but for some reason after init run the error messages aren't firing (that if inst triggering)
+        
+        List <Course> c = db.getCourses(null, null);   //clears all time data
+        for(Course ele: c){                            //the null string problem is creeping into the
+            ele.setDays(null);                         //    error message display stuff
+            ele.setsTime(null);                        //doing this made the messages actually appear correctly 
+            ele.seteTime(null);                        //   in the sense of the if statement in nonPrefs and teacherPrefs
+            ele.setClassroom(null);                    //   actually fire and print the error messages 
+            ele.setBuilding(null);                     //take note that courses without teachers do NOT display errors  
+            db.alterCourse(ele);                       //   i guess that since a course without a teacher cannot be scheduled
+        }                                              //I do not know if this clobbers anything important, so let me know if im destroying stuff that you need for your checking
         
         // Make the time slots for assigning classes
         makeTimeSlots(classrooms);
@@ -107,6 +117,7 @@ public class CourseScheduler {
                     }
                     if(done == 0){
                         c.setBuilding("null");
+                        textArea.appendText(c.getName() + " could not be scheduled. Not enough classrooms!\n");
                     }
                 }
                 db.alterCourse(c);
@@ -132,7 +143,8 @@ public class CourseScheduler {
             t.setTimeSlots(possibleTimes.toArray(new String[0]));
             //Parser.printList(possibleTimes);
             for(Course c:courses){
-                if(c.getClassroom() != null && c.getClassroom().length() > 0){
+                                                                                //added below check to not fire on classroom actually holding string "null" 
+                if(c.getClassroom() != null && c.getClassroom().length() > 0 && !c.getClassroom().equals("null")){
                     Classroom r = new Classroom();
                     for(Classroom i: rooms){
                         if(i.getRoomNum().equalsIgnoreCase(c.getClassroom())){
@@ -167,6 +179,7 @@ public class CourseScheduler {
                     }
                     if(done == 0){
                         c.setBuilding("null");
+                        textArea.appendText(c.getName() + " could not be scheduled. Teacher time preference conlict!\n");
                     }
                 }
                 db.alterCourse(c);
@@ -246,6 +259,7 @@ public class CourseScheduler {
     // Using main as a unit test for the scheduler
     public static void main(String[] argv){
         
+        System.out.println("you should NOT see this");
         CourseScheduler cs = new CourseScheduler();
         cs.scheduleCourses();
     }
